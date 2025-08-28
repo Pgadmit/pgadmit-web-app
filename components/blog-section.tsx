@@ -4,43 +4,81 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { User, ArrowRight, Clock } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { getFeaturedBlogPosts, getStrapiMediaURL, type BlogPost } from "@/lib/strapi"
 
 export function BlogSection() {
   const router = useRouter()
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const blogPosts = [
-    {
-      title: "Complete Guide to Studying CS in the US",
-      excerpt: "Everything you need to know about pursuing a Computer Science degree in America.",
-      author: "Dr. Sarah Johnson",
-      date: "Dec 15, 2024",
-      readTime: "8 min",
-      image: "/computer-science-lab.png",
-      category: "Academic",
-    },
-    {
-      title: "Visa Application Success Stories",
-      excerpt: "Real students share their F-1 visa journey and tips for approval.",
-      author: "Michael Chen",
-      date: "Dec 12, 2024",
-      readTime: "6 min",
-      image: "/visa-interview-prep.png",
-      category: "Visa",
-    },
-    {
-      title: "Top 10 Universities for International Students",
-      excerpt: "Discover the most welcoming campuses with strong support systems.",
-      author: "Priya Sharma",
-      date: "Dec 10, 2024",
-      readTime: "10 min",
-      image: "/diverse-students-campus.png",
-      category: "Universities",
-    },
-  ]
+  useEffect(() => {
+    async function loadBlogPosts() {
+      try {
+        const response = await getFeaturedBlogPosts(3)
+        setBlogPosts(response.data)
+      } catch (error) {
+        console.error("Failed to load blog posts:", error)
+        // Fallback to static data if API fails
+        setBlogPosts([
+          {
+            id: 1,
+            documentId: "1",
+            title: "Complete Guide to Studying CS in the US",
+            slug: "complete-guide-studying-cs-us",
+            excerpt: "Everything you need to know about pursuing a Computer Science degree in America.",
+            reading_time: 8,
+            createdAt: "2024-12-15T00:00:00.000Z",
+            updatedAt: "2024-12-15T00:00:00.000Z",
+            cover: { url: "/computer-science-lab.png" },
+            author: { name: "Dr. Sarah Johnson" },
+            category: { name: "Academic", slug: "academic" },
+          },
+          {
+            id: 2,
+            documentId: "2",
+            title: "Visa Application Success Stories",
+            slug: "visa-application-success-stories",
+            excerpt: "Real students share their F-1 visa journey and tips for approval.",
+            reading_time: 6,
+            createdAt: "2024-12-12T00:00:00.000Z",
+            updatedAt: "2024-12-12T00:00:00.000Z",
+            cover: { url: "/visa-interview-prep.png" },
+            author: { name: "Michael Chen" },
+            category: { name: "Visa", slug: "visa" },
+          },
+          {
+            id: 3,
+            documentId: "3",
+            title: "Top 10 Universities for International Students",
+            slug: "top-10-universities-international-students",
+            excerpt: "Discover the most welcoming campuses with strong support systems.",
+            reading_time: 10,
+            createdAt: "2024-12-10T00:00:00.000Z",
+            updatedAt: "2024-12-10T00:00:00.000Z",
+            cover: { url: "/diverse-students-campus.png" },
+            author: { name: "Priya Sharma" },
+            category: { name: "Universities", slug: "universities" },
+          },
+        ])
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  const handleReadMore = (title: string) => {
-    console.log(`Reading article: ${title}`)
-    // In a real app, this would navigate to the full article
+    loadBlogPosts()
+  }, [])
+
+  const handleReadMore = (slug: string) => {
+    router.push(`/blog/${slug}`)
+  }
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    })
   }
 
   return (
@@ -55,63 +93,83 @@ export function BlogSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-          {blogPosts.map((post, index) => (
-            <Card
-              key={index}
-              className="bg-card shadow-md border-0 overflow-hidden hover:shadow-lg transition-shadow group"
-            >
-              <div className="aspect-video overflow-hidden">
-                <img
-                  src={post.image || "/placeholder.svg"}
-                  alt={post.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <CardHeader className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full">
-                    {post.category}
-                  </span>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                    <Clock className="h-3 w-3" />
-                    <span>{post.readTime}</span>
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="bg-card shadow-md border-0 overflow-hidden">
+                <div className="aspect-video bg-muted animate-pulse" />
+                <CardHeader className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-16 h-4 bg-muted animate-pulse rounded" />
+                    <div className="w-12 h-4 bg-muted animate-pulse rounded" />
                   </div>
+                  <div className="w-full h-6 bg-muted animate-pulse rounded mb-3" />
+                  <div className="w-3/4 h-4 bg-muted animate-pulse rounded" />
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
+            {blogPosts.map((post) => (
+              <Card
+                key={post.id}
+                className="bg-card shadow-md border-0 overflow-hidden hover:shadow-lg transition-shadow group"
+              >
+                <div className="aspect-video overflow-hidden">
+                  <img
+                    src={post.cover ? getStrapiMediaURL(post.cover) : "/placeholder.svg"}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
                 </div>
-                <h3 className="text-xl md:text-2xl font-bold mb-3 text-foreground leading-tight line-clamp-2">
-                  {post.title}
-                </h3>
-                <p className="text-muted-foreground mb-4 line-clamp-2 leading-relaxed">{post.excerpt}</p>
-              </CardHeader>
-              <CardContent className="px-6 pb-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <User className="h-4 w-4" />
-                    <span>{post.author}</span>
-                    <span>•</span>
-                    <span>{post.date}</span>
+                <CardHeader className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full">
+                      {post.category?.name || 'General'}
+                    </span>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      <span>{post.reading_time || 5} min</span>
+                    </div>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => handleReadMore(post.title)}
-                    className="text-primary hover:text-primary/80 p-0 h-auto font-semibold group"
-                  >
-                    Read
-                    <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <h3 className="text-xl md:text-2xl font-bold mb-3 text-foreground leading-tight line-clamp-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-muted-foreground mb-4 line-clamp-2 leading-relaxed">
+                    {post.excerpt || post.description}
+                  </p>
+                </CardHeader>
+                <CardContent className="px-6 pb-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <User className="h-4 w-4" />
+                      <span>{post.author?.name || 'Anonymous'}</span>
+                      <span>•</span>
+                      <span>{formatDate(post.createdAt)}</span>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => handleReadMore(post.slug)}
+                      className="text-primary hover:text-primary/80 p-0 h-auto font-semibold group"
+                    >
+                      Read
+                      <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-12 md:mt-16">
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               variant="outline"
               size="lg"
-              onClick={() => console.log("View all articles")}
+              onClick={() => router.push("/blog")}
               className="bg-background hover:bg-muted border-2 border-primary text-primary hover:text-primary/80 px-8 py-4"
             >
               View All Articles
