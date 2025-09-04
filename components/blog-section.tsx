@@ -1,24 +1,28 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { User, ArrowRight, Clock } from "lucide-react"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { getFeaturedBlogPosts, getStrapiMediaURL, type BlogPost } from "@/lib/strapi"
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { User, ArrowRight, Clock } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  getFeaturedBlogPosts,
+  getStrapiMediaURL,
+  type BlogPost,
+} from "@/lib/strapi";
 
 export function BlogSection() {
-  const router = useRouter()
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([])
-  const [loading, setLoading] = useState(true)
+  const router = useRouter();
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadBlogPosts() {
       try {
-        const response = await getFeaturedBlogPosts(3)
-        setBlogPosts(response.data)
+        const response = await getFeaturedBlogPosts(3);
+        setBlogPosts(response.data);
       } catch (error) {
-        console.error("Failed to load blog posts:", error)
+        console.error("Failed to load blog posts:", error);
         // Fallback to static data if API fails
         setBlogPosts([
           {
@@ -26,11 +30,12 @@ export function BlogSection() {
             documentId: "1",
             title: "Complete Guide to Studying CS in the US",
             slug: "complete-guide-studying-cs-us",
-            excerpt: "Everything you need to know about pursuing a Computer Science degree in America.",
+            excerpt:
+              "Everything you need to know about pursuing a Computer Science degree in America.",
             reading_time: 8,
             createdAt: "2024-12-15T00:00:00.000Z",
             updatedAt: "2024-12-15T00:00:00.000Z",
-            cover: { url: "/computer-science-lab.png" },
+            cover: { url: "/blog/cs.jpg" },
             author: { name: "Dr. Sarah Johnson" },
             category: { name: "Academic", slug: "academic" },
           },
@@ -39,11 +44,12 @@ export function BlogSection() {
             documentId: "2",
             title: "Visa Application Success Stories",
             slug: "visa-application-success-stories",
-            excerpt: "Real students share their F-1 visa journey and tips for approval.",
+            excerpt:
+              "Real students share their F-1 visa journey and tips for approval.",
             reading_time: 6,
             createdAt: "2024-12-12T00:00:00.000Z",
             updatedAt: "2024-12-12T00:00:00.000Z",
-            cover: { url: "/visa-interview-prep.png" },
+            cover: { url: "/blog/visa.png" },
             author: { name: "Michael Chen" },
             category: { name: "Visa", slug: "visa" },
           },
@@ -52,34 +58,35 @@ export function BlogSection() {
             documentId: "3",
             title: "Top 10 Universities for International Students",
             slug: "top-10-universities-international-students",
-            excerpt: "Discover the most welcoming campuses with strong support systems.",
+            excerpt:
+              "Discover the most welcoming campuses with strong support systems.",
             reading_time: 10,
             createdAt: "2024-12-10T00:00:00.000Z",
             updatedAt: "2024-12-10T00:00:00.000Z",
-            cover: { url: "/diverse-students-campus.png" },
+            cover: { url: "/blog/univer.jpg" },
             author: { name: "Priya Sharma" },
             category: { name: "Universities", slug: "universities" },
           },
-        ])
+        ]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    loadBlogPosts()
-  }, [])
+    loadBlogPosts();
+  }, []);
 
   const handleReadMore = (slug: string) => {
-    router.push(`/blog/${slug}`)
-  }
+    router.push(`/blog/${slug}`);
+  };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    })
-  }
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
 
   return (
     <section data-section="blog" className="py-16 md:py-24 bg-background">
@@ -89,14 +96,18 @@ export function BlogSection() {
             Latest Insights 📚
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Real stories, expert tips, and insider knowledge from students who made it
+            Real stories, expert tips, and insider knowledge from students who
+            made it
           </p>
         </div>
 
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="bg-card shadow-md border-0 overflow-hidden">
+              <Card
+                key={i}
+                className="bg-card shadow-md border-0 overflow-hidden"
+              >
                 <div className="aspect-video bg-muted animate-pulse" />
                 <CardHeader className="p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -118,7 +129,11 @@ export function BlogSection() {
               >
                 <div className="aspect-video overflow-hidden">
                   <img
-                    src={post.cover ? getStrapiMediaURL(post.cover) : "/placeholder.svg"}
+                    src={
+                      post.cover
+                        ? getStrapiMediaURL(post.cover)
+                        : "/placeholder.svg"
+                    }
                     alt={post.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -126,7 +141,7 @@ export function BlogSection() {
                 <CardHeader className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-semibold px-3 py-1 bg-primary/10 text-primary rounded-full">
-                      {post.category?.name || 'General'}
+                      {post.category?.name || "General"}
                     </span>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
                       <Clock className="h-3 w-3" />
@@ -144,7 +159,7 @@ export function BlogSection() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <User className="h-4 w-4" />
-                      <span>{post.author?.name || 'Anonymous'}</span>
+                      <span>{post.author?.name || "Anonymous"}</span>
                       <span>•</span>
                       <span>{formatDate(post.createdAt)}</span>
                     </div>
@@ -187,5 +202,5 @@ export function BlogSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
