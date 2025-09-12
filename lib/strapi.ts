@@ -1,6 +1,6 @@
 const STRAPI_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL ??
-  "https://phenomenal-example-f9a76ee58b.strapiapp.com";
+  "//temporarily_disabled";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 // Content block types
