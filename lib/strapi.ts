@@ -1,6 +1,6 @@
 const STRAPI_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL ??
-  "//temporarily_disabled";
+  "https://refreshing-acoustics-4f6486bcd4.strapiapp.com";
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 // Content block types
@@ -152,7 +152,7 @@ function getStrapiURL(path: string = ""): string {
 // Helper function to fetch data from Strapi
 async function fetchAPI(
   path: string,
-  options: RequestInit = {},
+  options: RequestInit = {}
 ): Promise<unknown> {
   const defaultOptions: RequestInit = {
     headers: {
@@ -175,7 +175,7 @@ async function fetchAPI(
 
   if (!response.ok) {
     console.error(
-      `Strapi API error: ${response.status} ${response.statusText}`,
+      `Strapi API error: ${response.status} ${response.statusText}`
     );
     throw new Error(`Failed to fetch from Strapi: ${response.statusText}`);
   }
@@ -191,7 +191,7 @@ export async function getBlogPosts(
     featured?: boolean;
     category?: string;
     search?: string;
-  } = {},
+  } = {}
 ): Promise<StrapiResponse<BlogPost[]>> {
   const { page = 1, pageSize = 10, featured, category, search } = options;
 
@@ -217,19 +217,21 @@ export async function getBlogPosts(
     params.append("filters[title][$containsi]", search);
   }
 
-  const response = await fetchAPI(`/articles?${params.toString()}`) as StrapiResponse<BlogPost[]>;
-  
+  const response = (await fetchAPI(
+    `/articles?${params.toString()}`
+  )) as StrapiResponse<BlogPost[]>;
+
   // Ensure all posts have valid slugs
   const postsWithSlugs = response.data.map(ensurePostSlug);
-  
+
   return {
     ...response,
-    data: postsWithSlugs
+    data: postsWithSlugs,
   };
 }
 
 export async function getBlogPost(
-  slug: string,
+  slug: string
 ): Promise<StrapiResponse<BlogPost[]>> {
   // First try to get by slug
   let params = new URLSearchParams({
@@ -240,8 +242,10 @@ export async function getBlogPost(
     "populate[blocks]": "true",
   });
 
-  let response = await fetchAPI(`/articles?${params.toString()}`) as StrapiResponse<BlogPost[]>;
-  
+  let response = (await fetchAPI(
+    `/articles?${params.toString()}`
+  )) as StrapiResponse<BlogPost[]>;
+
   // If not found by slug, try to get all posts and find by generated slug
   if (response.data.length === 0) {
     params = new URLSearchParams({
@@ -250,29 +254,31 @@ export async function getBlogPost(
       "populate[category]": "true",
       "populate[blocks]": "true",
     });
-    
-    const allPostsResponse = await fetchAPI(`/articles?${params.toString()}`) as StrapiResponse<BlogPost[]>;
+
+    const allPostsResponse = (await fetchAPI(
+      `/articles?${params.toString()}`
+    )) as StrapiResponse<BlogPost[]>;
     const postsWithSlugs = allPostsResponse.data.map(ensurePostSlug);
-    
+
     // Find post by generated slug
-    const foundPost = postsWithSlugs.find(post => post.slug === slug);
-    
+    const foundPost = postsWithSlugs.find((post) => post.slug === slug);
+
     if (foundPost) {
       response = {
         data: [foundPost],
-        meta: { pagination: { page: 1, pageSize: 1, pageCount: 1, total: 1 } }
+        meta: { pagination: { page: 1, pageSize: 1, pageCount: 1, total: 1 } },
       };
     }
   } else {
     // Ensure slug is set for found post
     response.data = response.data.map(ensurePostSlug);
   }
-  
+
   return response;
 }
 
 export async function getFeaturedBlogPosts(
-  limit: number = 3,
+  limit: number = 3
 ): Promise<StrapiResponse<BlogPost[]>> {
   return getBlogPosts({
     pageSize: limit,
@@ -292,7 +298,7 @@ export async function getCategories(): Promise<StrapiResponse<Category[]>> {
 }
 
 export async function getCategory(
-  slug: string,
+  slug: string
 ): Promise<StrapiResponse<Category[]>> {
   const params = new URLSearchParams({
     "filters[slug][$eq]": slug,
@@ -328,7 +334,7 @@ export async function getAuthor(id: number): Promise<StrapiResponse<Author>> {
 // Helper function to get media URL with optional size preference
 export function getStrapiMediaURL(
   media: StrapiMedia | { url?: string } | null | undefined,
-  size: "thumbnail" | "small" | "medium" | "large" | "original" = "original",
+  size: "thumbnail" | "small" | "medium" | "large" | "original" = "original"
 ): string | null {
   if (!media) return null;
 
@@ -373,9 +379,9 @@ export function getStrapiMediaURL(
 export function generateSlugFromTitle(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-    .replace(/\s+/g, '-') // Replace spaces with hyphens
-    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
+    .replace(/\s+/g, "-") // Replace spaces with hyphens
+    .replace(/-+/g, "-") // Replace multiple hyphens with single
     .trim();
 }
 
@@ -383,7 +389,7 @@ export function generateSlugFromTitle(title: string): string {
 export function ensurePostSlug(post: BlogPost): BlogPost {
   return {
     ...post,
-    slug: post.slug || generateSlugFromTitle(post.title)
+    slug: post.slug || generateSlugFromTitle(post.title),
   };
 }
 
