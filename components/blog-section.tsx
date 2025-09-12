@@ -23,51 +23,7 @@ export function BlogSection() {
         setBlogPosts(response.data);
       } catch (error) {
         console.error("Failed to load blog posts:", error);
-        // Fallback to static data if API fails
-        setBlogPosts([
-          {
-            id: 1,
-            documentId: "1",
-            title: "Complete Guide to Studying CS in the US",
-            slug: "complete-guide-studying-cs-us",
-            excerpt:
-              "Everything you need to know about pursuing a Computer Science degree in America.",
-            reading_time: 8,
-            createdAt: "2024-12-15T00:00:00.000Z",
-            updatedAt: "2024-12-15T00:00:00.000Z",
-            cover: { url: "/blog/cs.jpg" },
-            author: { name: "Dr. Sarah Johnson" },
-            category: { name: "Academic", slug: "academic" },
-          },
-          {
-            id: 2,
-            documentId: "2",
-            title: "Visa Application Success Stories",
-            slug: "visa-application-success-stories",
-            excerpt:
-              "Real students share their F-1 visa journey and tips for approval.",
-            reading_time: 6,
-            createdAt: "2024-12-12T00:00:00.000Z",
-            updatedAt: "2024-12-12T00:00:00.000Z",
-            cover: { url: "/blog/visa.png" },
-            author: { name: "Michael Chen" },
-            category: { name: "Visa", slug: "visa" },
-          },
-          {
-            id: 3,
-            documentId: "3",
-            title: "Top 10 Universities for International Students",
-            slug: "top-10-universities-international-students",
-            excerpt:
-              "Discover the most welcoming campuses with strong support systems.",
-            reading_time: 10,
-            createdAt: "2024-12-10T00:00:00.000Z",
-            updatedAt: "2024-12-10T00:00:00.000Z",
-            cover: { url: "/blog/univer.jpg" },
-            author: { name: "Priya Sharma" },
-            category: { name: "Universities", slug: "universities" },
-          },
-        ]);
+        setBlogPosts([]);
       } finally {
         setLoading(false);
       }
@@ -131,7 +87,7 @@ export function BlogSection() {
                   <img
                     src={
                       post.cover
-                        ? getStrapiMediaURL(post.cover)
+                        ? getStrapiMediaURL(post.cover) || "/placeholder.svg"
                         : "/placeholder.svg"
                     }
                     alt={post.title}

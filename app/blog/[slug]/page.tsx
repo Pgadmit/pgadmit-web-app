@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { Card, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,15 +24,16 @@ export default function BlogPostPage() {
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (slug) {
-      loadPost();
-    }
-  }, [slug]);
-
-  const loadPost = async () => {
+  const loadPost = useCallback(async () => {
     try {
       setLoading(true);
+      
+      // Check if slug is 'null' and redirect to blog list
+      if (slug === 'null' || !slug) {
+        router.push("/blog");
+        return;
+      }
+      
       const response = await getBlogPost(slug);
 
       if (response.data.length > 0) {
@@ -61,7 +63,13 @@ export default function BlogPostPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug, router]);
+
+  useEffect(() => {
+    if (slug) {
+      loadPost();
+    }
+  }, [slug, loadPost]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -71,7 +79,7 @@ export default function BlogPostPage() {
     });
   };
 
-  const renderContent = (blocks: any[]) => {
+  const renderContent = (blocks: unknown[]) => {
     if (!blocks || blocks.length === 0) {
       return (
         <div className="prose prose-lg max-w-none">
@@ -85,40 +93,54 @@ export default function BlogPostPage() {
     return (
       <div className="prose prose-lg max-w-none">
         {blocks.map((block, index) => {
-          switch (block.__component) {
+          const blockObj = block as {
+            __component: string;
+            id?: number;
+            body?: string;
+            title?: string;
+            file?: { url: string; alternativeText?: string; caption?: string };
+          };
+          const blockKey = `${blockObj.__component}-${blockObj.id || index}`;
+          switch (blockObj.__component) {
             case "shared.rich-text":
               return (
                 <div
-                  key={index}
-                  dangerouslySetInnerHTML={{ __html: block.body }}
+                  key={blockKey}
+                  dangerouslySetInnerHTML={{ __html: blockObj.body || "" }}
                   className="mb-6"
                 />
               );
             case "shared.quote":
               return (
                 <blockquote
-                  key={index}
+                  key={blockKey}
                   className="border-l-4 border-primary pl-6 my-8 italic text-lg"
                 >
-                  <p>"{block.title}"</p>
-                  {block.body && (
+                  <p>&ldquo;{blockObj.title}&rdquo;</p>
+                  {blockObj.body && (
                     <cite className="text-sm text-muted-foreground">
-                      — {block.body}
+                      — {blockObj.body}
                     </cite>
                   )}
                 </blockquote>
               );
             case "shared.media":
+              const mediaUrl = getStrapiMediaURL(blockObj.file);
+              if (!mediaUrl) {
+                return null;
+              }
               return (
-                <div key={index} className="my-8">
-                  <img
-                    src={getStrapiMediaURL(block.file)}
-                    alt={block.file?.alternativeText || ""}
+                <div key={blockKey} className="my-8">
+                  <Image
+                    src={mediaUrl}
+                    alt={blockObj.file?.alternativeText || ""}
+                    width={800}
+                    height={400}
                     className="w-full rounded-lg"
                   />
-                  {block.file?.caption && (
+                  {blockObj.file?.caption && (
                     <p className="text-sm text-muted-foreground text-center mt-2">
-                      {block.file.caption}
+                      {blockObj.file.caption}
                     </p>
                   )}
                 </div>
@@ -182,12 +204,13 @@ export default function BlogPostPage() {
       {/* Article Header */}
       <article className="container mx-auto px-4 max-w-4xl">
         {/* Featured Image */}
-        {post.cover && (
-          <div className="aspect-video overflow-hidden rounded-lg mb-8">
-            <img
-              src={getStrapiMediaURL(post.cover)}
+        {post.cover && getStrapiMediaURL(post.cover) && (
+          <div className="aspect-video overflow-hidden rounded-lg mb-8 relative">
+            <Image
+              src={getStrapiMediaURL(post.cover)!}
               alt={post.title}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
         )}
@@ -230,7 +253,7 @@ export default function BlogPostPage() {
               <AvatarImage
                 src={
                   post.author.avatar
-                    ? getStrapiMediaURL(post.author.avatar)
+                    ? getStrapiMediaURL(post.author.avatar) || undefined
                     : undefined
                 }
                 alt={post.author.name}
@@ -269,15 +292,17 @@ export default function BlogPostPage() {
                   className="bg-card shadow-md border-0 overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer"
                   onClick={() => router.push(`/blog/${relatedPost.slug}`)}
                 >
-                  {relatedPost.cover && (
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={getStrapiMediaURL(relatedPost.cover)}
-                        alt={relatedPost.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                  )}
+                  {relatedPost.cover &&
+                    getStrapiMediaURL(relatedPost.cover) && (
+                      <div className="aspect-video overflow-hidden relative">
+                        <Image
+                          src={getStrapiMediaURL(relatedPost.cover)!}
+                          alt={relatedPost.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
                   <CardHeader className="p-4">
                     <h3 className="font-semibold line-clamp-2 mb-2">
                       {relatedPost.title}

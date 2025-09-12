@@ -168,7 +168,7 @@ export default function BlogPage() {
                       <img
                         src={
                           post.cover
-                            ? getStrapiMediaURL(post.cover)
+                            ? getStrapiMediaURL(post.cover) || "/placeholder.svg"
                             : "/placeholder.svg"
                         }
                         alt={post.title}
