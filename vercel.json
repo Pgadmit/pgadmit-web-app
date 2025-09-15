@@ -1,0 +1,31 @@
+{
+  "rewrites": [
+    {
+      "source": "/strapi-api/(.*)",
+      "destination": "https://refreshing-acoustics-4f6486bcd4.strapiapp.com/api/$1"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/strapi-api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization, X-Requested-With"
+        },
+        {
+          "key": "Access-Control-Max-Age",
+          "value": "86400"
+        }
+      ]
+    }
+  ]
+}
