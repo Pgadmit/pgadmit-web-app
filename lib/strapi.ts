@@ -146,9 +146,9 @@ interface Author {
 
 // Helper function to build Strapi URL
 function getStrapiURL(path: string = ""): string {
-  // Use Next.js API proxy to avoid CORS issues
-  if (typeof window !== 'undefined') {
-    return `/api/strapi${path}`;
+  // Use Vercel proxy to avoid CORS issues
+  if (typeof window !== "undefined") {
+    return `/strapi-api${path}`;
   }
   // For server-side requests, use direct URL
   return `${STRAPI_URL}/api${path}`;

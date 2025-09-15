@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
     PORT: process.env.PORT,
   },
 
+  // Strapi API proxy rewrites to avoid CORS
+  async rewrites() {
+    return [
+      {
+        source: "/strapi-api/:path*",
+        destination:
+          "https://refreshing-acoustics-4f6486bcd4.strapiapp.com/api/:path*",
+      },
+    ];
+  },
+
   // SEO and Performance optimizations
   compress: true,
   poweredByHeader: false,
@@ -20,7 +31,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // Image optimization
+  // Image optimization with Strapi support
   images: {
     formats: ["image/webp", "image/avif"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -53,18 +64,13 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "phenomenal-example-f9a76ee58b.strapiapp.com",
-        pathname: "/uploads/**",
-      },
-      {
-        protocol: "https",
-        hostname: "phenomenal-example-f9a76ee58b.media.strapiapp.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
         hostname: "refreshing-acoustics-4f6486bcd4.strapiapp.com",
         pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "refreshing-acoustics-4f6486bcd4.media.strapiapp.com",
+        pathname: "/**",
       },
     ],
   },
@@ -94,8 +100,20 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: "/api/:path*",
+        source: "/strapi-api/:path*",
         headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "*",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization, X-Requested-With",
+          },
           {
             key: "Cache-Control",
             value: "no-store, max-age=0",
