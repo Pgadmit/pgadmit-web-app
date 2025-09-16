@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { AIOnboardingFlow } from "@/components/onboarding/ai-onboarding-flow"
+import { PreSignupOnboarding } from "@/components/onboarding/presignup-onboarding"
 import { AuthModals } from "@/components/auth/auth-modals"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -15,6 +16,8 @@ export default function OnboardingPage() {
   const [signupOpen, setSignupOpen] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
   const [onboardingOpen, setOnboardingOpen] = useState(false)
+  const [preOpen, setPreOpen] = useState(false)
+  const [signupInitialData, setSignupInitialData] = useState<{ country?: string; fieldOfStudy?: string; budget?: string }>()
 
   useEffect(() => {
     if (user) {
@@ -25,14 +28,15 @@ export default function OnboardingPage() {
         router.push("/dashboard")
       }
     } else {
-      // User not logged in, show signup option
-      setSignupOpen(true)
+      // User not logged in → start pre-signup onboarding first
+      setPreOpen(true)
     }
   }, [user, router])
 
   const handleSignupSuccess = () => {
     setSignupOpen(false)
-    setOnboardingOpen(true)
+    // After pre-signup flow + registration, go to dashboard
+    router.push("/dashboard")
   }
 
   const handleOnboardingComplete = () => {
@@ -101,11 +105,23 @@ export default function OnboardingPage() {
         signupOpen={signupOpen}
         onLoginOpenChange={setLoginOpen}
         onSignupOpenChange={setSignupOpen}
+        signupInitialData={signupInitialData}
         onSignupSuccess={handleSignupSuccess}
       />
 
-      {/* AI Onboarding Flow */}
-      <AIOnboardingFlow isOpen={onboardingOpen} onClose={handleOnboardingComplete} />
+      {/* Pre-signup Onboarding (shown before registration for guests) */}
+      <PreSignupOnboarding
+        isOpen={preOpen && !user}
+        onClose={() => setPreOpen(false)}
+        onComplete={(d) => {
+          setPreOpen(false)
+          setSignupInitialData({ country: d.country, fieldOfStudy: d.fieldOfStudy, budget: d.budget })
+          setSignupOpen(true)
+        }}
+      />
+
+      {/* AI Onboarding Flow (for logged-in users who haven't completed onboarding) */}
+      <AIOnboardingFlow isOpen={onboardingOpen && !!user} onClose={handleOnboardingComplete} />
     </div>
   )
 }
