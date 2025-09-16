@@ -1,54 +1,60 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Progress } from "@/components/ui/progress"
-import { MessageCircle, ArrowRight, ArrowLeft, Sparkles } from "lucide-react"
-import { useAuth } from "@/lib/auth-context"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { useGamification } from "@/lib/gamification-context"
-import { PersonalizedInsights } from "./personalized-insights"
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Progress } from "@/components/ui/progress";
+import { MessageCircle, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useGamification } from "@/lib/gamification-context";
+import { PersonalizedInsights } from "./personalized-insights";
 
 interface OnboardingData {
   // Basic Info
-  country: string
-  fieldOfStudy: string
-  budget: string
+  country: string;
+  fieldOfStudy: string;
+  budget: string;
 
   // Academic Background
-  currentEducation: string
-  gpa: string
-  testScores: string
+  currentEducation: string;
+  gpa: string;
+  testScores: string;
 
   // Goals & Preferences
-  preferredCountries: string[]
-  careerGoals: string
-  priorities: string[]
+  preferredCountries: string[];
+  careerGoals: string;
+  priorities: string[];
 
   // Personal
-  challenges: string[]
-  motivation: string
+  challenges: string[];
+  motivation: string;
 }
 
 interface OnboardingStep {
-  id: string
-  title: string
-  description: string
-  aiMessage: string
+  id: string;
+  title: string;
+  description: string;
+  aiMessage: string;
   fields: Array<{
-    name: keyof OnboardingData
-    label: string
-    type: "select" | "input" | "textarea" | "multiselect"
-    options?: string[]
-    placeholder?: string
-    required?: boolean
-  }>
+    name: keyof OnboardingData;
+    label: string;
+    type: "select" | "input" | "textarea" | "multiselect";
+    options?: string[];
+    placeholder?: string;
+    required?: boolean;
+  }>;
 }
 
 const onboardingSteps: OnboardingStep[] = [
@@ -85,7 +91,12 @@ const onboardingSteps: OnboardingStep[] = [
         name: "budget",
         label: "What's your annual budget? (USD)",
         type: "select",
-        options: ["Under $20,000", "$20,000 - $40,000", "$40,000 - $60,000", "Over $60,000"],
+        options: [
+          "Under $20,000",
+          "$20,000 - $40,000",
+          "$40,000 - $60,000",
+          "Over $60,000",
+        ],
         required: true,
       },
     ],
@@ -101,7 +112,12 @@ const onboardingSteps: OnboardingStep[] = [
         name: "currentEducation",
         label: "Current Education Level",
         type: "select",
-        options: ["High School", "Bachelor's Degree", "Master's Degree", "Other"],
+        options: [
+          "High School",
+          "Bachelor's Degree",
+          "Master's Degree",
+          "Other",
+        ],
         required: true,
       },
       {
@@ -129,13 +145,22 @@ const onboardingSteps: OnboardingStep[] = [
         name: "preferredCountries",
         label: "Preferred Study Destinations",
         type: "multiselect",
-        options: ["United States", "United Kingdom", "Canada", "Australia", "Germany", "Netherlands", "Other"],
+        options: [
+          "United States",
+          "United Kingdom",
+          "Canada",
+          "Australia",
+          "Germany",
+          "Netherlands",
+          "Other",
+        ],
       },
       {
         name: "careerGoals",
         label: "What are your career goals?",
         type: "textarea",
-        placeholder: "e.g., I want to become a software engineer at a tech company...",
+        placeholder:
+          "e.g., I want to become a software engineer at a tech company...",
       },
       {
         name: "priorities",
@@ -182,16 +207,20 @@ const onboardingSteps: OnboardingStep[] = [
       },
     ],
   },
-]
+];
 
 interface AIOnboardingFlowProps {
-  isOpen: boolean
-  onClose: () => void
-  initialData?: Partial<OnboardingData>
+  isOpen: boolean;
+  onClose: () => void;
+  initialData?: Partial<OnboardingData>;
 }
 
-export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboardingFlowProps) {
-  const [currentStep, setCurrentStep] = useState(0)
+export function AIOnboardingFlow({
+  isOpen,
+  onClose,
+  initialData = {},
+}: AIOnboardingFlowProps) {
+  const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<OnboardingData>({
     country: "",
     fieldOfStudy: "",
@@ -205,42 +234,56 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
     challenges: [],
     motivation: "",
     ...initialData,
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showInsights, setShowInsights] = useState(false)
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showInsights, setShowInsights] = useState(false);
 
-  const { user, updateUser } = useAuth()
-  const router = useRouter()
-  const { toast } = useToast()
-  const { unlockAchievement, addPoints } = useGamification()
+  const { user, updateUser } = useAuth();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { unlockAchievement, addPoints } = useGamification();
 
-  const progress = ((currentStep + 1) / onboardingSteps.length) * 100
-  const currentStepData = onboardingSteps[currentStep]
+  const progress = ((currentStep + 1) / onboardingSteps.length) * 100;
+  const currentStepData = onboardingSteps[currentStep];
 
-  const handleFieldChange = (fieldName: keyof OnboardingData, value: string | string[]) => {
+  // Prevent background scroll when modal is open
+  useEffect(() => {
+    if (isOpen || showInsights) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [isOpen, showInsights]);
+
+  const handleFieldChange = (
+    fieldName: keyof OnboardingData,
+    value: string | string[]
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [fieldName]: value,
-    }))
-  }
+    }));
+  };
 
   const handleNext = () => {
     if (currentStep < onboardingSteps.length - 1) {
-      setCurrentStep((prev) => prev + 1)
-      addPoints(5, `Completed onboarding step: ${currentStepData.title}`)
+      setCurrentStep((prev) => prev + 1);
+      addPoints(5, `Completed onboarding step: ${currentStepData.title}`);
     } else {
-      handleComplete()
+      handleComplete();
     }
-  }
+  };
 
   const handleBack = () => {
     if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1)
+      setCurrentStep((prev) => prev - 1);
     }
-  }
+  };
 
   const handleComplete = async () => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       // Update user profile with onboarding data
       if (user) {
@@ -249,41 +292,46 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
           onboardingComplete: true,
           profileData: formData,
           profileComplete: true,
-        })
+        });
       }
 
       // Unlock achievement
-      unlockAchievement("profile-complete")
-      addPoints(50, "Completed full onboarding!")
+      unlockAchievement("profile-complete");
+      addPoints(50, "Completed full onboarding!");
 
       toast({
         title: "Profile Complete! 🎉",
-        description: "Now let's show you personalized insights based on your responses.",
-      })
+        description:
+          "Now let's show you personalized insights based on your responses.",
+      });
 
-      setShowInsights(true)
+      setShowInsights(true);
     } catch (error) {
       toast({
         title: "Something went wrong",
         description: "Please try again or contact support.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleInsightsComplete = () => {
-    setShowInsights(false)
-    onClose()
-    router.push("/dashboard")
-  }
+    setShowInsights(false);
+    onClose();
+    router.push("/dashboard");
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <>
-      <PersonalizedInsights isOpen={showInsights} onClose={handleInsightsComplete} userData={formData} />
+      <PersonalizedInsights
+        isOpen={showInsights}
+        onClose={handleInsightsComplete}
+        userData={formData}
+      />
 
       {!showInsights && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -291,10 +339,16 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
             <CardHeader className="text-center">
               <div className="flex items-center justify-center gap-2 mb-2">
                 <MessageCircle className="h-6 w-6 text-primary" />
-                <span className="text-sm font-medium text-primary">AI Counselor</span>
+                <span className="text-sm font-medium text-primary">
+                  AI Counselor
+                </span>
               </div>
-              <CardTitle className="text-2xl font-bold">{currentStepData.title}</CardTitle>
-              <p className="text-muted-foreground">{currentStepData.description}</p>
+              <CardTitle className="text-2xl font-bold">
+                {currentStepData.title}
+              </CardTitle>
+              <p className="text-muted-foreground">
+                {currentStepData.description}
+              </p>
 
               <div className="mt-4">
                 <Progress value={progress} className="h-2" />
@@ -311,7 +365,9 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
                   <div className="bg-primary/10 rounded-full p-2 flex-shrink-0">
                     <Sparkles className="h-4 w-4 text-primary" />
                   </div>
-                  <p className="text-sm text-foreground leading-relaxed">{currentStepData.aiMessage}</p>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {currentStepData.aiMessage}
+                  </p>
                 </div>
               </div>
 
@@ -321,20 +377,29 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
                   <div key={field.name} className="space-y-2">
                     <Label className="text-sm font-semibold">
                       {field.label}
-                      {field.required && <span className="text-red-500 ml-1">*</span>}
+                      {field.required && (
+                        <span className="text-red-500 ml-1">*</span>
+                      )}
                     </Label>
 
                     {field.type === "select" && (
                       <Select
                         value={formData[field.name] as string}
-                        onValueChange={(value) => handleFieldChange(field.name, value)}
+                        onValueChange={(value) =>
+                          handleFieldChange(field.name, value)
+                        }
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
+                          <SelectValue
+                            placeholder={`Select ${field.label.toLowerCase()}`}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {field.options?.map((option) => (
-                            <SelectItem key={option} value={option.toLowerCase().replace(/\s+/g, "-")}>
+                            <SelectItem
+                              key={option}
+                              value={option.toLowerCase().replace(/\s+/g, "-")}
+                            >
                               {option}
                             </SelectItem>
                           ))}
@@ -345,7 +410,9 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
                     {field.type === "input" && (
                       <Input
                         value={formData[field.name] as string}
-                        onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                        onChange={(e) =>
+                          handleFieldChange(field.name, e.target.value)
+                        }
                         placeholder={field.placeholder}
                       />
                     )}
@@ -353,7 +420,9 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
                     {field.type === "textarea" && (
                       <Textarea
                         value={formData[field.name] as string}
-                        onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                        onChange={(e) =>
+                          handleFieldChange(field.name, e.target.value)
+                        }
                         placeholder={field.placeholder}
                         rows={3}
                       />
@@ -362,9 +431,9 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
                     {field.type === "multiselect" && (
                       <div className="grid grid-cols-2 gap-2">
                         {field.options?.map((option) => {
-                          const isSelected = (formData[field.name] as string[]).includes(
-                            option.toLowerCase().replace(/\s+/g, "-"),
-                          )
+                          const isSelected = (
+                            formData[field.name] as string[]
+                          ).includes(option.toLowerCase().replace(/\s+/g, "-"));
                           return (
                             <Button
                               key={option}
@@ -373,17 +442,21 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
                               size="sm"
                               className="justify-start text-left h-auto py-2"
                               onClick={() => {
-                                const currentValues = formData[field.name] as string[]
-                                const value = option.toLowerCase().replace(/\s+/g, "-")
+                                const currentValues = formData[
+                                  field.name
+                                ] as string[];
+                                const value = option
+                                  .toLowerCase()
+                                  .replace(/\s+/g, "-");
                                 const newValues = isSelected
                                   ? currentValues.filter((v) => v !== value)
-                                  : [...currentValues, value]
-                                handleFieldChange(field.name, newValues)
+                                  : [...currentValues, value];
+                                handleFieldChange(field.name, newValues);
                               }}
                             >
                               {option}
                             </Button>
-                          )
+                          );
                         })}
                       </div>
                     )}
@@ -393,12 +466,20 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
 
               {/* Navigation */}
               <div className="flex justify-between pt-4">
-                <Button variant="outline" onClick={handleBack} disabled={currentStep === 0}>
+                <Button
+                  variant="outline"
+                  onClick={handleBack}
+                  disabled={currentStep === 0}
+                >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back
                 </Button>
 
-                <Button onClick={handleNext} disabled={isSubmitting} className="bg-primary hover:bg-primary/90">
+                <Button
+                  onClick={handleNext}
+                  disabled={isSubmitting}
+                  className="bg-primary hover:bg-primary/90"
+                >
                   {isSubmitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground mr-2"></div>
@@ -422,5 +503,5 @@ export function AIOnboardingFlow({ isOpen, onClose, initialData = {} }: AIOnboar
         </div>
       )}
     </>
-  )
+  );
 }
