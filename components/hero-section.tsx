@@ -20,7 +20,7 @@ export function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/diverse-students-campus.png"
+          src="/diverse-students-campus.JPG"
           alt="Diverse international students at university"
           className="w-full h-full object-cover"
         />
