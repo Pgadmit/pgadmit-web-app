@@ -8,6 +8,9 @@ export interface SegmentInput {
   knowsUniversities: "yes" | "no" | ""
   budget: string
   intake: string
+  funding?: string
+  studyBreak?: string
+  visaRefusal?: string
 }
 
 export function inferSegment(input: SegmentInput): string {
@@ -18,7 +21,8 @@ export function inferSegment(input: SegmentInput): string {
   }
   if (input.studyGoal === "master") {
     if (!input.budget) return "Master — Budget-sensitive"
-    if (input.intake === "" && input.knowsUniversities === "no") return "Master — Sponsored / Gap-year"
+    if (input.funding === "employer") return "Master — Sponsored / Gap-year"
+    if (input.studyBreak === "yes" && input.visaRefusal === "yes") return "Master — Gap-year"
     return "Master - Planned Candidate"
   }
   return "Master - Planned Candidate"
