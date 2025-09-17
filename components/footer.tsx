@@ -1,12 +1,6 @@
 import Link from "next/link";
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Mail,
-  Phone,
-} from "lucide-react";
+import { Mail, Phone } from "lucide-react";
+import { FaInstagram, FaYoutube, FaTiktok } from "react-icons/fa";
 
 export function Footer() {
   return (
@@ -20,10 +14,15 @@ export function Footer() {
               education accessible for everyone.
             </p>
             <div className="flex gap-4">
-              <Facebook className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
-              <Twitter className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
-              <Instagram className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
-              <Linkedin className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
+              <Link href="https://www.instagram.com/pgadmit">
+                <FaInstagram className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
+              </Link>
+              <Link href="https://www.youtube.com/@pgadmit">
+                <FaYoutube className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
+              </Link>
+              <Link href="https://www.tiktok.com/@pgadmit">
+                <FaTiktok className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
+              </Link>
             </div>
           </div>
 
@@ -108,7 +107,7 @@ export function Footer() {
             <div className="space-y-2 text-background/80">
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4" />
-                <span>hello@pgadmit.com</span>
+                <span>support@pgadmit.com</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="h-4 w-4" />
