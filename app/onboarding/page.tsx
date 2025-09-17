@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { AIOnboardingFlow } from "@/components/onboarding/ai-onboarding-flow"
 import { PreSignupOnboarding } from "@/components/onboarding/presignup-onboarding"
+import { OnboardingStatus } from "@/components/onboarding/onboarding-status"
 import { AuthModals } from "@/components/auth/auth-modals"
+import { useOnboardingUI } from "@/lib/stores/onboarding-store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Sparkles } from "lucide-react"
@@ -13,10 +15,10 @@ import { ArrowLeft, Sparkles } from "lucide-react"
 export default function OnboardingPage() {
   const { user } = useAuth()
   const router = useRouter()
+  const { isOpen: preSignupOpen, setOpen: setPreSignupOpen } = useOnboardingUI()
   const [signupOpen, setSignupOpen] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
   const [onboardingOpen, setOnboardingOpen] = useState(false)
-  const [preOpen, setPreOpen] = useState(false)
   const [signupInitialData, setSignupInitialData] = useState<{ country?: string; fieldOfStudy?: string; budget?: string }>()
 
   useEffect(() => {
@@ -29,9 +31,14 @@ export default function OnboardingPage() {
       }
     } else {
       // User not logged in → start pre-signup onboarding first
-      setPreOpen(true)
+      setPreSignupOpen(true)
     }
-  }, [user, router])
+  }, [user, router, setPreSignupOpen])
+
+  // Initialize onboarding store when component mounts
+  useEffect(() => {
+    setPreSignupOpen(true)
+  }, [setPreSignupOpen])
 
   const handleSignupSuccess = () => {
     setSignupOpen(false)
@@ -42,6 +49,15 @@ export default function OnboardingPage() {
   const handleOnboardingComplete = () => {
     setOnboardingOpen(false)
     router.push("/dashboard")
+  }
+
+  const handlePreSignupComplete = (finalData: any) => {
+    setSignupInitialData({
+      country: finalData.country,
+      fieldOfStudy: finalData.fieldOfStudy,
+      budget: finalData.budget,
+    })
+    setSignupOpen(true)
   }
 
   const handleBackToHome = () => {
@@ -109,16 +125,13 @@ export default function OnboardingPage() {
         onSignupSuccess={handleSignupSuccess}
       />
 
+      {/* Onboarding Status (for debugging) */}
+      <div className="mb-8">
+        <OnboardingStatus />
+      </div>
+
       {/* Pre-signup Onboarding (shown before registration for guests) */}
-      <PreSignupOnboarding
-        isOpen={preOpen && !user}
-        onClose={() => setPreOpen(false)}
-        onComplete={(d) => {
-          setPreOpen(false)
-          setSignupInitialData({ country: d.country, fieldOfStudy: d.fieldOfStudy, budget: d.budget })
-          setSignupOpen(true)
-        }}
-      />
+      <PreSignupOnboarding onComplete={handlePreSignupComplete} />
 
       {/* AI Onboarding Flow (for logged-in users who haven't completed onboarding) */}
       <AIOnboardingFlow isOpen={onboardingOpen && !!user} onClose={handleOnboardingComplete} />
