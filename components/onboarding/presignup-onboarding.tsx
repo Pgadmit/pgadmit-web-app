@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
-import { FIELD_OPTIONS, labelForField, DESTINATION_OPTIONS, COUNTRY_OPTIONS } from "@/lib/onboarding/constants";
+import { FIELD_OPTIONS, labelForField, DESTINATION_OPTIONS, COUNTRY_OPTIONS, FUNDING_OPTIONS, BREAK_OPTIONS, VISA_REFUSAL_OPTIONS } from "@/lib/onboarding/constants";
 import { gpaPlaceholderForCountry, inferSegment } from "@/lib/onboarding/logic";
 
 type StudyGoal = "bachelor" | "master" | "second-master";
@@ -28,6 +28,9 @@ interface PreSignupData {
   gpa: string;
   intake: string;
   budget: string;
+  funding: string;
+  studyBreak: string;
+  visaRefusal: string;
   segment: string;
 }
 
@@ -56,6 +59,9 @@ export function PreSignupOnboarding({
     gpa: "",
     intake: "",
     budget: "",
+    funding: "",
+    studyBreak: "",
+    visaRefusal: "",
     segment: "",
   });
 
@@ -282,6 +288,75 @@ export function PreSignupOnboarding({
         ),
         canContinue: () => true,
       },
+      // Master-specific steps
+      ...(data.studyGoal === "master" || data.studyGoal === "second-master" ? [
+        {
+          id: "funding",
+          title: "Who will fund your studies?",
+          description: "This helps us recommend the right financial support options",
+          content: (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {FUNDING_OPTIONS.map((opt) => (
+                <Button
+                  key={opt.v}
+                  variant={data.funding === opt.v ? "default" : "outline"}
+                  className="justify-start h-auto py-3"
+                  onClick={() => setData((p) => ({ ...p, funding: opt.v }))}
+                >
+                  {opt.l}
+                </Button>
+              ))}
+            </div>
+          ),
+          canContinue: () => data.funding !== "",
+        },
+        {
+          id: "break",
+          title: "Have you taken a break from studies after your last degree?",
+          description: "This helps us understand if you need to update transcripts or provide additional documents.",
+          content: (
+            <div className="grid grid-cols-2 gap-3">
+              {BREAK_OPTIONS.map((opt) => (
+                <Button
+                  key={opt.v}
+                  variant={data.studyBreak === opt.v ? "default" : "outline"}
+                  onClick={() => setData((p) => ({ ...p, studyBreak: opt.v }))}
+                >
+                  {opt.l}
+                </Button>
+              ))}
+            </div>
+          ),
+          canContinue: () => data.studyBreak !== "",
+        },
+        {
+          id: "visa",
+          title: "Have you ever been refused a visa?",
+          description: "No problem. Our experts will help you prepare a stronger application.",
+          content: (
+            <div className="space-y-3">
+              <div className="grid grid-cols-1 gap-3">
+                {VISA_REFUSAL_OPTIONS.map((opt) => (
+                  <Button
+                    key={opt.v}
+                    variant={data.visaRefusal === opt.v ? "default" : "outline"}
+                    className="justify-start h-auto py-3"
+                    onClick={() => setData((p) => ({ ...p, visaRefusal: opt.v }))}
+                  >
+                    {opt.l}
+                  </Button>
+                ))}
+              </div>
+              {data.visaRefusal === "yes" && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800">
+                  No problem. Our experts will help you prepare a stronger application. Tap to dismiss.
+                </div>
+              )}
+            </div>
+          ),
+          canContinue: () => data.visaRefusal !== "",
+        },
+      ] : []),
       {
         id: "ready",
         title: "🎉 Your Personalized Study Plan is Ready!",

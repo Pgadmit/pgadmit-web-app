@@ -48,4 +48,22 @@ export const COUNTRY_OPTIONS = [
   { v: "other", l: "Other" },
 ] as const
 
+export const FUNDING_OPTIONS = [
+  { v: "myself", l: "Myself" },
+  { v: "family", l: "Family" },
+  { v: "employer", l: "Employer / Sponsor" },
+  { v: "loan", l: "Loan" },
+  { v: "scholarships", l: "Scholarships" },
+] as const
+
+export const BREAK_OPTIONS = [
+  { v: "no", l: "No" },
+  { v: "yes", l: "Yes" },
+] as const
+
+export const VISA_REFUSAL_OPTIONS = [
+  { v: "no", l: "No, I have never been refused a visa" },
+  { v: "yes", l: "Yes, I have been refused before" },
+] as const
+
 
