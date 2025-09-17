@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import { AIOnboardingFlow } from "@/components/onboarding/ai-onboarding-flow"
 import { PreSignupOnboarding } from "@/components/onboarding/presignup-onboarding"
-import { OnboardingStatus } from "@/components/onboarding/onboarding-status"
 import { AuthModals } from "@/components/auth/auth-modals"
 import { useOnboardingUI } from "@/lib/stores/onboarding-store"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -125,11 +124,7 @@ export default function OnboardingPage() {
         onSignupSuccess={handleSignupSuccess}
       />
 
-      {/* Onboarding Status (for debugging) */}
-      <div className="mb-8">
-        <OnboardingStatus />
-      </div>
-
+    
       {/* Pre-signup Onboarding (shown before registration for guests) */}
       <PreSignupOnboarding onComplete={handlePreSignupComplete} />
 

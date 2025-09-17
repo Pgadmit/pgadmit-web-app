@@ -124,7 +124,7 @@ export function StudentStoriesSection() {
                   <Quote className="h-8 w-8 text-accent/20 absolute -top-2 -left-2" />
                   <p className="text-muted-foreground leading-relaxed pl-6 text-sm">{story.story}</p>
                 </div>
-
+123
                 <div className="flex items-center gap-4 mb-4">
                   <img
                     src={story.image || "/placeholder.svg"}
