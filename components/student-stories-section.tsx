@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Star, Quote, MapPin, Calendar, ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
+import { Card, CardContent } from "@/components/ui/card";
+import { Star, Quote, MapPin, Calendar, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export function StudentStoriesSection() {
-  const router = useRouter()
+  const router = useRouter();
 
   const stories = [
     {
@@ -87,7 +87,7 @@ export function StudentStoriesSection() {
       year: "2023",
       achievement: "Google Intern",
     },
-  ]
+  ];
 
   return (
     <section className="py-16 md:py-24 bg-muted/30">
@@ -97,7 +97,8 @@ export function StudentStoriesSection() {
             Real Stories, Real Success
           </h2>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Hear from students just like you who took the leap and are now thriving at top universities worldwide
+            Hear from students just like you who took the leap and are now
+            thriving at top universities worldwide
           </p>
         </div>
 
@@ -111,20 +112,26 @@ export function StudentStoriesSection() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-1">
                     {[...Array(story.rating)].map((_, i) => (
-                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <Star
+                        key={i}
+                        className="h-4 w-4 fill-yellow-400 text-yellow-400"
+                      />
                     ))}
                   </div>
                   <div className="inline-flex items-center gap-1 bg-primary/10 px-2 py-1 rounded-full">
                     <Calendar className="h-3 w-3 text-primary" />
-                    <span className="text-xs font-medium text-primary">{story.year}</span>
+                    <span className="text-xs font-medium text-primary">
+                      {story.year}
+                    </span>
                   </div>
                 </div>
 
                 <div className="relative mb-6">
                   <Quote className="h-8 w-8 text-accent/20 absolute -top-2 -left-2" />
-                  <p className="text-muted-foreground leading-relaxed pl-6 text-sm">{story.story}</p>
+                  <p className="text-muted-foreground leading-relaxed pl-6 text-sm">
+                    {story.story}
+                  </p>
                 </div>
-
                 <div className="flex items-center gap-4 mb-4">
                   <img
                     src={story.image || "/placeholder.svg"}
@@ -139,14 +146,20 @@ export function StudentStoriesSection() {
                       <MapPin className="h-3 w-3" />
                       <span>{story.country}</span>
                     </div>
-                    <p className="text-sm font-medium text-primary">{story.university}</p>
-                    <p className="text-xs text-muted-foreground">{story.course}</p>
+                    <p className="text-sm font-medium text-primary">
+                      {story.university}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {story.course}
+                    </p>
                   </div>
                 </div>
 
                 <div className="inline-flex items-center gap-2 bg-accent/10 px-3 py-1 rounded-full">
                   <Star className="h-3 w-3 text-accent" />
-                  <span className="text-xs font-medium text-accent">{story.achievement}</span>
+                  <span className="text-xs font-medium text-accent">
+                    {story.achievement}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -155,9 +168,12 @@ export function StudentStoriesSection() {
 
         <div className="text-center mt-12 md:mt-16">
           <div className="bg-gradient-to-r from-primary/10 to-accent/10 rounded-2xl p-8 md:p-10 mb-8">
-            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-6">Ready to Write Your Success Story?</h3>
+            <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
+              Ready to Write Your Success Story?
+            </h3>
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-              Join thousands of students who trusted PGadmit to make their study abroad dreams come true
+              Join thousands of students who trusted PGadmit to make their study
+              abroad dreams come true
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
@@ -181,5 +197,5 @@ export function StudentStoriesSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

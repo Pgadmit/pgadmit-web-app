@@ -1,16 +1,24 @@
-"use client"
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Instagram, Youtube, TwitterIcon as TikTok, Users, Award, Globe, ArrowRight } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Instagram,
+  Youtube,
+  TwitterIcon as TikTok,
+  Users,
+  Award,
+  Globe,
+  ArrowRight,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function SocialProofSection() {
-  const router = useRouter()
+  const router = useRouter();
 
   const navigateToOnboarding = () => {
-    router.push("/onboarding")
-  }
+    router.push("/onboarding");
+  };
 
   const socialStats = [
     {
@@ -34,7 +42,7 @@ export function SocialProofSection() {
       description: "University tours & guides",
       color: "text-red-500",
     },
-  ]
+  ];
 
   const achievements = [
     {
@@ -55,7 +63,7 @@ export function SocialProofSection() {
       label: "Universities",
       description: "US & UK partnerships",
     },
-  ]
+  ];
 
   return (
     <section className="py-16 md:py-24 bg-gradient-to-br from-primary/5 to-accent/5">
@@ -65,8 +73,8 @@ export function SocialProofSection() {
             Join the Community
           </h2>
           <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto leading-relaxed mb-8">
-            Follow us for daily study abroad content, campus tours, and connect with thousands of students on their
-            journey
+            Follow us for daily study abroad content, campus tours, and connect
+            with thousands of students on their journey
           </p>
           <Button
             onClick={navigateToOnboarding}
@@ -91,9 +99,15 @@ export function SocialProofSection() {
                     <social.icon className={`h-8 w-8 ${social.color}`} />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">{social.followers}</h3>
-                <p className="text-sm font-medium text-primary mb-1">{social.platform}</p>
-                <p className="text-xs text-muted-foreground">{social.description}</p>
+                <h3 className="text-2xl font-bold text-foreground mb-2">
+                  {social.followers}
+                </h3>
+                <p className="text-sm font-medium text-primary mb-1">
+                  {social.platform}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {social.description}
+                </p>
               </CardContent>
             </Card>
           ))}
@@ -106,9 +120,15 @@ export function SocialProofSection() {
               <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-full mb-4">
                 <achievement.icon className="h-10 w-10 text-primary" />
               </div>
-              <h3 className="text-4xl font-black text-foreground mb-2">{achievement.number}</h3>
-              <p className="text-lg font-semibold text-primary mb-1">{achievement.label}</p>
-              <p className="text-sm text-muted-foreground">{achievement.description}</p>
+              <h3 className="text-4xl font-black text-foreground mb-2">
+                {achievement.number}
+              </h3>
+              <p className="text-lg font-semibold text-primary mb-1">
+                {achievement.label}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {achievement.description}
+              </p>
             </div>
           ))}
         </div>
@@ -138,7 +158,7 @@ export function SocialProofSection() {
           </div>
           <div className="aspect-square rounded-lg overflow-hidden">
             <img
-              src="/student-community-celebration.png"
+              src="/young-adults-meeting-up-study.jpg"
               alt="Dorm life"
               className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
             />
@@ -157,5 +177,5 @@ export function SocialProofSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }
