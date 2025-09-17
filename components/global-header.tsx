@@ -29,7 +29,7 @@ export function GlobalHeader() {
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-3 cursor-pointer group" onClick={handleLogoClick}>
                 <img
-                  src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-GesS8hmkbGOcNJrrrTNEhJBqgEvVIT.png"
+                  src="/logo.png"
                   alt="PGadmit Logo"
                   className="h-8 w-auto sm:h-10 md:h-12 transition-transform group-hover:scale-105"
                 />
