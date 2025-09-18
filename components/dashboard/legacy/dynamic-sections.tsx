@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   FileText,
   Trophy,
@@ -16,28 +16,28 @@ import {
   Award,
   Globe,
   Briefcase,
-} from "lucide-react"
-import { AIAssistanceCard } from "@/components/ai/ai-assistance-card"
-import { AchievementsGrid } from "@/components/gamification/achievements-grid"
-import { StreakCounter } from "@/components/gamification/streak-counter"
-import { LevelProgress } from "@/components/gamification/level-progress"
-import { getUserStages, getCurrentStage } from "@/lib/dashboard-utils"
-import type { User as UserType } from "@/lib/auth-context"
-import { useRouter } from "next/navigation"
-import { useToast } from "@/hooks/use-toast"
-import { useAI } from "@/lib/ai-context"
+} from "lucide-react";
+import { AIAssistanceCard } from "@/components/ai/ai-assistance-card";
+import { AchievementsGrid } from "@/components/gamification/achievements-grid";
+import { StreakCounter } from "@/components/gamification/streak-counter";
+import { LevelProgress } from "@/components/gamification/level-progress";
+import { getUserStages, getCurrentStage } from "@/lib/dashboard-utils";
+import type { User as UserType } from "@/lib/auth-context";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useAI } from "@/lib/ai-context";
 
 interface DynamicSectionsProps {
-  user: UserType
+  user: UserType;
 }
 
 export function DynamicSections({ user }: DynamicSectionsProps) {
-  const router = useRouter()
-  const { toast } = useToast()
-  const { openChat } = useAI()
+  const router = useRouter();
+  const { toast } = useToast();
+  const { openChat } = useAI();
 
-  const stages = getUserStages(user)
-  const currentStage = getCurrentStage(stages)
+  const stages = getUserStages(user);
+  const currentStage = getCurrentStage(stages);
 
   const getAIAssistanceForStage = (stageId: string) => {
     const assistanceConfig = {
@@ -71,7 +71,11 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
       visa: {
         title: "AI Visa Coach",
         description: "Mock interviews and document verification",
-        suggestions: ["Practice F-1 visa interview", "Scan my visa documents", "Latest visa policy updates"],
+        suggestions: [
+          "Practice F-1 visa interview",
+          "Scan my visa documents",
+          "Latest visa policy updates",
+        ],
       },
       "pre-departure": {
         title: "AI Departure Assistant",
@@ -82,12 +86,12 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
           "Connect with alumni in my city",
         ],
       },
-    }
+    };
 
-    return assistanceConfig[stageId as keyof typeof assistanceConfig]
-  }
+    return assistanceConfig[stageId as keyof typeof assistanceConfig];
+  };
 
-  const aiAssistance = getAIAssistanceForStage(currentStage.id)
+  const aiAssistance = getAIAssistanceForStage(currentStage.id);
 
   const sections = [
     {
@@ -104,7 +108,14 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
           <AchievementsGrid />
         </div>
       ),
-      relevantStages: ["profile", "school-selection", "application", "visa", "pre-departure", "arrival"],
+      relevantStages: [
+        "profile",
+        "school-selection",
+        "application",
+        "visa",
+        "pre-departure",
+        "arrival",
+      ],
     },
     {
       id: "ai-copilot",
@@ -119,14 +130,27 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
           suggestions={aiAssistance.suggestions}
         />
       ) : null,
-      relevantStages: ["profile", "school-selection", "application", "visa", "pre-departure"],
+      relevantStages: [
+        "profile",
+        "school-selection",
+        "application",
+        "visa",
+        "pre-departure",
+      ],
     },
     {
       id: "discovery-exploration",
       title: "Discovery & Exploration",
       icon: Globe,
       priority: currentStage.id === "profile" ? 1 : 3,
-      content: <DiscoverySection user={user} router={router} toast={toast} openChat={openChat} />,
+      content: (
+        <DiscoverySection
+          user={user}
+          router={router}
+          toast={toast}
+          openChat={openChat}
+        />
+      ),
       relevantStages: ["profile", "school-selection"],
     },
     {
@@ -134,7 +158,14 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
       title: "Applications & Admissions",
       icon: FileText,
       priority: currentStage.id === "application" ? 1 : 3,
-      content: <ApplicationsSection user={user} router={router} toast={toast} openChat={openChat} />,
+      content: (
+        <ApplicationsSection
+          user={user}
+          router={router}
+          toast={toast}
+          openChat={openChat}
+        />
+      ),
       relevantStages: ["school-selection", "application"],
     },
     {
@@ -142,16 +173,32 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
       title: "Scholarships & Funding",
       icon: DollarSign,
       priority: 2,
-      content: <ScholarshipsSection user={user} router={router} toast={toast} openChat={openChat} />,
+      content: (
+        <ScholarshipsSection
+          user={user}
+          router={router}
+          toast={toast}
+          openChat={openChat}
+        />
+      ),
       relevantStages: ["profile", "school-selection", "application"],
     },
     {
       id: "visa-predeparture",
       title: "Visa & Pre-Departure",
       icon: Plane,
-      priority: currentStage.id === "visa" || currentStage.id === "pre-departure" ? 1 : 4,
+      priority:
+        currentStage.id === "visa" || currentStage.id === "pre-departure"
+          ? 1
+          : 4,
       content: (
-        <VisaSection user={user} currentStage={currentStage} router={router} toast={toast} openChat={openChat} />
+        <VisaSection
+          user={user}
+          currentStage={currentStage}
+          router={router}
+          toast={toast}
+          openChat={openChat}
+        />
       ),
       relevantStages: ["application", "visa", "pre-departure"],
     },
@@ -160,7 +207,14 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
       title: "Career Launch",
       icon: Briefcase,
       priority: 4,
-      content: <CareerLaunchSection user={user} router={router} toast={toast} openChat={openChat} />,
+      content: (
+        <CareerLaunchSection
+          user={user}
+          router={router}
+          toast={toast}
+          openChat={openChat}
+        />
+      ),
       relevantStages: ["pre-departure", "arrival"],
     },
     {
@@ -168,15 +222,25 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
       title: "Competitive Edge",
       icon: TrendingUp,
       priority: 2,
-      content: <CompetitiveEdgeSection user={user} router={router} toast={toast} openChat={openChat} />,
+      content: (
+        <CompetitiveEdgeSection
+          user={user}
+          router={router}
+          toast={toast}
+          openChat={openChat}
+        />
+      ),
       relevantStages: ["school-selection", "application"],
     },
-  ]
+  ];
 
   // Filter and sort sections based on relevance and priority
   const relevantSections = sections
-    .filter((section) => section.content && section.relevantStages.includes(currentStage.id))
-    .sort((a, b) => a.priority - b.priority)
+    .filter(
+      (section) =>
+        section.content && section.relevantStages.includes(currentStage.id)
+    )
+    .sort((a, b) => a.priority - b.priority);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -190,7 +254,10 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
             {section.content}
           </div>
         ) : (
-          <Card key={section.id} className="bg-card shadow-sm hover:shadow-md transition-shadow">
+          <Card
+            key={section.id}
+            className="bg-card shadow-sm hover:shadow-md transition-shadow"
+          >
             <CardHeader className="pb-3">
               <CardTitle className="flex items-center gap-2 text-lg">
                 <section.icon className="h-5 w-5 text-primary" />
@@ -199,10 +266,10 @@ export function DynamicSections({ user }: DynamicSectionsProps) {
             </CardHeader>
             <CardContent>{section.content}</CardContent>
           </Card>
-        ),
+        )
       )}
     </div>
-  )
+  );
 }
 
 function DiscoverySection({
@@ -210,33 +277,42 @@ function DiscoverySection({
   router,
   toast,
   openChat,
-}: { user: UserType; router: any; toast: any; openChat: any }) {
+}: {
+  user: UserType;
+  router: any;
+  toast: any;
+  openChat: any;
+}) {
   const recommendations = [
     { title: "Computer Science Programs", match: "95%", schools: 12 },
     { title: "Engineering Programs", match: "87%", schools: 8 },
     { title: "Business Programs", match: "78%", schools: 15 },
-  ]
+  ];
 
   const handleExplore = (program: string) => {
-    router.push(`/universities?program=${encodeURIComponent(program.toLowerCase())}`)
+    router.push(
+      `/universities?program=${encodeURIComponent(program.toLowerCase())}`
+    );
     toast({
       title: "Exploring Programs",
       description: `Finding ${program} matches for you...`,
-    })
-  }
+    });
+  };
 
   const handleGetMatches = () => {
-    router.push("/universities")
+    router.push("/universities");
     toast({
       title: "University Discovery",
       description: "Opening university search and discovery...",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">AI Recommendations</span>
+        <span className="text-sm text-muted-foreground">
+          AI Recommendations
+        </span>
         <Badge variant="outline">Updated Today</Badge>
       </div>
 
@@ -249,7 +325,12 @@ function DiscoverySection({
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>{rec.schools} programs found</span>
-              <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => handleExplore(rec.title)}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-6 px-2"
+                onClick={() => handleExplore(rec.title)}
+              >
                 Explore
               </Button>
             </div>
@@ -262,7 +343,7 @@ function DiscoverySection({
         Search Universities
       </Button>
     </div>
-  )
+  );
 }
 
 function ApplicationsSection({
@@ -270,33 +351,61 @@ function ApplicationsSection({
   router,
   toast,
   openChat,
-}: { user: UserType; router: any; toast: any; openChat: any }) {
+}: {
+  user: UserType;
+  router: any;
+  toast: any;
+  openChat: any;
+}) {
   const applications = [
-    { school: "Stanford University", status: "draft", deadline: "Dec 1, 2024", progress: 60, aiHelp: true },
-    { school: "MIT", status: "in-review", deadline: "Jan 15, 2025", progress: 100, aiHelp: false },
-    { school: "UC Berkeley", status: "not-started", deadline: "Nov 30, 2024", progress: 0, aiHelp: true },
-  ]
+    {
+      school: "Stanford University",
+      status: "draft",
+      deadline: "Dec 1, 2024",
+      progress: 60,
+      aiHelp: true,
+    },
+    {
+      school: "MIT",
+      status: "in-review",
+      deadline: "Jan 15, 2025",
+      progress: 100,
+      aiHelp: false,
+    },
+    {
+      school: "UC Berkeley",
+      status: "not-started",
+      deadline: "Nov 30, 2024",
+      progress: 0,
+      aiHelp: true,
+    },
+  ];
 
   const handleAddApp = () => {
-    router.push("/applications")
+    router.push("/applications");
     toast({
       title: "Add Application",
       description: "Opening application manager...",
-    })
-  }
+    });
+  };
 
   const handleAIAutoFill = () => {
-    openChat("application-help", "Help me auto-fill my university applications")
+    openChat(
+      "application-help",
+      "Help me auto-fill my university applications"
+    );
     toast({
       title: "AI Auto-Fill Ready",
       description: "AI will help you complete your applications faster!",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">Application Tracker</span>
+        <span className="text-sm text-muted-foreground">
+          Application Tracker
+        </span>
         <Badge variant="outline">{applications.length} Active</Badge>
       </div>
 
@@ -312,7 +421,13 @@ function ApplicationsSection({
                   </Badge>
                 )}
                 <Badge
-                  variant={app.status === "draft" ? "secondary" : app.status === "in-review" ? "default" : "outline"}
+                  variant={
+                    app.status === "draft"
+                      ? "secondary"
+                      : app.status === "in-review"
+                      ? "default"
+                      : "outline"
+                  }
                   className="text-xs"
                 >
                   {app.status}
@@ -325,21 +440,27 @@ function ApplicationsSection({
                 <span>{app.progress}%</span>
               </div>
               <Progress value={app.progress} className="h-1" />
-              <span className="text-xs text-muted-foreground">Due: {app.deadline}</span>
+              <span className="text-xs text-muted-foreground">
+                Due: {app.deadline}
+              </span>
             </div>
           </div>
         ))}
       </div>
 
       <div className="grid grid-cols-2 gap-2">
-        <Button variant="outline" className="bg-transparent" onClick={handleAddApp}>
+        <Button
+          variant="outline"
+          className="bg-transparent"
+          onClick={handleAddApp}
+        >
           <Plus className="h-4 w-4 mr-2" />
           Add App
         </Button>
         <Button onClick={handleAIAutoFill}>AI Auto-Fill</Button>
       </div>
     </div>
-  )
+  );
 }
 
 function ScholarshipsSection({
@@ -347,25 +468,50 @@ function ScholarshipsSection({
   router,
   toast,
   openChat,
-}: { user: UserType; router: any; toast: any; openChat: any }) {
+}: {
+  user: UserType;
+  router: any;
+  toast: any;
+  openChat: any;
+}) {
   const scholarships = [
-    { name: "Merit Scholarship", amount: "$15,000", match: "High", deadline: "Dec 15" },
-    { name: "International Student Grant", amount: "$8,000", match: "Medium", deadline: "Jan 30" },
-    { name: "STEM Excellence Award", amount: "$20,000", match: "High", deadline: "Feb 1" },
-  ]
+    {
+      name: "Merit Scholarship",
+      amount: "$15,000",
+      match: "High",
+      deadline: "Dec 15",
+    },
+    {
+      name: "International Student Grant",
+      amount: "$8,000",
+      match: "Medium",
+      deadline: "Jan 30",
+    },
+    {
+      name: "STEM Excellence Award",
+      amount: "$20,000",
+      match: "High",
+      deadline: "Feb 1",
+    },
+  ];
 
   const handleFindScholarships = () => {
-    openChat("scholarship-search", "Find scholarships that match my profile and help me apply")
+    openChat(
+      "scholarship-search",
+      "Find scholarships that match my profile and help me apply"
+    );
     toast({
       title: "AI Scholarship Search",
       description: "Finding personalized scholarship opportunities for you...",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">AI-Matched Scholarships</span>
+        <span className="text-sm text-muted-foreground">
+          AI-Matched Scholarships
+        </span>
         <Badge variant="outline">3 New</Badge>
       </div>
 
@@ -374,12 +520,17 @@ function ScholarshipsSection({
           <div key={index} className="p-3 bg-muted/50 rounded-lg">
             <div className="flex items-center justify-between mb-1">
               <span className="font-medium text-sm">{scholarship.name}</span>
-              <Badge variant={scholarship.match === "High" ? "default" : "secondary"} className="text-xs">
+              <Badge
+                variant={scholarship.match === "High" ? "default" : "secondary"}
+                className="text-xs"
+              >
                 {scholarship.match}
               </Badge>
             </div>
             <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span className="font-semibold text-green-600">{scholarship.amount}</span>
+              <span className="font-semibold text-green-600">
+                {scholarship.amount}
+              </span>
               <span>Due: {scholarship.deadline}</span>
             </div>
           </div>
@@ -391,7 +542,7 @@ function ScholarshipsSection({
         Find More Scholarships
       </Button>
     </div>
-  )
+  );
 }
 
 function VisaSection({
@@ -400,14 +551,24 @@ function VisaSection({
   router,
   toast,
   openChat,
-}: { user: UserType; currentStage: any; router: any; toast: any; openChat: any }) {
+}: {
+  user: UserType;
+  currentStage: any;
+  router: any;
+  toast: any;
+  openChat: any;
+}) {
   const visaItems = {
     application: [
       { title: "Document Checklist", type: "checklist", status: "pending" },
       { title: "Financial Proof Guide", type: "guide", status: "completed" },
     ],
     visa: [
-      { title: "Mock Interview Practice", type: "interactive", status: "pending" },
+      {
+        title: "Mock Interview Practice",
+        type: "interactive",
+        status: "pending",
+      },
       { title: "Document Scanner", type: "tool", status: "available" },
       { title: "Visa Policy Updates", type: "alert", status: "new" },
     ],
@@ -415,38 +576,45 @@ function VisaSection({
       { title: "Travel Preparation", type: "checklist", status: "pending" },
       { title: "Airport Guide", type: "guide", status: "available" },
     ],
-  }
+  };
 
-  const items = visaItems[currentStage.id as keyof typeof visaItems] || []
+  const items = visaItems[currentStage.id as keyof typeof visaItems] || [];
 
   const handleVisaItem = (item: any) => {
     if (item.type === "interactive") {
-      openChat("visa-interview", "Start a mock F-1 visa interview practice session")
+      openChat(
+        "visa-interview",
+        "Start a mock F-1 visa interview practice session"
+      );
       toast({
         title: "Mock Interview Starting",
         description: "AI will conduct a practice visa interview with you!",
-      })
+      });
     } else if (item.type === "tool") {
       toast({
         title: "Document Scanner",
-        description: "AI will help verify your visa documents for completeness.",
-      })
-      openChat("document-scan", "Help me scan and verify my visa documents")
+        description:
+          "AI will help verify your visa documents for completeness.",
+      });
+      openChat("document-scan", "Help me scan and verify my visa documents");
     } else {
       toast({
         title: item.title,
         description: "Opening visa assistance tool...",
-      })
+      });
     }
-  }
+  };
 
   const handleStartVisaPrep = () => {
-    openChat("visa-prep", "Guide me through the complete visa preparation process")
+    openChat(
+      "visa-prep",
+      "Guide me through the complete visa preparation process"
+    );
     toast({
       title: "Visa Preparation Started",
       description: "AI will guide you through every step of the visa process!",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -457,7 +625,10 @@ function VisaSection({
 
       <div className="space-y-2">
         {items.map((item, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+          <div
+            key={index}
+            className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+          >
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">{item.title}</span>
               {item.status === "new" && (
@@ -466,7 +637,11 @@ function VisaSection({
                 </Badge>
               )}
             </div>
-            <Button size="sm" variant="ghost" onClick={() => handleVisaItem(item)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => handleVisaItem(item)}
+            >
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
@@ -478,7 +653,7 @@ function VisaSection({
         Start Visa Prep
       </Button>
     </div>
-  )
+  );
 }
 
 function CareerLaunchSection({
@@ -486,35 +661,50 @@ function CareerLaunchSection({
   router,
   toast,
   openChat,
-}: { user: UserType; router: any; toast: any; openChat: any }) {
+}: {
+  user: UserType;
+  router: any;
+  toast: any;
+  openChat: any;
+}) {
   const careerItems = [
     { title: "Job Sponsorship Tracker", companies: 45, type: "tracker" },
     { title: "Alumni Network", connections: 12, type: "network" },
     { title: "Interview Prep", sessions: 3, type: "prep" },
-  ]
+  ];
 
   const handleCareerItem = (item: any) => {
     if (item.type === "tracker") {
-      openChat("job-sponsorship", "Show me companies that sponsor international students in my field")
+      openChat(
+        "job-sponsorship",
+        "Show me companies that sponsor international students in my field"
+      );
     } else if (item.type === "network") {
-      openChat("alumni-network", "Connect me with alumni from my target universities")
+      openChat(
+        "alumni-network",
+        "Connect me with alumni from my target universities"
+      );
     } else if (item.type === "prep") {
-      openChat("interview-prep", "Help me prepare for job interviews in the US/UK")
+      openChat(
+        "interview-prep",
+        "Help me prepare for job interviews in the US/UK"
+      );
     }
 
     toast({
       title: item.title,
       description: "AI is preparing career assistance for you...",
-    })
-  }
+    });
+  };
 
   const handleExploreCareer = () => {
-    openChat("career-guidance", "Help me plan my career path after graduation")
+    openChat("career-guidance", "Help me plan my career path after graduation");
     toast({
       title: "Career Planning",
-      description: "AI will help you plan your post-graduation career strategy!",
-    })
-  }
+      description:
+        "AI will help you plan your post-graduation career strategy!",
+    });
+  };
 
   return (
     <div className="space-y-4">
@@ -536,7 +726,8 @@ function CareerLaunchSection({
             </div>
             <span className="text-xs text-muted-foreground">
               {item.type === "tracker" && `${item.companies} sponsor companies`}
-              {item.type === "network" && `${item.connections} connections available`}
+              {item.type === "network" &&
+                `${item.connections} connections available`}
               {item.type === "prep" && `${item.sessions} sessions completed`}
             </span>
           </div>
@@ -548,7 +739,7 @@ function CareerLaunchSection({
         Explore Career Tools
       </Button>
     </div>
-  )
+  );
 }
 
 function CompetitiveEdgeSection({
@@ -556,25 +747,47 @@ function CompetitiveEdgeSection({
   router,
   toast,
   openChat,
-}: { user: UserType; router: any; toast: any; openChat: any }) {
+}: {
+  user: UserType;
+  router: any;
+  toast: any;
+  openChat: any;
+}) {
   const edgeTools = [
-    { title: "Acceptance Odds Calculator", description: "AI predicts your chances", status: "ready" },
-    { title: "Profile Strength Analyzer", description: "Compare with successful applicants", status: "ready" },
-    { title: "Rejection Risk Assessment", description: "Identify weak points", status: "premium" },
-  ]
+    {
+      title: "Acceptance Odds Calculator",
+      description: "AI predicts your chances",
+      status: "ready",
+    },
+    {
+      title: "Profile Strength Analyzer",
+      description: "Compare with successful applicants",
+      status: "ready",
+    },
+    {
+      title: "Rejection Risk Assessment",
+      description: "Identify weak points",
+      status: "premium",
+    },
+  ];
 
   const handleAnalyzeProfile = () => {
-    openChat("profile-analysis", "Analyze my profile strength and calculate my acceptance odds for target universities")
+    openChat(
+      "profile-analysis",
+      "Analyze my profile strength and calculate my acceptance odds for target universities"
+    );
     toast({
       title: "Profile Analysis Starting",
       description: "AI is analyzing your competitive position...",
-    })
-  }
+    });
+  };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <span className="text-sm text-muted-foreground">Competitive Analysis</span>
+        <span className="text-sm text-muted-foreground">
+          Competitive Analysis
+        </span>
         <Badge variant="outline">AI Powered</Badge>
       </div>
 
@@ -589,7 +802,9 @@ function CompetitiveEdgeSection({
                 </Badge>
               )}
             </div>
-            <span className="text-xs text-muted-foreground">{tool.description}</span>
+            <span className="text-xs text-muted-foreground">
+              {tool.description}
+            </span>
           </div>
         ))}
       </div>
@@ -599,5 +814,5 @@ function CompetitiveEdgeSection({
         Analyze My Profile
       </Button>
     </div>
-  )
+  );
 }
