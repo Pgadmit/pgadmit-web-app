@@ -1,24 +1,28 @@
-"use client"
+"use client";
 
-import { Card, CardContent } from "@/components/ui/card"
-import { CheckCircle, Circle, Clock } from "lucide-react"
-import { getUserStages } from "@/lib/dashboard-utils"
-import type { User } from "@/lib/auth-context"
+import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle, Circle, Clock } from "lucide-react";
+import { getUserStages } from "@/lib/dashboard-utils";
+import type { User } from "@/lib/auth-context";
 
 interface ProgressTimelineProps {
-  user: User
+  user: User;
 }
 
 export function ProgressTimeline({ user }: ProgressTimelineProps) {
-  const stages = getUserStages(user)
-  const completedStages = stages.filter((stage) => stage.status === "completed").length
-  const progressPercentage = (completedStages / stages.length) * 100
+  const stages = getUserStages(user);
+  const completedStages = stages.filter(
+    (stage) => stage.status === "completed"
+  ).length;
+  const progressPercentage = (completedStages / stages.length) * 100;
 
   return (
     <Card className="bg-card shadow-sm">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-foreground">Your Journey Progress</h2>
+          <h2 className="text-xl font-bold text-foreground">
+            Your Journey Progress
+          </h2>
           <span className="text-sm text-muted-foreground">
             {completedStages} of {stages.length} stages completed
           </span>
@@ -51,13 +55,15 @@ export function ProgressTimeline({ user }: ProgressTimelineProps) {
                     stage.status === "completed"
                       ? "text-green-600"
                       : stage.status === "in-progress"
-                        ? "text-primary"
-                        : "text-muted-foreground"
+                      ? "text-primary"
+                      : "text-muted-foreground"
                   }`}
                 >
                   {stage.name}
                 </h3>
-                <p className="text-sm text-muted-foreground">{stage.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {stage.description}
+                </p>
               </div>
               {stage.status === "in-progress" && (
                 <div className="flex-shrink-0">
@@ -71,5 +77,5 @@ export function ProgressTimeline({ user }: ProgressTimelineProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

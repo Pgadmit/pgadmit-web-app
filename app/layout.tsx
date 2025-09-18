@@ -5,10 +5,10 @@ import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
 import { AIProvider } from "@/lib/ai-context";
 import { GamificationProvider } from "@/lib/gamification-context";
-import { AIChatWidget } from "@/components/ai/ai-chat-widget";
+import { SidebarProvider } from "@/lib/sidebar-context";
 import { AchievementCelebration } from "@/components/gamification/achievement-celebration";
 import { Toaster } from "@/components/ui/toaster";
-import { GlobalHeader } from "@/components/global-header";
+import { ConditionalHeader } from "@/components/conditional-header";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -44,11 +44,12 @@ export default function RootLayout({
         <AuthProvider>
           <GamificationProvider>
             <AIProvider>
-              <GlobalHeader />
-              {children}
-              <AIChatWidget />
-              <AchievementCelebration />
-              <Toaster />
+              <SidebarProvider>
+                <ConditionalHeader />
+                {children}
+                <AchievementCelebration />
+                <Toaster />
+              </SidebarProvider>
             </AIProvider>
           </GamificationProvider>
         </AuthProvider>

@@ -1,59 +1,36 @@
-"use client"
+"use client";
 
-import { useAuth } from "@/lib/auth-context"
-import { useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { DashboardHeader } from "./dashboard-header"
-import { ProgressTimeline } from "./progress-timeline"
-import { NextStepCard } from "./next-step-card"
-import { DynamicSections } from "./dynamic-sections"
-import { QuickActions } from "./quick-actions"
+import { DashboardSidebar } from "./dashboard-sidebar";
+import { WelcomeSection } from "./welcome-section";
+import { StatsCards } from "./stats-cards";
+import { ApplicationsSection } from "./applications-section";
+import { DeadlinesSection } from "./deadlines-section";
+import { ScholarshipsSection } from "./scholarships-section";
+import { AIRecommendations } from "./ai-recommendations";
 
 export function DashboardContent() {
-  const { user, loading } = useAuth()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/")
-    }
-  }, [user, loading, router])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
-
-  if (!user) {
-    return null
-  }
-
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardHeader user={user} />
+    <div className="min-h-screen bg-gray-50 flex">
+      <DashboardSidebar />
 
-      <main className="container mx-auto px-4 py-6 max-w-7xl">
-        {/* Mobile Quick Actions - Visible without scrolling */}
-        <div className="md:hidden mb-6">
-          <QuickActions user={user} />
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
+        <div className="max-w-6xl mx-auto">
+          <WelcomeSection />
+          <StatsCards />
+
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+            <div className="space-y-4 md:space-y-6 lg:space-y-8">
+              <ApplicationsSection />
+              <DeadlinesSection />
+            </div>
+
+            <div className="space-y-4 md:space-y-6 lg:space-y-8">
+              <ScholarshipsSection />
+              <AIRecommendations />
+            </div>
+          </div>
         </div>
-
-        {/* Progress Timeline */}
-        <div className="mb-8">
-          <ProgressTimeline user={user} />
-        </div>
-
-        {/* Next Step Card */}
-        <div className="mb-8">
-          <NextStepCard user={user} />
-        </div>
-
-        {/* Dynamic Sections */}
-        <DynamicSections user={user} />
       </main>
     </div>
-  )
+  );
 }
