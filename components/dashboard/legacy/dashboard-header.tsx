@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { UserMenu } from "@/components/user-menu"
-import { Bell, MessageCircle } from "lucide-react"
-import { useAI } from "@/lib/ai-context"
-import { StreakCounter } from "@/components/gamification/streak-counter"
-import { LevelProgress } from "@/components/gamification/level-progress"
-import type { User } from "@/lib/auth-context"
+import { Button } from "@/components/ui/button";
+import { UserMenu } from "@/components/user-menu";
+import { Bell, MessageCircle } from "lucide-react";
+import { useAI } from "@/lib/ai-context";
+import { StreakCounter } from "@/components/gamification/streak-counter";
+import { LevelProgress } from "@/components/gamification/level-progress";
+import type { User } from "@/lib/auth-context";
 
 interface DashboardHeaderProps {
-  user: User
+  user: User;
 }
 
 export function DashboardHeader({ user }: DashboardHeaderProps) {
-  const { openChat } = useAI()
+  const { openChat } = useAI();
 
   const getGreeting = () => {
-    const hour = new Date().getHours()
-    if (hour < 12) return "Good morning"
-    if (hour < 17) return "Good afternoon"
-    return "Good evening"
-  }
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  };
 
   const handleAIChat = () => {
-    openChat("dashboard")
-  }
+    openChat("dashboard");
+  };
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-40">
@@ -46,7 +46,11 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                 <Bell className="h-4 w-4 mr-2" />
                 Notifications
               </Button>
-              <Button size="sm" className="bg-accent hover:bg-accent/90" onClick={handleAIChat}>
+              <Button
+                size="sm"
+                className="bg-accent hover:bg-accent/90"
+                onClick={handleAIChat}
+              >
                 <MessageCircle className="h-4 w-4 mr-2" />
                 AI Chat
               </Button>
@@ -62,5 +66,5 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
         </div>
       </div>
     </header>
-  )
+  );
 }

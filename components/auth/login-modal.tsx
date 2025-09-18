@@ -1,79 +1,90 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { useAuth } from "@/lib/auth-context"
-import { Eye, EyeOff, Loader2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useAuth } from "@/lib/auth-context";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface LoginModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSwitchToSignup: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSwitchToSignup: () => void;
 }
 
-export function LoginModal({ open, onOpenChange, onSwitchToSignup }: LoginModalProps) {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { login, loginWithGoogle } = useAuth()
-  const { toast } = useToast()
+export function LoginModal({
+  open,
+  onOpenChange,
+  onSwitchToSignup,
+}: LoginModalProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { login, loginWithGoogle } = useAuth();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      await login(email, password)
+      await login(email, password);
       toast({
         title: "Welcome back!",
         description: "You've successfully logged in.",
-      })
-      onOpenChange(false)
-      setEmail("")
-      setPassword("")
+      });
+      onOpenChange(false);
+      setEmail("");
+      setPassword("");
     } catch (error) {
       toast({
         title: "Login failed",
         description: "Please check your credentials and try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleGoogleLogin = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      await loginWithGoogle()
+      await loginWithGoogle();
       toast({
         title: "Welcome back!",
         description: "You've successfully logged in with Google.",
-      })
-      onOpenChange(false)
+      });
+      onOpenChange(false);
     } catch (error) {
       toast({
         title: "Google login failed",
         description: "Please try again or use email login.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">Welcome Back</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-center">
+            Welcome Back
+          </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -114,7 +125,9 @@ export function LoginModal({ open, onOpenChange, onSwitchToSignup }: LoginModalP
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+              <span className="bg-background px-2 text-muted-foreground">
+                Or continue with email
+              </span>
             </div>
           </div>
         </div>
@@ -150,7 +163,11 @@ export function LoginModal({ open, onOpenChange, onSwitchToSignup }: LoginModalP
                 className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
                 onClick={() => setShowPassword(!showPassword)}
               >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -163,11 +180,15 @@ export function LoginModal({ open, onOpenChange, onSwitchToSignup }: LoginModalP
 
         <div className="text-center text-sm">
           <span className="text-muted-foreground">Don't have an account? </span>
-          <Button variant="link" className="p-0 h-auto font-semibold" onClick={onSwitchToSignup}>
+          <Button
+            variant="link"
+            className="p-0 h-auto font-semibold"
+            onClick={onSwitchToSignup}
+          >
             Sign up
           </Button>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
