@@ -6,10 +6,9 @@ import { AuthProvider } from "@/lib/auth-context";
 import { AIProvider } from "@/lib/ai-context";
 import { GamificationProvider } from "@/lib/gamification-context";
 import { SidebarProvider } from "@/lib/sidebar-context";
-import { AIChatWidget } from "@/components/ai/ai-chat-widget";
 import { AchievementCelebration } from "@/components/gamification/achievement-celebration";
 import { Toaster } from "@/components/ui/toaster";
-import { GlobalHeader } from "@/components/global-header";
+import { ConditionalHeader } from "@/components/conditional-header";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -46,9 +45,8 @@ export default function RootLayout({
           <GamificationProvider>
             <AIProvider>
               <SidebarProvider>
-                <GlobalHeader />
+                <ConditionalHeader />
                 {children}
-                <AIChatWidget />
                 <AchievementCelebration />
                 <Toaster />
               </SidebarProvider>

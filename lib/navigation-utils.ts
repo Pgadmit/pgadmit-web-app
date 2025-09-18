@@ -30,6 +30,7 @@ export function useActivePath() {
     isDashboardActive: () => isActivePath("/dashboard"),
     isApplicationsActive: () => isActivePath("/applications"),
     isUniversitiesActive: () => isActivePath("/universities"),
+    isAIChatActive: () => isActivePath("/ai-chat"),
     isCommunityActive: () => isActivePath("/community"),
     isResourcesActive: () => isActivePath("/resources"),
     isBlogActive: () => isActivePath("/blog"),
@@ -53,6 +54,11 @@ export const navigationItems = [
   {
     label: "Universities",
     href: "/universities",
+    exact: false,
+  },
+  {
+    label: "AI Chat",
+    href: "/ai-chat",
     exact: false,
   },
   {

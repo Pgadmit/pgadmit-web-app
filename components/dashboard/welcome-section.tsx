@@ -3,8 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Target } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function WelcomeSection() {
+  const router = useRouter();
+
+  const handleAIChat = () => {
+    router.push("/ai-chat");
+  };
+
   return (
     <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg md:rounded-xl p-4 md:p-6 mb-6 md:mb-8">
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
@@ -26,7 +33,10 @@ export function WelcomeSection() {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 md:h-10">
+          <Button
+            onClick={handleAIChat}
+            className="bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 md:h-10"
+          >
             Ask AI Assistant
           </Button>
           <Button variant="outline" className="text-sm h-9 md:h-10">
