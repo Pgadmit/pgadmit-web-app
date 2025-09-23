@@ -18,7 +18,7 @@ export function SocialProofSection() {
     {
       platform: "Instagram",
       icon: FaInstagram,
-      followers: "50K+",
+      followers: "1K+",
       description: "Daily study abroad tips",
       color: "text-pink-500",
       href: "https://www.instagram.com/pgadmit",
@@ -26,7 +26,7 @@ export function SocialProofSection() {
     {
       platform: "TikTok",
       icon: FaTiktok,
-      followers: "75K+",
+      followers: "1K+",
       description: "Campus life content",
       color: "text-black",
       href: "https://www.tiktok.com/@pgadmit",
@@ -34,7 +34,7 @@ export function SocialProofSection() {
     {
       platform: "YouTube",
       icon: FaYoutube,
-      followers: "25K+",
+      followers: "1K+",
       description: "University tours & guides",
       color: "text-red-500",
       href: "https://www.youtube.com/@pgadmit",
@@ -92,12 +92,12 @@ export function SocialProofSection() {
             >
               <Link href={social.href} target="_blank">
                 <CardContent className="p-6 text-center">
-                  <div className="flex justify-center mb-4">
+                  <div className="flex justify-center mb-2">
                     <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center shadow-md">
                       <social.icon className={`h-8 w-8 ${social.color}`} />
                     </div>
                   </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-2">
+                  <h3 className="text-2xl font-bold text-foreground">
                     {social.followers}
                   </h3>
                   <p className="text-sm font-medium text-primary mb-1">
