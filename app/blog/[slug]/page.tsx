@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Clock, Calendar, ArrowRight } from "lucide-react";
+import { MarkdownContent } from "@/components/ui/markdown-content";
 import {
   getBlogPost,
   getBlogPosts,
@@ -27,13 +28,13 @@ export default function BlogPostPage() {
   const loadPost = useCallback(async () => {
     try {
       setLoading(true);
-      
+
       // Check if slug is 'null' and redirect to blog list
-      if (slug === 'null' || !slug) {
+      if (slug === "null" || !slug) {
         router.push("/blog");
         return;
       }
-      
+
       const response = await getBlogPost(slug);
 
       if (response.data.length > 0) {
@@ -100,16 +101,33 @@ export default function BlogPostPage() {
             title?: string;
             file?: { url: string; alternativeText?: string; caption?: string };
           };
-          const blockKey = `${blockObj.__component}-${blockObj.id || index}`;
+          const blockKey = `${blockObj.__component}-${blockObj.id ?? index}`;
           switch (blockObj.__component) {
             case "shared.rich-text":
-              return (
-                <div
-                  key={blockKey}
-                  dangerouslySetInnerHTML={{ __html: blockObj.body || "" }}
-                  className="mb-6"
-                />
-              );
+              // Check if body contains markdown syntax
+              const body = blockObj.body ?? "";
+              const hasMarkdown =
+                /^#{1,6}\s|^\*\*|^\*[^*]|^\-\s|^\d+\.\s|^\>\s|^\`|^\??\*\*.*\*\*|\*.*\*|\[.*\]\(.*\)/.test(
+                  body.trim()
+                );
+
+              if (hasMarkdown) {
+                return (
+                  <MarkdownContent
+                    key={blockKey}
+                    content={body}
+                    className="mb-6"
+                  />
+                );
+              } else {
+                return (
+                  <div
+                    key={blockKey}
+                    dangerouslySetInnerHTML={{ __html: body }}
+                    className="mb-6"
+                  />
+                );
+              }
             case "shared.quote":
               return (
                 <blockquote
@@ -133,7 +151,7 @@ export default function BlogPostPage() {
                 <div key={blockKey} className="my-8">
                   <Image
                     src={mediaUrl}
-                    alt={blockObj.file?.alternativeText || ""}
+                    alt={blockObj.file?.alternativeText ?? ""}
                     width={800}
                     height={400}
                     className="w-full rounded-lg"
@@ -229,7 +247,7 @@ export default function BlogPostPage() {
             </div>
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
-              <span>{post.reading_time || 5} min read</span>
+              <span>{post.reading_time ?? 5} min read</span>
             </div>
           </div>
         </div>
@@ -253,7 +271,7 @@ export default function BlogPostPage() {
               <AvatarImage
                 src={
                   post.author.avatar
-                    ? getStrapiMediaURL(post.author.avatar) || undefined
+                    ? getStrapiMediaURL(post.author.avatar) ?? undefined
                     : undefined
                 }
                 alt={post.author.name}
@@ -279,7 +297,7 @@ export default function BlogPostPage() {
         )}
 
         {/* Content */}
-        <div className="mb-16">{renderContent(post.blocks || [])}</div>
+        <div className="mb-16">{renderContent(post.blocks ?? [])}</div>
 
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
@@ -308,7 +326,7 @@ export default function BlogPostPage() {
                       {relatedPost.title}
                     </h3>
                     <p className="text-sm text-muted-foreground line-clamp-2">
-                      {relatedPost.excerpt || relatedPost.description}
+                      {relatedPost.excerpt ?? relatedPost.description}
                     </p>
                   </CardHeader>
                 </Card>
