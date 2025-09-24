@@ -565,7 +565,7 @@ export function createOnboardingSteps({
               "No problem. Our experts will help you prepare a stronger application.",
             content: (
               <div className="space-y-8 sm:space-y-10">
-                <div className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-8 max-w-3xl mx-auto">
+                <div className="flex flex-col sm:flex-row justify-center gap-6 sm:gap-8 max-w-4xl mx-auto">
                   {[
                     {
                       v: "no",
@@ -585,7 +585,7 @@ export function createOnboardingSteps({
                       variant={
                         data.visaRefusal === opt.v ? "default" : "outline"
                       }
-                      className={`flex items-start justify-start h-auto w-full sm:w-72 lg:w-80 p-5 lg:p-6 space-x-4 hover:scale-105 transition-all duration-200 cursor-pointer ${
+                      className={`flex items-start justify-start h-auto w-full sm:w-80 lg:w-96 p-5 lg:p-6 space-x-4 hover:scale-105 transition-all duration-200 cursor-pointer ${
                         data.visaRefusal === opt.v 
                           ? "bg-primary text-primary-foreground shadow-lg border-primary" 
                           : "border-2 border-border hover:border-primary/50 hover:bg-primary/5 hover:text-foreground"
@@ -595,8 +595,8 @@ export function createOnboardingSteps({
                       }
                     >
                       <opt.icon className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                      <div className="text-left">
-                        <div className="font-medium text-sm leading-tight">
+                      <div className="text-left flex-1 min-w-0">
+                        <div className="font-medium text-sm leading-tight break-words">
                           {opt.l}
                         </div>
                         <div className="text-xs opacity-70 mt-1">

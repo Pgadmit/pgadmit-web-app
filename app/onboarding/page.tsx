@@ -192,7 +192,7 @@ export default function OnboardingPage() {
                 variant="outline"
                 onClick={handleBack}
                 disabled={step === 0}
-                className="h-11 sm:h-12 px-6 sm:px-8 w-full sm:w-auto order-2 sm:order-1 border-2 border-border hover:border-primary/50 transition-colors"
+                className="h-11 sm:h-12 px-6 sm:px-8 w-full sm:w-auto order-2 sm:order-1 border-2 border-border hover:border-primary/50 transition-colors cursor-pointer"
               >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
@@ -201,7 +201,7 @@ export default function OnboardingPage() {
               <Button
                 onClick={handleNext}
                 disabled={!currentStepData?.canContinue()}
-                className="bg-primary hover:bg-primary/90 h-11 sm:h-12 px-8 sm:px-10 text-sm sm:text-base font-semibold w-full sm:w-auto order-1 sm:order-2 shadow-lg"
+                className="bg-primary hover:bg-primary/90 h-11 sm:h-12 px-8 sm:px-10 text-sm sm:text-base font-semibold w-full sm:w-auto order-1 sm:order-2 shadow-lg cursor-pointer"
               >
                 {step === total - 1 ? (
                   <>
