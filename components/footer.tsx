@@ -14,13 +14,25 @@ export function Footer() {
               education accessible for everyone.
             </p>
             <div className="flex gap-4">
-              <Link href="https://www.instagram.com/pgadmit">
+              <Link
+                href="https://www.instagram.com/pgadmit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FaInstagram className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
               </Link>
-              <Link href="https://www.youtube.com/@pgadmit">
+              <Link
+                href="https://www.youtube.com/@pgadmit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FaYoutube className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
               </Link>
-              <Link href="https://www.tiktok.com/@pgadmit">
+              <Link
+                href="https://www.tiktok.com/@pgadmit"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <FaTiktok className="h-5 w-5 text-background/60 hover:text-background cursor-pointer transition-colors" />
               </Link>
             </div>

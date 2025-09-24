@@ -8,45 +8,45 @@ export const FIELD_OPTIONS = [
   "natural-sciences",
   "law-legal",
   "other",
-] as const
+] as const;
 
-export type FieldOption = (typeof FIELD_OPTIONS)[number]
+export type FieldOption = (typeof FIELD_OPTIONS)[number];
 
 export function labelForField(value: FieldOption | string): string {
   switch (value) {
     case "computer-science":
-      return "💻 Computer Science"
+      return "💻 Computer Science";
     case "business":
-      return "💼 Business"
+      return "💼 Business";
     case "engineering":
-      return "⚙️ Engineering"
+      return "⚙️ Engineering";
     case "medicine-health":
-      return "🧬 Medicine & Health"
+      return "🧬 Medicine & Health";
     case "arts-design":
-      return "🎨 Arts & Design"
+      return "🎨 Arts & Design";
     case "social-sciences":
-      return "🌍 Social Sciences"
+      return "🌍 Social Sciences";
     case "natural-sciences":
-      return "🔬 Natural Sciences"
+      return "🔬 Natural Sciences";
     case "law-legal":
-      return "⚖️ Law & Legal Studies"
+      return "⚖️ Law & Legal Studies";
     default:
-      return "📚 Other"
+      return "📚 Other";
   }
 }
 
 export const DESTINATION_OPTIONS = [
   { v: "usa", l: "🇺🇸 USA" },
   { v: "uk", l: "🇬🇧 UK" },
-] as const
+] as const;
 
 export const COUNTRY_OPTIONS = [
-  { v: "india", l: "India (auto detected)" },
+  { v: "india", l: "India" },
   { v: "nigeria", l: "Nigeria" },
   { v: "ghana", l: "Ghana" },
   { v: "kenya", l: "Kenya" },
   { v: "other", l: "Other" },
-] as const
+] as const;
 
 export const FUNDING_OPTIONS = [
   { v: "myself", l: "Myself" },
@@ -54,16 +54,14 @@ export const FUNDING_OPTIONS = [
   { v: "employer", l: "Employer / Sponsor" },
   { v: "loan", l: "Loan" },
   { v: "scholarships", l: "Scholarships" },
-] as const
+] as const;
 
 export const BREAK_OPTIONS = [
   { v: "no", l: "No" },
   { v: "yes", l: "Yes" },
-] as const
+] as const;
 
 export const VISA_REFUSAL_OPTIONS = [
   { v: "no", l: "No, I have never been refused a visa" },
   { v: "yes", l: "Yes, I have been refused before" },
-] as const
-
-
+] as const;
