@@ -4,15 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Search, LogIn } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { UserMenu } from "@/components/user-menu";
-import { useState } from "react";
-import { AuthModals } from "@/components/auth/auth-modals";
+import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
 export function StickyBottomNav() {
   const { user } = useAuth();
   const pathname = usePathname();
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [signupOpen, setSignupOpen] = useState(false);
+  const router = useRouter();
 
   // Don't show sticky nav on AI Chat pages
   if (pathname.startsWith("/ai-chat")) {
@@ -46,7 +44,7 @@ export function StickyBottomNav() {
               variant="outline"
               size="sm"
               className="flex-1 bg-transparent"
-              onClick={() => setLoginOpen(true)}
+              onClick={() => router.push("/auth")}
             >
               <LogIn className="h-4 w-4 mr-1" />
               Login
@@ -54,13 +52,6 @@ export function StickyBottomNav() {
           )}
         </div>
       </div>
-
-      <AuthModals
-        loginOpen={loginOpen}
-        signupOpen={signupOpen}
-        onLoginOpenChange={setLoginOpen}
-        onSignupOpenChange={setSignupOpen}
-      />
     </>
   );
 }

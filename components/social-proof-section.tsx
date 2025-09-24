@@ -2,16 +2,10 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  Instagram,
-  Youtube,
-  TwitterIcon as TikTok,
-  Users,
-  Award,
-  Globe,
-  ArrowRight,
-} from "lucide-react";
+import { Users, Award, Globe, ArrowRight } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { FaTiktok, FaYoutube, FaInstagram } from "react-icons/fa";
 
 export function SocialProofSection() {
   const router = useRouter();
@@ -23,24 +17,27 @@ export function SocialProofSection() {
   const socialStats = [
     {
       platform: "Instagram",
-      icon: Instagram,
-      followers: "50K+",
+      icon: FaInstagram,
+      followers: "1K+",
       description: "Daily study abroad tips",
       color: "text-pink-500",
+      href: "https://www.instagram.com/pgadmit",
     },
     {
       platform: "TikTok",
-      icon: TikTok,
-      followers: "75K+",
+      icon: FaTiktok,
+      followers: "1K+",
       description: "Campus life content",
       color: "text-black",
+      href: "https://www.tiktok.com/@pgadmit",
     },
     {
       platform: "YouTube",
-      icon: Youtube,
-      followers: "25K+",
+      icon: FaYoutube,
+      followers: "1K+",
       description: "University tours & guides",
       color: "text-red-500",
+      href: "https://www.youtube.com/@pgadmit",
     },
   ];
 
@@ -93,22 +90,24 @@ export function SocialProofSection() {
               key={index}
               className="bg-background/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              <CardContent className="p-6 text-center">
-                <div className="flex justify-center mb-4">
-                  <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center shadow-md">
-                    <social.icon className={`h-8 w-8 ${social.color}`} />
+              <Link href={social.href} target="_blank">
+                <CardContent className="p-6 text-center">
+                  <div className="flex justify-center mb-2">
+                    <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center shadow-md">
+                      <social.icon className={`h-8 w-8 ${social.color}`} />
+                    </div>
                   </div>
-                </div>
-                <h3 className="text-2xl font-bold text-foreground mb-2">
-                  {social.followers}
-                </h3>
-                <p className="text-sm font-medium text-primary mb-1">
-                  {social.platform}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  {social.description}
-                </p>
-              </CardContent>
+                  <h3 className="text-2xl font-bold text-foreground">
+                    {social.followers}
+                  </h3>
+                  <p className="text-sm font-medium text-primary mb-1">
+                    {social.platform}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {social.description}
+                  </p>
+                </CardContent>
+              </Link>
             </Card>
           ))}
         </div>

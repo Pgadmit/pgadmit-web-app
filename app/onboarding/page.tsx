@@ -1,74 +1,145 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/auth-context"
-import { AIOnboardingFlow } from "@/components/onboarding/ai-onboarding-flow"
-import { PreSignupOnboarding } from "@/components/onboarding/presignup-onboarding"
-import { AuthModals } from "@/components/auth/auth-modals"
-import { useOnboardingUI } from "@/lib/stores/onboarding-store"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, Sparkles } from "lucide-react"
+import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
+import { AIOnboardingFlow } from "@/components/onboarding/ai-onboarding-flow";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { createOnboardingSteps, OnboardingStep } from "@/lib/onboarding/steps";
+import {
+  useOnboardingData,
+  useOnboardingUI,
+} from "@/lib/stores/onboarding-store";
+import { inferSegment } from "@/lib/onboarding/logic";
 
 export default function OnboardingPage() {
-  const { user } = useAuth()
-  const router = useRouter()
-  const { isOpen: preSignupOpen, setOpen: setPreSignupOpen } = useOnboardingUI()
-  const [signupOpen, setSignupOpen] = useState(false)
-  const [loginOpen, setLoginOpen] = useState(false)
-  const [onboardingOpen, setOnboardingOpen] = useState(false)
-  const [signupInitialData, setSignupInitialData] = useState<{ country?: string; fieldOfStudy?: string; budget?: string }>()
+  const { user } = useAuth();
+  const router = useRouter();
+  const { isOpen: preSignupOpen, setOpen: setPreSignupOpen } =
+    useOnboardingUI();
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+
+  const {
+    data,
+    currentStep: step,
+    budgetSlider,
+    updateData,
+    setCurrentStep,
+    setBudgetSlider,
+    setCompleted,
+    getFinalData,
+  } = useOnboardingData();
+
+  const steps = useMemo(
+    () =>
+      createOnboardingSteps({
+        data,
+        setData: (updates) => {
+          if (typeof updates === "function") {
+            updateData(updates(data));
+          } else {
+            updateData(updates);
+          }
+        },
+        setStep: (newStep) => {
+          if (typeof newStep === "function") {
+            setCurrentStep(newStep(step));
+          } else {
+            setCurrentStep(newStep);
+          }
+        },
+        budgetSlider,
+        setBudgetSlider: (value) => {
+          if (typeof value === "function") {
+            setBudgetSlider(value(budgetSlider));
+          } else {
+            setBudgetSlider(value);
+          }
+        },
+        currentStep: step,
+      }),
+    [data, budgetSlider, updateData, setCurrentStep, setBudgetSlider, step]
+  );
+
+  const total = steps.length;
+  const progress = ((step + 1) / total) * 100;
+  const currentStepData = steps[step];
 
   useEffect(() => {
     if (user) {
       if (!user.onboardingComplete) {
-        setOnboardingOpen(true)
+        setOnboardingOpen(true);
       } else {
         // User is already onboarded, redirect to dashboard
-        router.push("/dashboard")
+        router.push("/dashboard");
       }
     } else {
       // User not logged in → start pre-signup onboarding first
-      setPreSignupOpen(true)
+      setPreSignupOpen(true);
     }
-  }, [user, router, setPreSignupOpen])
+  }, [user, router, setPreSignupOpen]);
 
   // Initialize onboarding store when component mounts
   useEffect(() => {
-    setPreSignupOpen(true)
-  }, [setPreSignupOpen])
-
-  const handleSignupSuccess = () => {
-    setSignupOpen(false)
-    // After pre-signup flow + registration, go to dashboard
-    router.push("/dashboard")
-  }
+    setPreSignupOpen(true);
+  }, [setPreSignupOpen]);
 
   const handleOnboardingComplete = () => {
-    setOnboardingOpen(false)
-    router.push("/dashboard")
-  }
+    setOnboardingOpen(false);
+    router.push("/dashboard");
+  };
 
   const handlePreSignupComplete = (finalData: any) => {
-    setSignupInitialData({
-      country: finalData.country,
-      fieldOfStudy: finalData.fieldOfStudy,
-      budget: finalData.budget,
-    })
-    setSignupOpen(true)
-  }
+    // Redirect to auth page with initial data
+    const params = new URLSearchParams({
+      country: finalData.country || "",
+      fieldOfStudy: finalData.fieldOfStudy || "",
+      budget: finalData.budget || "",
+    });
+    router.push(`/auth?${params.toString()}`);
+  };
+
+  const handleNext = () => {
+    if (step < total - 1) {
+      setCurrentStep(step + 1);
+    } else {
+      // Onboarding completed
+      const segment = inferSegment(data);
+      const finalData = { ...data, segment };
+      updateData({ segment });
+      setCompleted(true);
+      setPreSignupOpen(false);
+      handlePreSignupComplete(getFinalData());
+    }
+  };
+
+  const handleBack = () => {
+    if (step > 0) setCurrentStep(step - 1);
+  };
 
   const handleBackToHome = () => {
-    router.push("/")
+    router.push("/");
+  };
+
+  // Show AI onboarding for logged-in users
+  if (user && onboardingOpen) {
+    return (
+      <AIOnboardingFlow
+        isOpen={onboardingOpen}
+        onClose={handleOnboardingComplete}
+      />
+    );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
+  // Show pre-signup onboarding for non-logged-in users
+  if (!user && preSignupOpen && currentStepData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex flex-col">
+        {/* Header - Fixed at top */}
+        <div className="flex-shrink-0 px-4 pt-4 sm:pt-6">
+          <div className="max-w-4xl mx-auto">
             <Button
               variant="ghost"
               onClick={handleBackToHome}
@@ -78,58 +149,78 @@ export default function OnboardingPage() {
               Back to Home
             </Button>
 
-            <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              <Sparkles className="h-4 w-4" />
-              AI-Powered Onboarding
-            </div>
+            <div className="text-center">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-semibold mb-4">
+                <Sparkles className="h-4 w-4" />
+                AI-Powered Onboarding
+              </div>
 
-            <h1 className="text-3xl md:text-4xl font-black mb-4 text-foreground">Let's Get You Started</h1>
-            <p className="text-lg text-muted-foreground">
-              Our AI counselor will guide you through a personalized onboarding experience
-            </p>
-          </div>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-4 text-foreground">
+                {currentStepData.title}
+              </h1>
+              <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+                {currentStepData.description}
+              </p>
 
-          {/* Welcome Card for Non-Users */}
-          {!user && (
-            <Card className="shadow-lg border-0 bg-card mb-8">
-              <CardHeader className="text-center">
-                <CardTitle className="text-2xl font-bold">Welcome to PGadmit!</CardTitle>
-              </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-muted-foreground mb-6">
-                  Join thousands of students who have successfully navigated their study abroad journey with our
-                  AI-powered platform.
-                </p>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Button onClick={() => setSignupOpen(true)} className="bg-primary hover:bg-primary/90">
-                    Create Free Account
-                  </Button>
-                  <Button variant="outline" onClick={() => setLoginOpen(true)}>
-                    Already have an account?
-                  </Button>
+              <div className="mt-4 sm:mt-6 space-y-2 max-w-md mx-auto">
+                <Progress value={progress} className="h-2 sm:h-3" />
+                <div className="flex justify-between text-xs sm:text-sm text-muted-foreground">
+                  <span>
+                    Step {step + 1} of {total}
+                  </span>
+                  <span>{Math.round(progress)}% complete</span>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content - Flexible center */}
+        <div className="flex-1 flex items-center justify-center px-4 py-6 sm:py-8">
+          <div className="w-full max-w-4xl mx-auto">
+            <div className="animate-in slide-in-from-right-4 duration-300">
+              {currentStepData.content}
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation - Fixed at bottom */}
+        <div className="flex-shrink-0 px-4 pb-4 sm:pb-6">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4">
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                disabled={step === 0}
+                className="h-11 sm:h-12 px-6 sm:px-8 w-full sm:w-auto order-2 sm:order-1 border-2 border-border hover:border-primary/50 transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+
+              <Button
+                onClick={handleNext}
+                disabled={!currentStepData?.canContinue()}
+                className="bg-primary hover:bg-primary/90 h-11 sm:h-12 px-8 sm:px-10 text-sm sm:text-base font-semibold w-full sm:w-auto order-1 sm:order-2 shadow-lg"
+              >
+                {step === total - 1 ? (
+                  <>
+                    Start with PGadmit
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </>
+                ) : (
+                  <>
+                    Continue
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Auth Modals */}
-      <AuthModals
-        loginOpen={loginOpen}
-        signupOpen={signupOpen}
-        onLoginOpenChange={setLoginOpen}
-        onSignupOpenChange={setSignupOpen}
-        signupInitialData={signupInitialData}
-        onSignupSuccess={handleSignupSuccess}
-      />
-
-    
-      {/* Pre-signup Onboarding (shown before registration for guests) */}
-      <PreSignupOnboarding onComplete={handlePreSignupComplete} />
-
-      {/* AI Onboarding Flow (for logged-in users who haven't completed onboarding) */}
-      <AIOnboardingFlow isOpen={onboardingOpen && !!user} onClose={handleOnboardingComplete} />
-    </div>
-  )
+  return null;
 }
