@@ -4,8 +4,6 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth-context";
 import { UserMenu } from "@/components/user-menu";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { AuthModals } from "@/components/auth/auth-modals";
 import { useActivePath, navigationItems } from "@/lib/navigation-utils";
 import {
   NavigationSkeleton,
@@ -17,8 +15,6 @@ import { Menu, X } from "lucide-react";
 export function GlobalHeader() {
   const { user } = useAuth();
   const router = useRouter();
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [signupOpen, setSignupOpen] = useState(false);
   const { isActivePath, mounted, pathname } = useActivePath();
   const { sidebarOpen, toggleSidebar } = useSidebar();
 
@@ -133,7 +129,7 @@ export function GlobalHeader() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => setLoginOpen(true)}
+                    onClick={() => router.push("/auth")}
                     className="hidden sm:inline-flex"
                   >
                     Login
@@ -151,13 +147,6 @@ export function GlobalHeader() {
           </div>
         </div>
       </header>
-
-      <AuthModals
-        loginOpen={loginOpen}
-        signupOpen={signupOpen}
-        onLoginOpenChange={setLoginOpen}
-        onSignupOpenChange={setSignupOpen}
-      />
     </>
   );
 }

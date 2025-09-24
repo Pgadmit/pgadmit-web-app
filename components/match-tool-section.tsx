@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useState } from "react";
-// import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // import { Label } from "@/components/ui/label";
 // import {
@@ -19,8 +19,7 @@ import {
 // import { useAuth } from "@/lib/auth-context";
 // import { useRouter } from "next/navigation";
 // import { useToast } from "@/hooks/use-toast";
-import { AIOnboardingFlow } from "@/components/onboarding/ai-onboarding-flow";
-import { AuthModals } from "@/components/auth/auth-modals";
+import { useRouter } from "next/navigation";
 
 // const OnboardingMatchTool = () => {
 //   const { user } = useAuth();
@@ -167,14 +166,7 @@ import { AuthModals } from "@/components/auth/auth-modals";
 // };
 
 export function MatchToolSection() {
-  const [signupOpen, setSignupOpen] = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [onboardingOpen, setOnboardingOpen] = useState(false);
-
-  const handleSignupSuccess = () => {
-    setSignupOpen(false);
-    setOnboardingOpen(true);
-  };
+  const router = useRouter();
 
   return (
     <section data-section="match-tool" className="py-16 md:py-24 bg-background">
@@ -192,21 +184,17 @@ export function MatchToolSection() {
             aspirations, budget, and academic profile.
           </p>
         </div>
-        {/* <OnboardingMatchTool />  temporary commented onboarding */}
-        <AuthModals
-          loginOpen={loginOpen}
-          signupOpen={signupOpen}
-          onLoginOpenChange={setLoginOpen}
-          onSignupOpenChange={setSignupOpen}
-          onSignupSuccess={handleSignupSuccess}
-          // signupInitialData={formData}
-        />
-
-        <AIOnboardingFlow
-          isOpen={onboardingOpen}
-          onClose={() => setOnboardingOpen(false)}
-          // initialData={formData}
-        />
+        {/* Call to Action */}
+        <div className="text-center">
+          <Button
+            size="lg"
+            onClick={() => router.push("/onboarding")}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 text-lg"
+          >
+            <Sparkles className="h-5 w-5 mr-2" />
+            Get Started with AI Matching
+          </Button>
+        </div>
       </div>
     </section>
   );
