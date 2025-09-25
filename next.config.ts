@@ -183,8 +183,16 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["@/components", "@/lib", "@/hooks"],
   },
 
-  // Docker optimization
-  output: "standalone",
+  // Windows compatibility fixes
+  webpack: (config, { isServer }) => {
+    if (process.platform === 'win32') {
+      config.resolve.symlinks = false;
+    }
+    return config;
+  },
+
+  // Docker optimization - disabled for Windows compatibility
+  // output: "standalone",
 };
 
 export default nextConfig;
