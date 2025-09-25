@@ -40,13 +40,11 @@ export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
     }
   }, [initialData]);
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { signup, signupWithGoogle } = useAuth();
+  const { signup, signupWithGoogle, loading } = useAuth();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
       await signup(formData);
@@ -56,18 +54,16 @@ export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
       });
       onSuccess?.();
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Please try again or contact support.";
       toast({
         title: "Signup failed",
-        description: "Please try again or contact support.",
+        description: errorMessage,
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleGoogleSignup = async () => {
-    setIsLoading(true);
     try {
       await signupWithGoogle();
       toast({
@@ -81,8 +77,6 @@ export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
         description: "Please try again or use email signup.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -94,9 +88,9 @@ export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
         variant="outline"
         className="w-full bg-transparent transition-all duration-300 ease-in-out hover:bg-accent/10 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
         onClick={handleGoogleSignup}
-        disabled={isLoading}
+        disabled={loading}
       >
-        {isLoading ? (
+        {loading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <svg className="mr-2 h-4 w-4 cursor-pointer" viewBox="0 0 24 24">
@@ -213,9 +207,9 @@ export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
           <Button
             type="submit"
             className="w-full transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-[0.98] disabled:scale-100 cursor-pointer"
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Create Account
           </Button>
         </div>

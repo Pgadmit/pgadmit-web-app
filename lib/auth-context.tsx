@@ -75,18 +75,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.id)
-        
+
         if (session?.user) {
+          setLoading(true)
           await handleSupabaseUser(session.user)
+          setLoading(false)
         } else {
           // Clear user data on sign out or token expiration
           if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
             setUser(null)
             localStorage.removeItem("pgadmit_user")
           }
+          setLoading(false)
         }
-        setLoading(false)
       }
     )
 
@@ -94,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
+    console.log('handleSupabaseUser called with:', supabaseUser)
     try {
       // Get user profile from Supabase
       const { data: profile, error } = await supabase
@@ -182,42 +184,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     setLoading(true)
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
-      if (error) throw error
-      // User will be handled by onAuthStateChange
+      console.log('Supabase login response:', { data, error })
+
+      if (error) {
+        console.error('Login error:', error)
+        throw new Error(error.message || "Login failed")
+      }
+
+      if (data.user) {
+        console.log('Login successful, handling user data...')
+        await handleSupabaseUser(data.user)
+      }
     } catch (error) {
-      throw new Error("Login failed")
+      console.error('Login error:', error)
+      throw error
     } finally {
       setLoading(false)
     }
   }
 
   const signup = async (userData: SignupData) => {
+    console.log('Starting signup with data:', userData)
     setLoading(true)
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      const newUser: User = {
-        id: Date.now().toString(),
+      console.log('Calling supabase.auth.signUp...')
+      const { data, error } = await supabase.auth.signUp({
         email: userData.email,
-        name: userData.name,
-        country: userData.country,
-        fieldOfStudy: userData.fieldOfStudy,
-        budget: userData.budget,
-        profileComplete: !!(userData.fieldOfStudy && userData.budget),
-        onboardingComplete: false, // New users need onboarding
-        createdAt: new Date().toISOString(),
+        password: userData.password,
+        options: {
+          data: {
+            name: userData.name,
+            country: userData.country,
+            field_of_study: userData.fieldOfStudy,
+            budget: userData.budget,
+          }
+        }
+      })
+
+      console.log('Supabase signup response:', { data, error })
+
+      if (error) {
+        console.error('Signup error:', error)
+        throw new Error(error.message || "Signup failed")
       }
 
-      setUser(newUser)
-      localStorage.setItem("pgadmit_user", JSON.stringify(newUser))
+      // Check if user needs email confirmation
+      if (data.user && !data.session) {
+        throw new Error("Please check your email to confirm your account")
+      }
+
+      if (data.user && data.session) {
+        await handleSupabaseUser(data.user)
+      }
     } catch (error) {
-      throw new Error("Signup failed")
+      console.error('Signup error:', error)
+      throw error
     } finally {
       setLoading(false)
     }
@@ -226,7 +249,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = async () => {
     setLoading(true)
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`
@@ -248,9 +271,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    await supabase.auth.signOut()
-    setUser(null)
-    localStorage.removeItem("pgadmit_user")
+    setLoading(true)
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Logout error:', error)
+        throw error
+      }
+
+      setUser(null)
+      localStorage.removeItem("pgadmit_user")
+    } catch (error) {
+      console.error('Logout error:', error)
+      // Even if logout fails, clear local data
+      setUser(null)
+      localStorage.removeItem("pgadmit_user")
+    } finally {
+      setLoading(false)
+    }
   }
 
   const updateProfile = async (data: Partial<User>) => {

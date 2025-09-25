@@ -31,11 +31,13 @@ CREATE POLICY "Users can update own profile" ON profiles
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, name, country, avatar_url, picture)
+  INSERT INTO public.profiles (id, name, country, field_of_study, budget, avatar_url, picture)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
+    COALESCE(NEW.raw_user_meta_data->>'name', NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
     COALESCE(NEW.raw_user_meta_data->>'country', 'India'),
+    NEW.raw_user_meta_data->>'field_of_study',
+    NEW.raw_user_meta_data->>'budget',
     NEW.raw_user_meta_data->>'avatar_url',
     NEW.raw_user_meta_data->>'picture'
   );

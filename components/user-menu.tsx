@@ -44,14 +44,18 @@ export function UserMenu() {
     router.push("/applications");
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      router.push("/");
+    }
   };
 
   return (
     <DropdownMenu >
-            <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 cursor-pointer">
           <UserAvatar size="md" />
         </Button>
@@ -73,44 +77,40 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleDashboard}
-          className={`cursor-pointer transition-colors ${
-            mounted && isActivePath("/dashboard", false)
+          className={`cursor-pointer transition-colors ${mounted && isActivePath("/dashboard", false)
               ? "bg-blue-50 text-blue-700 font-semibold"
               : "hover:bg-gray-50"
-          }`}
+            }`}
         >
           <LayoutDashboard className="cursor-pointer  mr-2 h-4 w-4" />
           <span>Dashboard</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleApplications}
-          className={`cursor-pointer transition-colors ${
-            mounted && isActivePath("/applications", false)
+          className={`cursor-pointer transition-colors ${mounted && isActivePath("/applications", false)
               ? "bg-blue-50 text-blue-700 font-semibold"
               : "hover:bg-gray-50"
-          }`}
+            }`}
         >
           <FileText className="cursor-pointer mr-2 h-4 w-4" />
           <span>Applications</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleProfile}
-          className={`cursor-pointer transition-colors ${
-            mounted && isActivePath("/profile", false)
+          className={`cursor-pointer transition-colors ${mounted && isActivePath("/profile", false)
               ? "bg-blue-50 text-blue-700 font-semibold"
               : "hover:bg-gray-50"
-          }`}
+            }`}
         >
           <User className="cursor-pointer mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleSettings}
-          className={`cursor-pointer transition-colors ${
-            mounted && isActivePath("/settings", false)
+          className={`cursor-pointer transition-colors ${mounted && isActivePath("/settings", false)
               ? "bg-blue-50 text-blue-700 font-semibold"
               : "hover:bg-gray-50"
-          }`}
+            }`}
         >
           <Settings className="cursor-pointer mr-2 h-4 w-4" />
           <span>Settings</span>
