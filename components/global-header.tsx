@@ -103,9 +103,9 @@ export function GlobalHeader() {
             </div>
 
             {/* Navigation Actions */}
-            <div className="flex items-center gap-3">
+            <div className=" flex items-center gap-3">
               {user ? (
-                <div className="flex items-center gap-2">
+                <div className="cursor-pointer flex items-center gap-2">
                   {mounted ? (
                     <Button
                       variant="outline"

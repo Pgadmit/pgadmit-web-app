@@ -90,7 +90,10 @@ export default function ApplicationsPage() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
-            <h1 className="text-2xl font-bold">My Applications</h1>
+            <div>
+              <h1 className="text-2xl font-bold">My Applications</h1>
+              <p className="text-muted-foreground">Welcome back, {user.name}!</p>
+            </div>
           </div>
           <Button>
             <FileText className="h-4 w-4 mr-2" />

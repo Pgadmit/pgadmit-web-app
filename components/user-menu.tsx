@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { UserAvatar } from "@/components/user-avatar";
 import { useAuth } from "@/lib/auth-context";
 import {
   User,
@@ -27,12 +27,6 @@ export function UserMenu() {
   const { isActivePath, mounted } = useActivePath();
 
   if (!user) return null;
-
-  const initials = user.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
 
   const handleDashboard = () => {
     router.push("/dashboard");
@@ -56,23 +50,24 @@ export function UserMenu() {
   };
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-          <Avatar className="h-10 w-10">
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+    <DropdownMenu >
+            <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 cursor-pointer">
+          <UserAvatar size="md" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name}</p>
+            <p className="text-sm font-medium leading-none">{user.name ?? user.email ?? 'User'}</p>
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            {user.country && (
+              <p className="text-xs leading-none text-muted-foreground">
+                🌍 {user.country}
+              </p>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -84,7 +79,7 @@ export function UserMenu() {
               : "hover:bg-gray-50"
           }`}
         >
-          <LayoutDashboard className="mr-2 h-4 w-4" />
+          <LayoutDashboard className="cursor-pointer  mr-2 h-4 w-4" />
           <span>Dashboard</span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -95,7 +90,7 @@ export function UserMenu() {
               : "hover:bg-gray-50"
           }`}
         >
-          <FileText className="mr-2 h-4 w-4" />
+          <FileText className="cursor-pointer mr-2 h-4 w-4" />
           <span>Applications</span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -106,7 +101,7 @@ export function UserMenu() {
               : "hover:bg-gray-50"
           }`}
         >
-          <User className="mr-2 h-4 w-4" />
+          <User className="cursor-pointer mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -117,12 +112,12 @@ export function UserMenu() {
               : "hover:bg-gray-50"
           }`}
         >
-          <Settings className="mr-2 h-4 w-4" />
+          <Settings className="cursor-pointer mr-2 h-4 w-4" />
           <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut className="mr-2 h-4 w-4" />
+        <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+          <LogOut className="cursor-pointer mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

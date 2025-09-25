@@ -50,11 +50,25 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Name</label>
-                  <p className="text-lg">{user.name}</p>
+                  <p className="text-lg">{user.name || 'Not provided'}</p>
                 </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">Email</label>
                   <p className="text-lg">{user.email}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Country</label>
+                  <p className="text-lg">{user.country || 'Not specified'}</p>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">Profile Status</label>
+                  <p className="text-lg">
+                    {user.profileComplete ? (
+                      <span className="text-green-600">✓ Complete</span>
+                    ) : (
+                      <span className="text-orange-600">⚠ Incomplete</span>
+                    )}
+                  </p>
                 </div>
               </div>
             </CardContent>
