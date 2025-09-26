@@ -1,7 +1,7 @@
 {
   "name": "PGadmit - Study Abroad Made Simple",
   "short_name": "PGadmit",
-  "description": "Your journey to the best universities in the US and UK starts here. AI-powered guidance for Nigerian and Indian students.",
+  "description": "Your journey to the best universities worldwide starts here. AI-powered guidance for international students.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -62,7 +62,7 @@ export default function CommunityPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">Adaora Okafor</h3>
-                      <Badge variant="secondary">Nigeria → US</Badge>
+                      <Badge variant="secondary">West Africa → North America</Badge>
                     </div>
                     <p className="text-sm text-gray-500">2 hours ago</p>
                   </div>
@@ -99,7 +99,7 @@ export default function CommunityPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold">Raj Sharma</h3>
-                      <Badge variant="secondary">India → UK</Badge>
+                      <Badge variant="secondary">South Asia → Europe</Badge>
                     </div>
                     <p className="text-sm text-gray-500">5 hours ago</p>
                   </div>

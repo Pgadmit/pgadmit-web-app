@@ -212,8 +212,8 @@ export function SignupModal({ open, onOpenChange, onSwitchToLogin, initialData, 
                 <SelectValue placeholder="Select your country" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="nigeria">Nigeria</SelectItem>
-                <SelectItem value="india">India</SelectItem>
+                <SelectItem value="west-africa">West Africa</SelectItem>
+                <SelectItem value="south-asia">South Asia</SelectItem>
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>

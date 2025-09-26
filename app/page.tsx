@@ -5,7 +5,6 @@ import { BlogSection } from "@/components/blog-section";
 import { MatchToolSection } from "@/components/match-tool-section";
 import { StudentStoriesSection } from "@/components/student-stories-section";
 import { AboutSection } from "@/components/about-section";
-import { ParentTestimonialsSection } from "@/components/parent-testimonials-section";
 import { SocialProofSection } from "@/components/social-proof-section";
 import { Footer } from "@/components/footer";
 import { StickyBottomNav } from "@/components/sticky-bottom-nav";
@@ -19,7 +18,6 @@ export default async function HomePage() {
       <MatchToolSection />
       <BlogSection />
       <StudentStoriesSection />
-      <ParentTestimonialsSection />
       <AboutSection />
       <SocialProofSection />
       <Footer />

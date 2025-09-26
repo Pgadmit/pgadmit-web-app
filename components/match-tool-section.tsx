@@ -189,7 +189,7 @@ export function MatchToolSection() {
           <Button
             size="lg"
             onClick={() => router.push("/onboarding")}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 text-lg"
+            className="cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 text-lg"
           >
             <Sparkles className="h-5 w-5 mr-2" />
             Get Started with AI Matching

@@ -31,7 +31,7 @@ export function StickyBottomNav() {
           <Button
             variant="outline"
             size="sm"
-            className="flex-1 bg-transparent"
+            className="cursor-pointer flex-1 bg-transparent"
             onClick={handleMatchTool}
           >
             <Search className="h-4 w-4 mr-1" />
@@ -43,7 +43,7 @@ export function StickyBottomNav() {
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 bg-transparent"
+              className="cursor-pointer flex-1 bg-transparent"
               onClick={() => router.push("/auth")}
             >
               <LogIn className="h-4 w-4 mr-1" />

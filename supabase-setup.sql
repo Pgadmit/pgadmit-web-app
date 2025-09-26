@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
   name TEXT,
-  country TEXT DEFAULT 'India',
+  country TEXT DEFAULT 'South Asia',
   field_of_study TEXT,
   budget TEXT,
   current_education TEXT,
@@ -35,7 +35,7 @@ BEGIN
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'country', 'India'),
+    COALESCE(NEW.raw_user_meta_data->>'country', 'South Asia'),
     NEW.raw_user_meta_data->>'field_of_study',
     NEW.raw_user_meta_data->>'budget',
     NEW.raw_user_meta_data->>'avatar_url',

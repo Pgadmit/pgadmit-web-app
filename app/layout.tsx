@@ -26,7 +26,7 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "PGadmit - Study Abroad Made Simple",
   description:
-    "Your journey to the top universities worldwide starts here. AI-powered guidance for Nigerian and Indian students.",
+    "Your journey to the top universities worldwide starts here. AI-powered guidance for international students.",
   generator: "v0.app",
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://pgadmit.com'),
   
