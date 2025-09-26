@@ -192,7 +192,7 @@ const nextConfig: NextConfig = {
   },
 
   // Docker optimization - disabled for Windows compatibility
-  // output: "standalone",
+  output: "standalone",
 };
 
 export default nextConfig;
