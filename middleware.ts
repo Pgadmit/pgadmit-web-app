@@ -2,6 +2,39 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  // Check if this is an OAuth callback with code parameter on root path
+  const { pathname, searchParams } = new URL(request.url)
+  const code = searchParams.get('code')
+  
+  if (pathname === '/' && code) {
+    // Redirect OAuth callback to proper callback route
+    const redirectUrl = new URL('/auth/callback', request.url)
+    redirectUrl.searchParams.set('code', code)
+    // Copy other relevant parameters
+    searchParams.forEach((value, key) => {
+      if (key !== 'code') {
+        redirectUrl.searchParams.set(key, value)
+      }
+    })
+    
+    console.log('Redirecting OAuth callback from root to:', redirectUrl.toString())
+    return NextResponse.redirect(redirectUrl)
+  }
+
+  // Also handle OAuth callback on /auth path
+  if (pathname === '/auth' && code) {
+    const redirectUrl = new URL('/auth/callback', request.url)
+    redirectUrl.searchParams.set('code', code)
+    searchParams.forEach((value, key) => {
+      if (key !== 'code') {
+        redirectUrl.searchParams.set(key, value)
+      }
+    })
+    
+    console.log('Redirecting OAuth callback from /auth to:', redirectUrl.toString())
+    return NextResponse.redirect(redirectUrl)
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   })

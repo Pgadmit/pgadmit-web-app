@@ -6,6 +6,13 @@ export async function GET(request: NextRequest) {
     const code = searchParams.get('code')
     const next = searchParams.get('next') ?? '/dashboard'
 
+    console.log('OAuth callback received:', { 
+        code: !!code, 
+        origin, 
+        next,
+        fullUrl: request.url 
+    })
+
     if (code) {
         const supabase = await createClient()
         const { error } = await supabase.auth.exchangeCodeForSession(code)
@@ -20,5 +27,6 @@ export async function GET(request: NextRequest) {
     }
 
     // Return the user to an error page with instructions
+    console.log('OAuth failed, redirecting to error page')
     return NextResponse.redirect(`${origin}/auth/auth-code-error`)
 }
