@@ -123,7 +123,7 @@ export function BlogSection() {
                       size="sm"
                       variant="ghost"
                       onClick={() => handleReadMore(post.slug)}
-                      className="text-primary hover:text-primary/80 p-0 h-auto font-semibold group"
+                      className="cursor-pointer text-primary hover:text-primary/80 p-0 h-auto font-semibold group"
                     >
                       Read
                       <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
@@ -141,7 +141,7 @@ export function BlogSection() {
               variant="outline"
               size="lg"
               onClick={() => router.push("/blog")}
-              className="bg-background hover:bg-muted border-2 border-primary text-primary hover:text-primary/80 px-8 py-4"
+              className="cursor-pointer bg-background hover:bg-muted border-2 border-primary text-primary hover:text-primary/80 px-8 py-4"
             >
               View All Articles
               <ArrowRight className="ml-2 h-4 w-4" />
@@ -149,7 +149,7 @@ export function BlogSection() {
             <Button
               size="lg"
               onClick={() => router.push("/onboarding")}
-              className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold px-8 py-4"
+              className="cursor-pointer bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold px-8 py-4"
             >
               Get Personalized Guidance
               <ArrowRight className="ml-2 h-4 w-4" />

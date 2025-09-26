@@ -49,7 +49,7 @@ export function CostBreakdownSection() {
       name: "Diversity Grants",
       amount: "Up to $10,000",
       description: "Supporting international student diversity",
-      eligibility: "Nigerian & Indian students",
+      eligibility: "International students",
       icon: BookOpen,
       color: "text-purple-600",
     },
@@ -121,8 +121,7 @@ export function CostBreakdownSection() {
           <div className="text-center mb-8">
             <h3 className="text-2xl md:text-3xl font-bold mb-4 text-foreground">Scholarship Opportunities 🎓</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Don't let finances hold you back! Explore these funding opportunities specifically available for Nigerian
-              and Indian students.
+              Don't let finances hold you back! Explore these funding opportunities specifically available for international students.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -161,7 +160,7 @@ export function CostBreakdownSection() {
             <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Free Financial Planning Kit 📊</h3>
             <p className="text-lg text-muted-foreground mb-6 max-w-2xl mx-auto leading-relaxed">
               Get our comprehensive guide with cost calculators, scholarship databases, budgeting templates, and
-              personalized financial roadmaps for Nigerian and Indian students.
+              personalized financial roadmaps for international students.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button

@@ -46,19 +46,19 @@ export function SocialProofSection() {
       icon: Users,
       number: "10,000+",
       label: "Students Helped",
-      description: "Across Nigeria & India",
+      description: "International students worldwide",
     },
     {
       icon: Award,
       number: "98%",
-      label: "Acceptance Rate",
-      description: "To top universities",
+      label: "Success Rate",
+      description: "University placements",
     },
     {
       icon: Globe,
-      number: "500+",
+      number: "5,000+",
       label: "Universities",
-      description: "US & UK partnerships",
+      description: "Worldwide partnerships",
     },
   ];
 
@@ -76,7 +76,7 @@ export function SocialProofSection() {
           <Button
             onClick={navigateToOnboarding}
             size="lg"
-            className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-bold px-8 py-4"
+            className="cursor-pointer bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-bold px-8 py-4"
           >
             Join Our Community
             <ArrowRight className="ml-2 h-5 w-5" />
@@ -168,7 +168,7 @@ export function SocialProofSection() {
           <Button
             onClick={navigateToOnboarding}
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-4"
+            className="cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-8 py-4"
           >
             Start Your Journey Today
             <ArrowRight className="ml-2 h-5 w-5" />

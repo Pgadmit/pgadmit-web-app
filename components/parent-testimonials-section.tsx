@@ -12,7 +12,7 @@ export function ParentTestimonialsSection() {
     {
       name: "Mrs. Chioma Okafor",
       relation: "Adaora's Mother",
-      location: "Lagos, Nigeria",
+      location: "West Africa",
       image: "/nigerian-mother-headshot.png",
       testimonial:
         "As a parent, I was worried about sending my daughter abroad. PGadmit provided constant updates and support. Now she's thriving at Cambridge, and I have peace of mind.",
@@ -22,7 +22,7 @@ export function ParentTestimonialsSection() {
     {
       name: "Mr. Suresh Patel",
       relation: "Raj's Father",
-      location: "Mumbai, India",
+      location: "South Asia",
       image: "/indian-businessman-father.png",
       testimonial:
         "The transparency in the process was incredible. Every step was explained, costs were clear, and the support team kept us informed. Worth every rupee for our son's future at MIT.",
@@ -32,7 +32,7 @@ export function ParentTestimonialsSection() {
     {
       name: "Mrs. Priya Sharma",
       relation: "Ananya's Mother",
-      location: "Delhi, India",
+      location: "South Asia",
       image: "/indian-mother-doctor-headshot.png",
       testimonial:
         "The financial planning guidance was exceptional. They helped us understand all costs upfront and even suggested scholarship opportunities. Our daughter is now at Oxford!",
@@ -129,7 +129,7 @@ export function ParentTestimonialsSection() {
                 <Star className="h-6 w-6 text-orange-600" />
               </div>
               <h4 className="font-semibold text-foreground mb-2">Proven Results</h4>
-              <p className="text-sm text-muted-foreground">98% acceptance rate to top-tier universities</p>
+                <p className="text-sm text-muted-foreground">Proven track record with top-tier universities</p>
             </div>
           </div>
 

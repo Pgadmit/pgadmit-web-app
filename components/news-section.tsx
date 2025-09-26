@@ -7,7 +7,7 @@ export function NewsSection() {
   const newsStory = {
     title: "US Universities Report 23% Increase in International Student Applications for Fall 2025",
     summary:
-      "New data shows record-breaking interest from Nigerian and Indian students, with STEM programs leading the surge",
+      "New data shows record-breaking interest from international students, with STEM programs leading the surge",
     date: "January 8, 2025",
     source: "International Education Weekly",
     category: "Breaking News",
@@ -17,7 +17,7 @@ export function NewsSection() {
 
       **Record-Breaking Numbers**
       
-      The surge is particularly pronounced among students from Nigeria and India, who represent 35% and 28% of the total increase respectively. Nigerian applications have jumped by 41%, while Indian applications rose by 31%.
+      The surge is particularly pronounced among students from West Africa and South Asia, who represent 35% and 28% of the total increase respectively. West African applications have jumped by 41%, while South Asian applications rose by 31%.
 
       "We're seeing the strongest international interest in American higher education in over a decade," said Dr. Maria Rodriguez, IIE President. "Students are recognizing the value of a US education, especially in STEM fields where job prospects remain exceptionally strong."
 
@@ -41,7 +41,7 @@ export function NewsSection() {
       
       Top universities are expanding their international recruitment efforts. Stanford University increased its international student quota by 15%, while MIT launched new scholarship programs specifically for African and South Asian students.
 
-      "The talent pool from Nigeria and India is exceptional," noted Dr. James Chen, MIT Admissions Director. "These students bring diverse perspectives and strong technical skills that enrich our campus community."
+      "The talent pool from West Africa and South Asia is exceptional," noted Dr. James Chen, MIT Admissions Director. "These students bring diverse perspectives and strong technical skills that enrich our campus community."
 
       **Economic Impact**
       

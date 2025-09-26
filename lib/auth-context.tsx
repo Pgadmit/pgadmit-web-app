@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .insert({
             id: supabaseUser.id,
             name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-            country: supabaseUser.user_metadata?.country || 'India',
+            country: supabaseUser.user_metadata?.country || 'South Asia',
             avatar_url: supabaseUser.user_metadata?.avatar_url,
             picture: supabaseUser.user_metadata?.picture,
           })
@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           id: supabaseUser.id,
           email: supabaseUser.email!,
           name: newProfile?.name || supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
-          country: newProfile?.country || 'India',
+          country: newProfile?.country || 'South Asia',
           fieldOfStudy: newProfile?.field_of_study,
           budget: newProfile?.budget,
           profileComplete: !!(newProfile?.field_of_study && newProfile?.budget),
@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: supabaseUser.id,
         email: supabaseUser.email!,
         name: profile?.name || supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
-        country: profile?.country || 'India',
+        country: profile?.country || 'South Asia',
         fieldOfStudy: profile?.field_of_study,
         budget: profile?.budget,
         profileComplete: !!(profile?.field_of_study && profile?.budget),
@@ -167,7 +167,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         id: supabaseUser.id,
         email: supabaseUser.email!,
         name: supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
-        country: 'India',
+        country: 'South Asia',
         profileComplete: false,
         onboardingComplete: false,
         profileData: {

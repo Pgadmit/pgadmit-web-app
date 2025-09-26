@@ -12,7 +12,7 @@ export function StudentStoriesSection() {
     {
       name: "Adaora Okafor",
       age: 20,
-      country: "Nigeria",
+      country: "West Africa",
       university: "University of Cambridge",
       course: "Computer Science",
       image: "/nigerian-student-cambridge.png",
@@ -25,7 +25,7 @@ export function StudentStoriesSection() {
     {
       name: "Raj Patel",
       age: 19,
-      country: "India",
+      country: "South Asia",
       university: "MIT",
       course: "Mechanical Engineering",
       image: "/mit-indian-student.png",
@@ -36,56 +36,17 @@ export function StudentStoriesSection() {
       achievement: "Dean's List",
     },
     {
-      name: "Kemi Adebayo",
-      age: 21,
-      country: "Nigeria",
-      university: "Stanford University",
-      course: "Business Administration",
-      image: "/nigerian-student-stanford.png",
-      story:
-        "From application to visa, PGadmit supported me every step. The community was amazing - I connected with other Nigerian students before I even arrived. Now I'm living my American dream!",
-      rating: 5,
-      year: "2023",
-      achievement: "Student Body President",
-    },
-    {
       name: "Arjun Sharma",
       age: 22,
-      country: "India",
+      country: "South Asia",
       university: "Oxford University",
       course: "Medicine",
       image: "/indian-student-portrait.png",
       story:
         "The scholarship guidance was game-changing. PGadmit helped me secure a full scholarship to Oxford. My parents are so proud, and I'm grateful for this life-changing opportunity.",
       rating: 5,
-      year: "2023",
-      achievement: "Rhodes Scholar",
-    },
-    {
-      name: "Funmi Ogundimu",
-      age: 20,
-      country: "Nigeria",
-      university: "Harvard University",
-      course: "International Relations",
-      image: "/nigerian-student-portrait.png",
-      story:
-        "The anxiety support was incredible. Moving from Lagos to Boston felt overwhelming, but the PGadmit community and AI counselor helped me settle in. Harvard feels like home now!",
-      rating: 5,
       year: "2024",
-      achievement: "Model UN President",
-    },
-    {
-      name: "Vikram Reddy",
-      age: 21,
-      country: "India",
-      university: "University College London",
-      course: "Data Science",
-      image: "/indian-student-portrait.png",
-      story:
-        "The tech industry connections through PGadmit were amazing. I landed internships at top London tech companies before graduation. The network is invaluable!",
-      rating: 5,
-      year: "2023",
-      achievement: "Google Intern",
+      achievement: "Rhodes Scholar",
     },
   ];
 
@@ -179,7 +140,7 @@ export function StudentStoriesSection() {
               <Button
                 size="lg"
                 onClick={() => router.push("/onboarding")}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4"
+                className="cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4"
               >
                 Find My Universities
                 <ArrowRight className="ml-2 h-4 w-4" />
@@ -188,7 +149,7 @@ export function StudentStoriesSection() {
                 size="lg"
                 variant="outline"
                 onClick={() => router.push("/onboarding")}
-                className="border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold px-8 py-4"
+                className="cursor-pointer border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground font-semibold px-8 py-4"
               >
                 Start Free Today
               </Button>

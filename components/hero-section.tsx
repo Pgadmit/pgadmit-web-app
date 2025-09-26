@@ -46,19 +46,10 @@ export function HeroSection() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
           <Button
-            size="lg"
-            onClick={navigateToOnboarding}
-            className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-4 text-lg font-bold group transition-all duration-300 transform hover:scale-105 shadow-2xl"
-          >
-            Get Started Now
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-
-          <Button
             variant="outline"
             size="lg"
             onClick={scrollToCampusTour}
-            className="w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-foreground px-8 py-4 text-lg font-semibold group transition-all duration-300 bg-white/10 backdrop-blur-sm"
+            className="cursor-pointer w-full sm:w-auto border-2 border-white text-white hover:bg-white hover:text-foreground px-8 py-4 text-lg font-semibold group transition-all duration-300 bg-white/10 backdrop-blur-sm"
           >
             <Play className="mr-2 h-5 w-5" />
             Start Your Journey
@@ -68,7 +59,7 @@ export function HeroSection() {
         <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 text-sm sm:text-base">
           <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full">
             <span>🎓</span>
-            <span className="font-semibold">500+ Universities</span>
+            <span className="font-semibold">5,000+ Universities</span>
           </div>
           <div className="flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full">
             <span>🤖</span>
