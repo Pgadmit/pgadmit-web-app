@@ -112,6 +112,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-primary-blue: #2563eb;
+  --color-primary-blue-foreground: #ffffff;
 
   /* Added custom font families for PGadmit */
   --font-sans: "Open Sans", system-ui, sans-serif;
@@ -135,5 +137,11 @@
   h6 {
     font-family: var(--font-heading);
     font-weight: 900;
+  }
+}
+
+@layer utilities {
+  .blur-xs {
+    filter: blur(2px);
   }
 }
