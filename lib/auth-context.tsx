@@ -2,6 +2,8 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
+import { createBrowserClient } from "@supabase/ssr"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export interface User {
   id: string
@@ -42,64 +44,203 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
+  )
 
   useEffect(() => {
-    // Check for existing session on mount
-    const savedUser = localStorage.getItem("pgadmit_user")
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        await handleSupabaseUser(session.user)
+      } else {
+        // Check if we have user data in localStorage but no valid session
+        const savedUser = localStorage.getItem("pgadmit_user")
+        if (savedUser) {
+          try {
+            const userData = JSON.parse(savedUser)
+            setUser(userData)
+          } catch (error) {
+            localStorage.removeItem("pgadmit_user")
+          }
+        }
+      }
+      setLoading(false)
     }
-    setLoading(false)
+
+    getInitialSession()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+
+        if (session?.user) {
+          setLoading(true)
+          await handleSupabaseUser(session.user)
+          setLoading(false)
+        } else {
+          // Clear user data on sign out or token expiration
+          if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+            setUser(null)
+            localStorage.removeItem("pgadmit_user")
+          }
+          setLoading(false)
+        }
+      }
+    )
+
+    return () => subscription.unsubscribe()
   }, [])
+
+  const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
+    console.log('handleSupabaseUser called with:', supabaseUser)
+    try {
+      // Get user profile from Supabase
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single()
+
+      // If profile doesn't exist, create it
+      if (error && error.code === 'PGRST116') {
+        const { data: newProfile } = await supabase
+          .from('profiles')
+          .insert({
+            id: supabaseUser.id,
+            name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
+            country: supabaseUser.user_metadata?.country || 'India',
+            avatar_url: supabaseUser.user_metadata?.avatar_url,
+            picture: supabaseUser.user_metadata?.picture,
+          })
+          .select()
+          .single()
+
+        const userData: User = {
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          name: newProfile?.name || supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
+          country: newProfile?.country || 'India',
+          fieldOfStudy: newProfile?.field_of_study,
+          budget: newProfile?.budget,
+          profileComplete: !!(newProfile?.field_of_study && newProfile?.budget),
+          onboardingComplete: newProfile?.onboarding_complete || false,
+          profileData: {
+            ...newProfile,
+            avatar_url: supabaseUser.user_metadata?.avatar_url,
+            picture: supabaseUser.user_metadata?.picture,
+          },
+          createdAt: supabaseUser.created_at,
+        }
+
+        setUser(userData)
+        localStorage.setItem("pgadmit_user", JSON.stringify(userData))
+        return
+      }
+
+      // Profile exists, use it
+      const userData: User = {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: profile?.name || supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
+        country: profile?.country || 'India',
+        fieldOfStudy: profile?.field_of_study,
+        budget: profile?.budget,
+        profileComplete: !!(profile?.field_of_study && profile?.budget),
+        onboardingComplete: profile?.onboarding_complete || false,
+        profileData: {
+          ...profile,
+          avatar_url: supabaseUser.user_metadata?.avatar_url,
+          picture: supabaseUser.user_metadata?.picture,
+        },
+        createdAt: supabaseUser.created_at,
+      }
+
+      setUser(userData)
+      localStorage.setItem("pgadmit_user", JSON.stringify(userData))
+    } catch (error) {
+      console.error('Error handling Supabase user:', error)
+      // Fallback to basic user data
+      const userData: User = {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
+        country: 'India',
+        profileComplete: false,
+        onboardingComplete: false,
+        profileData: {
+          avatar_url: supabaseUser.user_metadata?.avatar_url,
+          picture: supabaseUser.user_metadata?.picture,
+        },
+        createdAt: supabaseUser.created_at,
+      }
+      setUser(userData)
+      localStorage.setItem("pgadmit_user", JSON.stringify(userData))
+    }
+  }
 
   const login = async (email: string, password: string) => {
     setLoading(true)
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
-      // Mock user data - in real app this would come from API
-      const mockUser: User = {
-        id: "1",
-        email,
-        name: email.split("@")[0],
-        country: "Nigeria",
-        profileComplete: false,
-        onboardingComplete: false, // Initialize onboarding status
-        createdAt: new Date().toISOString(),
+      console.log('Supabase login response:', { data, error })
+
+      if (error) {
+        console.error('Login error:', error)
+        throw new Error(error.message || "Login failed")
       }
 
-      setUser(mockUser)
-      localStorage.setItem("pgadmit_user", JSON.stringify(mockUser))
+      if (data.user) {
+        console.log('Login successful, handling user data...')
+        await handleSupabaseUser(data.user)
+      }
     } catch (error) {
-      throw new Error("Login failed")
+      console.error('Login error:', error)
+      throw error
     } finally {
       setLoading(false)
     }
   }
 
   const signup = async (userData: SignupData) => {
+    console.log('Starting signup with data:', userData)
     setLoading(true)
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      const newUser: User = {
-        id: Date.now().toString(),
+      console.log('Calling supabase.auth.signUp...')
+      const { data, error } = await supabase.auth.signUp({
         email: userData.email,
-        name: userData.name,
-        country: userData.country,
-        fieldOfStudy: userData.fieldOfStudy,
-        budget: userData.budget,
-        profileComplete: !!(userData.fieldOfStudy && userData.budget),
-        onboardingComplete: false, // New users need onboarding
-        createdAt: new Date().toISOString(),
+        password: userData.password,
+        options: {
+          data: {
+            name: userData.name,
+            country: userData.country,
+            field_of_study: userData.fieldOfStudy,
+            budget: userData.budget,
+          }
+        }
+      })
+
+      console.log('Supabase signup response:', { data, error })
+
+      if (error) {
+        console.error('Signup error:', error)
+        throw new Error(error.message || "Signup failed")
       }
 
-      setUser(newUser)
-      localStorage.setItem("pgadmit_user", JSON.stringify(newUser))
+      // Check if user needs email confirmation
+      if (data.user && !data.session) {
+        throw new Error("Please check your email to confirm your account")
+      }
+
+      if (data.user && data.session) {
+        await handleSupabaseUser(data.user)
+      }
     } catch (error) {
-      throw new Error("Signup failed")
+      console.error('Signup error:', error)
+      throw error
     } finally {
       setLoading(false)
     }
@@ -108,22 +249,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = async () => {
     setLoading(true)
     try {
-      // Simulate Google OAuth flow
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Get the correct base URL for current environment
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+        (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
+      
+      console.log('OAuth redirect URL:', `${baseUrl}/auth/callback`)
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${baseUrl}/auth/callback`
+        }
+      })
 
-      // Mock Google user data - in real app this would come from Google OAuth
-      const googleUser: User = {
-        id: "google_" + Date.now().toString(),
-        email: "user@gmail.com", // This would come from Google
-        name: "Google User", // This would come from Google
-        country: "Nigeria", // Default, user can update later
-        profileComplete: false,
-        onboardingComplete: false,
-        createdAt: new Date().toISOString(),
-      }
-
-      setUser(googleUser)
-      localStorage.setItem("pgadmit_user", JSON.stringify(googleUser))
+      if (error) throw error
+      // User will be handled by onAuthStateChange
     } catch (error) {
       throw new Error("Google login failed")
     } finally {
@@ -132,34 +272,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signupWithGoogle = async () => {
+    // For OAuth, signup and login are the same flow
+    return loginWithGoogle()
+  }
+
+  const logout = async () => {
     setLoading(true)
     try {
-      // Simulate Google OAuth flow
-      await new Promise((resolve) => setTimeout(resolve, 1500))
-
-      // Mock Google user data - in real app this would come from Google OAuth
-      const googleUser: User = {
-        id: "google_" + Date.now().toString(),
-        email: "newuser@gmail.com", // This would come from Google
-        name: "New Google User", // This would come from Google
-        country: "Nigeria", // Default, user can update later
-        profileComplete: false,
-        onboardingComplete: false, // New Google users also need onboarding
-        createdAt: new Date().toISOString(),
+      const { error } = await supabase.auth.signOut()
+      if (error) {
+        console.error('Logout error:', error)
+        throw error
       }
 
-      setUser(googleUser)
-      localStorage.setItem("pgadmit_user", JSON.stringify(googleUser))
+      setUser(null)
+      localStorage.removeItem("pgadmit_user")
     } catch (error) {
-      throw new Error("Google signup failed")
+      console.error('Logout error:', error)
+      // Even if logout fails, clear local data
+      setUser(null)
+      localStorage.removeItem("pgadmit_user")
     } finally {
       setLoading(false)
     }
-  }
-
-  const logout = () => {
-    setUser(null)
-    localStorage.removeItem("pgadmit_user")
   }
 
   const updateProfile = async (data: Partial<User>) => {
