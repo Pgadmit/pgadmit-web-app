@@ -41,10 +41,9 @@ export const DESTINATION_OPTIONS = [
 ] as const;
 
 export const COUNTRY_OPTIONS = [
-  { v: "india", l: "India" },
-  { v: "nigeria", l: "Nigeria" },
-  { v: "ghana", l: "Ghana" },
-  { v: "kenya", l: "Kenya" },
+  { v: "south-asia", l: "South Asia" },
+  { v: "west-africa", l: "West Africa" },
+  { v: "east-africa", l: "East Africa" },
   { v: "other", l: "Other" },
 ] as const;
 

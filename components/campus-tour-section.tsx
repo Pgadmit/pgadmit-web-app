@@ -64,7 +64,7 @@ export function CampusTourSection() {
                     <Button
                       size="lg"
                       onClick={handleWatchTour}
-                      className="bg-accent hover:bg-accent/90 text-accent-foreground rounded-full p-6 md:p-8 group transition-all duration-300 transform hover:scale-110 shadow-2xl"
+                      className="cursor-pointer bg-accent hover:bg-accent/90 text-accent-foreground rounded-full p-6 md:p-8 group transition-all duration-300 transform hover:scale-110 shadow-2xl"
                     >
                       <Play
                         className="h-8 w-8 md:h-10 md:w-10 ml-1 group-hover:scale-110 transition-transform"
@@ -127,14 +127,14 @@ export function CampusTourSection() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button
                     onClick={handleWatchTour}
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3"
+                    className="cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3"
                   >
                     <Play className="mr-2 h-4 w-4" />
                     {isPlaying ? "Restart Tour" : "Watch Now"}
                   </Button>
                   <Button
                     onClick={navigateToOnboarding}
-                    className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-semibold px-6 py-3"
+                    className="cursor-pointer bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 text-accent-foreground font-semibold px-6 py-3"
                   >
                     Start Your Journey
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -161,7 +161,7 @@ export function CampusTourSection() {
                     <Button
                       size="sm"
                       onClick={navigateToOnboarding}
-                      className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+                      className="cursor-pointer w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
                     >
                       Get Started Now 📋
                     </Button>
@@ -170,7 +170,7 @@ export function CampusTourSection() {
                   <Button
                     size="sm"
                     onClick={navigateToOnboarding}
-                    className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold"
+                    className="cursor-pointer w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold"
                   >
                     Find My Perfect Match
                     <ArrowRight className="ml-2 h-3 w-3" />

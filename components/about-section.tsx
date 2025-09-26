@@ -10,7 +10,7 @@ export function AboutSection() {
     {
       icon: GraduationCap,
       title: "Broad School List",
-      description: "500+ universities across US and UK",
+      description: "5,000+ universities worldwide",
     },
     {
       icon: Globe,

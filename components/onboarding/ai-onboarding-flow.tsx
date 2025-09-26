@@ -69,7 +69,7 @@ const onboardingSteps: OnboardingStep[] = [
         name: "country",
         label: "Where are you from?",
         type: "select",
-        options: ["Nigeria", "India", "Ghana", "Kenya", "Other"],
+        options: ["West Africa", "South Asia", "East Africa", "Other"],
         required: true,
       },
       {

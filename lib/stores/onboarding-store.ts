@@ -44,7 +44,7 @@ const initialState = {
     fieldOfStudy: "",
     destination: "",
     knowsUniversities: "",
-    country: "india", // Default to India
+    country: "south-asia", // Default to South Asia
     gpa: "",
     intake: "",
     budget: "",

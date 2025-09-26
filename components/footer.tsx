@@ -131,8 +131,8 @@ export function Footer() {
 
         <div className="border-t border-background/20 mt-8 pt-8 text-center text-background/60">
           <p>
-            &copy; 2024 PGadmit. All rights reserved. | Privacy Policy | Terms
-            of Service
+          © {new Date().getFullYear()} PGAdmit. All rights reserved.
+          | Privacy Policy | Terms of Service
           </p>
         </div>
       </div>
