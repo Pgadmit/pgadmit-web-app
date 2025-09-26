@@ -11,8 +11,11 @@ export async function GET(request: NextRequest) {
         const { error } = await supabase.auth.exchangeCodeForSession(code)
 
         if (!error) {
-            // Always redirect to dashboard after successful OAuth
-            return NextResponse.redirect(`${origin}/dashboard`)
+            console.log('OAuth successful, redirecting to:', next)
+            // Use the same origin for redirect
+            return NextResponse.redirect(`${origin}${next}`)
+        } else {
+            console.error('OAuth exchange error:', error)
         }
     }
 
