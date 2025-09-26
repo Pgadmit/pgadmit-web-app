@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export function WelcomeSection() {
   const router = useRouter();
+  const { user } = useAuth();
 
   const handleAIChat = () => {
     router.push("/ai-chat");
@@ -17,7 +19,7 @@ export function WelcomeSection() {
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
         <div className="mb-4 lg:mb-0">
           <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
-            Welcome back, Alex!
+            Welcome back, {user?.name || 'Student'}!
           </h2>
           <p className="text-sm md:text-base text-gray-600 mb-4">
             Continue your journey to studying abroad. You have 3 upcoming
@@ -25,10 +27,22 @@ export function WelcomeSection() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="bg-white text-xs">
-              <Target className="w-3 h-3 mr-1" />
-              Complete Profile Setup
-            </Badge>
+            {!user?.profileComplete && (
+              <Badge variant="outline" className="bg-white text-xs">
+                <Target className="w-3 h-3 mr-1" />
+                Complete Profile Setup
+              </Badge>
+            )}
+            {user?.country && (
+              <Badge variant="outline" className="bg-white text-xs">
+                🌍 {user.country}
+              </Badge>
+            )}
+            {user?.fieldOfStudy && (
+              <Badge variant="outline" className="bg-white text-xs">
+                🎓 {user.fieldOfStudy}
+              </Badge>
+            )}
           </div>
         </div>
 

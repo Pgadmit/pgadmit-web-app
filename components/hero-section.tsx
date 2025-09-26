@@ -39,7 +39,7 @@ export function HeroSection() {
         </h1>
 
         <p className="text-lg sm:text-xl md:text-2xl mb-8 max-w-3xl mx-auto leading-relaxed opacity-95 font-medium">
-          Skip the stress. Get matched with top US & UK universities that actually want YOU.
+          Skip the stress. top universities worldwide that actually want YOU.
           <br className="hidden sm:block" />
           <span className="font-bold text-accent">AI-powered. Student-approved.</span>
         </p>

@@ -1,0 +1,26 @@
+{
+  "name": "PGadmit - Study Abroad Made Simple",
+  "short_name": "PGadmit",
+  "description": "Your journey to the best universities in the US and UK starts here. AI-powered guidance for Nigerian and Indian students.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}

@@ -19,6 +19,14 @@ function AuthPageContent() {
     budget?: string;
   }>({});
 
+  const handleLoginSuccess = () => {
+    router.push("/dashboard");
+  };
+
+  const handleSignupSuccess = () => {
+    router.push("/onboarding");
+  };
+
   useEffect(() => {
     // Get initial data from URL parameters
     const country = searchParams.get("country");
@@ -92,7 +100,7 @@ function AuthPageContent() {
                 value="login"
                 className="mt-4 flex-1 flex flex-col data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-right-4"
               >
-                <LoginForm onSuccess={() => router.push("/dashboard")} />
+                <LoginForm onSuccess={handleLoginSuccess} />
               </TabsContent>
 
               <TabsContent
@@ -100,7 +108,7 @@ function AuthPageContent() {
                 className="mt-4 flex-1 flex flex-col data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-right-4"
               >
                 <SignupForm
-                  onSuccess={() => router.push("/dashboard")}
+                  onSuccess={handleSignupSuccess}
                   initialData={initialData}
                 />
               </TabsContent>

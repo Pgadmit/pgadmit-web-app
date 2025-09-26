@@ -2,6 +2,7 @@
 
 import type React from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,13 +18,12 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, loading } = useAuth();
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
 
     try {
       await login(email, password);
@@ -31,35 +31,34 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         title: "Welcome back!",
         description: "You've successfully logged in.",
       });
-      onSuccess?.();
+      
+      // Call onSuccess callback if provided, otherwise redirect to dashboard
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/dashboard");
+      }
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Please check your credentials and try again.";
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again.",
+        description: errorMessage,
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    setIsLoading(true);
     try {
       await loginWithGoogle();
-      toast({
-        title: "Welcome back!",
-        description: "You've successfully logged in with Google.",
-      });
-      onSuccess?.();
+      // Note: Google login redirects to /auth/callback which handles the redirect
+      // No need for additional logic here
     } catch (error) {
       toast({
         title: "Google login failed",
         description: "Please try again or use email login.",
         variant: "destructive",
       });
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -71,9 +70,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         variant="outline"
         className="w-full bg-transparent transition-all duration-300 ease-in-out hover:bg-accent/10 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
         onClick={handleGoogleLogin}
-        disabled={isLoading}
+        disabled={loading}
       >
-        {isLoading ? (
+        {loading ? (
           <Loader2 className="mr-2 h-4 w-4 animate-spin cursor-pointer" />
         ) : (
           <svg className="mr-2 h-4 w-4 cursor-pointer" viewBox="0 0 24 24">
@@ -169,9 +168,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
           <Button
             type="submit"
             className="w-full transition-all duration-300 ease-in-out hover:scale-[1.02] active:scale-[0.98] disabled:scale-100 cursor-pointer"
-            disabled={isLoading}
+            disabled={loading}
           >
-            {isLoading && (
+            {loading && (
               <Loader2 className="mr-2 h-4 w-4 animate-spin cursor-pointer" />
             )}
             Sign In

@@ -3,7 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   env: {
-    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL || 
+      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000'),
     PORT: process.env.PORT,
   },
 
@@ -183,7 +184,15 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ["@/components", "@/lib", "@/hooks"],
   },
 
-  // Docker optimization
+  // Windows compatibility fixes
+  webpack: (config, { isServer }) => {
+    if (process.platform === 'win32') {
+      config.resolve.symlinks = false;
+    }
+    return config;
+  },
+
+  // Docker optimization - disabled for Windows compatibility
   output: "standalone",
 };
 
