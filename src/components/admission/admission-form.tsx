@@ -30,6 +30,7 @@ type AdmissionFormProps = {
   form: UseFormReturn<any>;
   onSubmit: (values: any) => void;
   isPending: boolean;
+  isRateLimited?: boolean;
 };
 
 const countryOptions = countries.map((c) => ({
@@ -37,7 +38,7 @@ const countryOptions = countries.map((c) => ({
   label: c.name.common,
 }));
 
-export default function AdmissionForm({ form, onSubmit, isPending }: AdmissionFormProps) {
+export default function AdmissionForm({ form, onSubmit, isPending, isRateLimited = false }: AdmissionFormProps) {
   const [selectedCountry, setSelectedCountry] = useState('');
 
   const allGradingScales = [
@@ -291,9 +292,9 @@ export default function AdmissionForm({ form, onSubmit, isPending }: AdmissionFo
           className="bg-primary-blue hover:bg-primary-blue/80"
           type="submit"
           size="lg"
-          disabled={isPending}
+          disabled={isPending || isRateLimited}
         >
-          {isPending ? 'Submitting...' : 'Submit'}
+          {isPending ? 'Submitting...' : 'Get AI Suggestions'}
         </Button>
         <FormLabel className="text-xs text-muted-foreground mb-2">
           By submitting this form, you agree that your data will be stored and processed.
