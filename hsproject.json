@@ -1,0 +1,13 @@
+{
+    "name": "pgadmit-web-app",
+    "srcDir": "src",
+    "version": "1.0.0",
+    "description": "PGAdmit Web Application - University Admission Platform",
+    "hubspot": {
+        "projectType": "nextjs",
+        "framework": "next",
+        "buildCommand": "pnpm run build",
+        "devCommand": "pnpm run dev",
+        "outputDirectory": ".next"
+    }
+}
