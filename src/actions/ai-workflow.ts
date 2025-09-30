@@ -36,7 +36,6 @@ Student:
   });
 
   const content = completion.choices[0].message?.content ?? '[]';
-  console.log('AI raw response content:', content);
 
   let suggestions: string[] = [];
 
@@ -56,11 +55,11 @@ Student:
 }
 
 export async function sendToN8nWebhook(payload: any) {
-  console.log('=== N8N WEBHOOK DEBUG ===');
-  console.log('Webhook URL:', process.env.N8N_WEBHOOK_URL);
-  console.log('Payload being sent:', JSON.stringify(payload, null, 2));
-  console.log('========================');
-  
+  // console.log('=== N8N WEBHOOK DEBUG ===');
+  // console.log('Webhook URL:', process.env.N8N_WEBHOOK_URL);
+  // console.log('Payload being sent:', JSON.stringify(payload, null, 2));
+  // console.log('========================');
+
   try {
     const res = await fetch(process.env.N8N_WEBHOOK_URL!, {
       method: 'POST',
@@ -74,7 +73,7 @@ export async function sendToN8nWebhook(payload: any) {
     }
 
     const data = await res.json().catch(() => null);
-    console.log('n8n response:', data ?? 'no JSON response');
+    // console.log('n8n response:', data ?? 'no JSON response');
     return data;
   } catch (err) {
     console.error('Failed to send data to n8n webhook:', err);

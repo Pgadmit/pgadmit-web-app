@@ -95,7 +95,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
-    console.log('handleSupabaseUser called with:', supabaseUser)
     try {
       // Get user profile from Supabase
       const { data: profile, error } = await supabase
@@ -186,7 +185,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
-      console.log('Supabase login response:', { data, error })
 
       if (error) {
         console.error('Login error:', error)
@@ -194,7 +192,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (data.user) {
-        console.log('Login successful, handling user data...')
         await handleSupabaseUser(data.user)
       }
     } catch (error) {
@@ -206,10 +203,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signup = async (userData: SignupData) => {
-    console.log('Starting signup with data:', userData)
     setLoading(true)
     try {
-      console.log('Calling supabase.auth.signUp...')
       const { data, error } = await supabase.auth.signUp({
         email: userData.email,
         password: userData.password,
@@ -223,7 +218,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       })
 
-      console.log('Supabase signup response:', { data, error })
 
       if (error) {
         console.error('Signup error:', error)
@@ -250,11 +244,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true)
     try {
       // Get the correct base URL for current environment
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
         (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
-      
-      console.log('OAuth redirect URL:', `${baseUrl}/auth/callback`)
-      
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {

@@ -13,11 +13,9 @@ export async function GET(
     const searchParams = request.nextUrl.searchParams;
     const queryString = searchParams.toString();
 
-    const strapiUrl = `${STRAPI_URL}/api/${path}${
-      queryString ? `?${queryString}` : ""
-    }`;
+    const strapiUrl = `${STRAPI_URL}/api/${path}${queryString ? `?${queryString}` : ""
+      }`;
 
-    console.log("Fallback API proxying to:", strapiUrl);
 
     const response = await fetch(strapiUrl, {
       headers: {
