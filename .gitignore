@@ -106,3 +106,8 @@ jspm_packages/
 
 # TernJS port file
 .tern-port
+
+# HubSpot config files
+hubspot.config.yml
+.hubspot/
+.hubspotignore

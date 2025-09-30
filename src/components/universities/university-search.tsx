@@ -17,7 +17,6 @@ export function UniversitySearch() {
   })
 
   const handleSearch = () => {
-    console.log("Searching for:", searchQuery, filters)
   }
 
   return (

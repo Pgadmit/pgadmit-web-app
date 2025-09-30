@@ -17,7 +17,6 @@ export async function middleware(request: NextRequest) {
       }
     })
     
-    console.log('Redirecting OAuth callback from root to:', redirectUrl.toString())
     return NextResponse.redirect(redirectUrl)
   }
 
@@ -31,7 +30,6 @@ export async function middleware(request: NextRequest) {
       }
     })
     
-    console.log('Redirecting OAuth callback from /auth to:', redirectUrl.toString())
     return NextResponse.redirect(redirectUrl)
   }
 
