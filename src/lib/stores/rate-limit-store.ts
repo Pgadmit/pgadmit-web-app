@@ -16,7 +16,6 @@ interface RateLimitState {
     canMakeOpenAIRequest: () => boolean;
     canMakeN8nRequest: () => boolean;
     getRemainingTime: (type: 'openai' | 'n8n') => number;
-    syncWithServer: () => Promise<void>;
 }
 
 const OPENAI_COOLDOWN = 5 * 60 * 1000; // 5 minutes
@@ -100,35 +99,6 @@ export const useRateLimitStore = create<RateLimitState>()(
                 return 0;
             },
 
-            // Sync with server rate limits
-            syncWithServer: async () => {
-                try {
-                    const response = await fetch('/api/rate-limit/check');
-                    if (response.ok) {
-                        const data = await response.json();
-                        const { openai, n8n } = data.rateLimits;
-
-                        // Update local state with server data
-                        if (openai.isLimited && openai.remainingTime > 0) {
-                            set({
-                                isOpenAILimited: true,
-                                remainingOpenAITime: openai.remainingTime,
-                                lastOpenAIRequest: Date.now() - (OPENAI_COOLDOWN - openai.remainingTime)
-                            });
-                        }
-
-                        if (n8n.isLimited && n8n.remainingTime > 0) {
-                            set({
-                                isN8nLimited: true,
-                                remainingN8nTime: n8n.remainingTime,
-                                lastN8nRequest: Date.now() - (N8N_DEBOUNCE - n8n.remainingTime)
-                            });
-                        }
-                    }
-                } catch (error) {
-                    console.warn('Failed to sync with server rate limits:', error);
-                }
-            },
         }),
         {
             name: 'rate-limit-storage',
