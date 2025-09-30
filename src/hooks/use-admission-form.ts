@@ -13,8 +13,7 @@ export function useAdmissionForm() {
         isOpenAILimited,
         canMakeOpenAIRequest,
         setLastOpenAIRequest,
-        checkRateLimits,
-        syncWithServer
+        checkRateLimits
     } = useRateLimitStore();
 
     const [isPending, startTransition] = useTransition();
@@ -31,21 +30,15 @@ export function useAdmissionForm() {
     // Check rate limits on component mount and set up interval
     useEffect(() => {
         checkRateLimits();
-        syncWithServer();
 
         const interval = setInterval(() => {
             checkRateLimits();
         }, 1000);
 
-        const serverSyncInterval = setInterval(() => {
-            syncWithServer();
-        }, 30000);
-
         return () => {
             clearInterval(interval);
-            clearInterval(serverSyncInterval);
         };
-    }, [checkRateLimits, syncWithServer]);
+    }, [checkRateLimits]);
 
     const onSubmit = (values: AdmissionFormSchemaValues) => {
         if (!canMakeOpenAIRequest()) {
@@ -78,7 +71,6 @@ export function useAdmissionForm() {
                     }
                 } catch (error: any) {
                     if (error.message.includes('Rate limit exceeded')) {
-                        syncWithServer();
                         throw error;
                     }
                     console.warn('HubSpot API error:', error);
