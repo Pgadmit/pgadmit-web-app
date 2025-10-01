@@ -69,20 +69,20 @@ export default function ApplicationsPage() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-6 max-w-6xl">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-4">
+      <div className="min-h-screen bg-background overflow-x-hidden">
+        <div className="container mx-auto px-4 py-6 max-w-6xl w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div className="flex items-center gap-4 min-w-0">
               <Button variant="outline" onClick={() => router.back()}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
-              <div>
-                <h1 className="text-2xl font-bold">My Applications</h1>
-                <p className="text-muted-foreground">Welcome back, {user.name}!</p>
+              <div className="min-w-0">
+                <h1 className="text-2xl font-bold truncate">My Applications</h1>
+                <p className="text-muted-foreground truncate">Welcome back, {user.name}!</p>
               </div>
             </div>
-            <Button>
+            <Button className="shrink-0">
               <FileText className="h-4 w-4 mr-2" />
               New Application
             </Button>
@@ -90,12 +90,12 @@ export default function ApplicationsPage() {
 
           <div className="grid gap-6">
             {applications.map((app) => (
-              <Card key={app.id} className="hover:shadow-md transition-shadow">
+              <Card key={app.id} className="hover:shadow-md transition-shadow overflow-hidden">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="flex items-center gap-2 min-w-0 flex-1">
                       {getStatusIcon(app.status)}
-                      {app.university}
+                      <span className="truncate">{app.university}</span>
                     </CardTitle>
                     <Badge className={getStatusColor(app.status)}>{app.status.replace("-", " ")}</Badge>
                   </div>
@@ -115,11 +115,15 @@ export default function ApplicationsPage() {
                       <p>{app.progress}% Complete</p>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
+                  <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" size="sm" className="shrink-0">
                       View Details
                     </Button>
-                    {app.status !== "submitted" && <Button size="sm">Continue Application</Button>}
+                    {app.status !== "submitted" && (
+                      <Button size="sm" className="shrink-0">
+                        Continue Application
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

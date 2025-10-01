@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { createBrowserClient } from "@supabase/ssr"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
+import { fetchUserProfile, clearCachedProfile, getCachedProfile } from "./profile-utils"
 
 export interface User {
   id: string
@@ -52,22 +53,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Get initial session
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session?.user) {
-        await handleSupabaseUser(session.user)
-      } else {
-        // Check if we have user data in localStorage but no valid session
-        const savedUser = localStorage.getItem("pgadmit_user")
-        if (savedUser) {
-          try {
-            const userData = JSON.parse(savedUser)
-            setUser(userData)
-          } catch (error) {
-            localStorage.removeItem("pgadmit_user")
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        if (session?.user) {
+          await handleSupabaseUser(session.user)
+        } else {
+          const cachedProfile = getCachedProfile()
+          if (cachedProfile) {
+            setUser(cachedProfile)
+          } else {
+            // Check if we have user data in localStorage but no valid session
+            const savedUser = localStorage.getItem("pgadmit_user")
+            if (savedUser) {
+              try {
+                const userData = JSON.parse(savedUser)
+                setUser(userData)
+              } catch (error) {
+                console.warn("Failed to parse saved user data:", error)
+                localStorage.removeItem("pgadmit_user")
+              }
+            }
           }
         }
+      } catch (error) {
+        console.error("Error getting initial session:", error)
+        // Try to use cached data as fallback
+        const cachedProfile = getCachedProfile()
+        if (cachedProfile) {
+          setUser(cachedProfile)
+        }
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     getInitialSession()
@@ -75,16 +92,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        console.log("Auth state changed:", event, session?.user?.id)
 
         if (session?.user) {
           setLoading(true)
-          await handleSupabaseUser(session.user)
-          setLoading(false)
+          try {
+            await handleSupabaseUser(session.user)
+          } catch (error) {
+            console.error("Error handling auth state change:", error)
+            // Try to use cached data as fallback
+            const cachedProfile = getCachedProfile()
+            if (cachedProfile) {
+              setUser(cachedProfile)
+            }
+          } finally {
+            setLoading(false)
+          }
         } else {
           // Clear user data on sign out or token expiration
           if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+            console.log("Clearing user data due to:", event)
             setUser(null)
             localStorage.removeItem("pgadmit_user")
+            clearCachedProfile()
           }
           setLoading(false)
         }
@@ -96,77 +126,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
     try {
-      // Get user profile from Supabase
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', supabaseUser.id)
-        .single()
-
-      // If profile doesn't exist, create it
-      if (error && error.code === 'PGRST116') {
-        const { data: newProfile } = await supabase
-          .from('profiles')
-          .insert({
-            id: supabaseUser.id,
-            name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-            country: supabaseUser.user_metadata?.country || 'South Asia',
-            avatar_url: supabaseUser.user_metadata?.avatar_url,
-            picture: supabaseUser.user_metadata?.picture,
-          })
-          .select()
-          .single()
-
-        const userData: User = {
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          name: newProfile?.name || supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
-          country: newProfile?.country || 'South Asia',
-          fieldOfStudy: newProfile?.field_of_study,
-          budget: newProfile?.budget,
-          profileComplete: !!(newProfile?.field_of_study && newProfile?.budget),
-          onboardingComplete: newProfile?.onboarding_complete || false,
-          profileData: {
-            ...newProfile,
-            avatar_url: supabaseUser.user_metadata?.avatar_url,
-            picture: supabaseUser.user_metadata?.picture,
-          },
-          createdAt: supabaseUser.created_at,
-        }
-
-        setUser(userData)
-        localStorage.setItem("pgadmit_user", JSON.stringify(userData))
-        return
-      }
-
-      // Profile exists, use it
-      const userData: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email!,
-        name: profile?.name || supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
-        country: profile?.country || 'South Asia',
-        fieldOfStudy: profile?.field_of_study,
-        budget: profile?.budget,
-        profileComplete: !!(profile?.field_of_study && profile?.budget),
-        onboardingComplete: profile?.onboarding_complete || false,
-        profileData: {
-          ...profile,
-          avatar_url: supabaseUser.user_metadata?.avatar_url,
-          picture: supabaseUser.user_metadata?.picture,
-        },
-        createdAt: supabaseUser.created_at,
-      }
+      const userData = await fetchUserProfile(supabaseUser, supabase)
 
       setUser(userData)
       localStorage.setItem("pgadmit_user", JSON.stringify(userData))
     } catch (error) {
       console.error('Error handling Supabase user:', error)
-      // Fallback to basic user data
+
+      // Fallback to basic user data from Supabase user metadata
       const userData: User = {
         id: supabaseUser.id,
         email: supabaseUser.email!,
-        name: supabaseUser.user_metadata?.full_name || supabaseUser.email!.split('@')[0],
-        country: 'South Asia',
+        name: supabaseUser.user_metadata?.full_name ||
+          supabaseUser.user_metadata?.name ||
+          supabaseUser.email!.split('@')[0],
+        country: supabaseUser.user_metadata?.country || 'South Asia',
         profileComplete: false,
         onboardingComplete: false,
         profileData: {
@@ -175,8 +149,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         },
         createdAt: supabaseUser.created_at,
       }
+
       setUser(userData)
       localStorage.setItem("pgadmit_user", JSON.stringify(userData))
+      console.log("Using fallback user data for:", userData.id)
     }
   }
 
@@ -271,6 +247,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     setLoading(true)
     try {
+      console.log("Logging out user")
       const { error } = await supabase.auth.signOut()
       if (error) {
         console.error('Logout error:', error)
@@ -279,11 +256,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(null)
       localStorage.removeItem("pgadmit_user")
+      clearCachedProfile()
+      console.log("User logged out successfully")
     } catch (error) {
       console.error('Logout error:', error)
       // Even if logout fails, clear local data
       setUser(null)
       localStorage.removeItem("pgadmit_user")
+      clearCachedProfile()
     } finally {
       setLoading(false)
     }
@@ -295,11 +275,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const updatedUser = { ...user, ...data }
     setUser(updatedUser)
     localStorage.setItem("pgadmit_user", JSON.stringify(updatedUser))
+
+    try {
+      const { setCachedProfile } = await import("./profile-utils")
+      setCachedProfile(updatedUser)
+    } catch (error) {
+      console.warn("Failed to update cached profile:", error)
+    }
   }
 
   const updateUser = async (userData: User) => {
     setUser(userData)
     localStorage.setItem("pgadmit_user", JSON.stringify(userData))
+
+    try {
+      const { setCachedProfile } = await import("./profile-utils")
+      setCachedProfile(userData)
+    } catch (error) {
+      console.warn("Failed to update cached user data:", error)
+    }
   }
 
   return (
