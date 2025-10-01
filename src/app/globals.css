@@ -1,6 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Mobile bottom navigation spacing */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 70px;
+  }
+}
+
 @custom-variant dark (&:is(.dark *));
 
 :root {
@@ -124,6 +131,7 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground font-sans;
   }
@@ -144,11 +152,12 @@
   .blur-xs {
     filter: blur(2px);
   }
-  
+
   @keyframes shimmer {
     0% {
       transform: translateX(-100%);
     }
+
     100% {
       transform: translateX(100%);
     }

@@ -9,6 +9,7 @@ import { SidebarProvider } from "@/lib/sidebar-context";
 import { AchievementCelebration } from "@/components/gamification/achievement-celebration";
 import { Toaster } from "@/components/ui/toaster";
 import { ConditionalHeader } from "@/components/conditional-header";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     "Your journey to the top universities worldwide starts here. AI-powered guidance for international students.",
   generator: "v0.app",
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://pgadmit.com'),
-  
+
   icons: {
     icon: [
       { url: '/favicon.ico', sizes: 'any' },
@@ -90,7 +91,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://pgadmit.com';
-  
+
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -132,6 +133,7 @@ export default function RootLayout({
                 {children}
                 <AchievementCelebration />
                 <Toaster />
+                <MobileBottomNav />
               </SidebarProvider>
             </AIProvider>
           </GamificationProvider>

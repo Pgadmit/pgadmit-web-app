@@ -1,7 +1,7 @@
 import {
   AboutSection, AdmissionSection, BlogSection,
   CampusTourSection, Footer, HeroSection, MatchToolSection,
-  SocialProofSection, StickyBottomNav, StudentStoriesSection
+  SocialProofSection, StudentStoriesSection
 } from "@/components";
 
 export default async function HomePage() {
@@ -16,7 +16,6 @@ export default async function HomePage() {
       <AboutSection />
       <SocialProofSection />
       <Footer />
-      <StickyBottomNav />
     </main>
   );
 }

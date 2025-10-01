@@ -9,4 +9,3 @@ export * from './student-stories-section';
 export * from './about-section';
 export * from './social-proof-section';
 export * from './footer';
-export * from './sticky-bottom-nav';
