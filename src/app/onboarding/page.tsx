@@ -1,25 +1,22 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { AIOnboardingFlow } from "@/components/onboarding/ai-onboarding-flow";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
-import { createOnboardingSteps, OnboardingStep } from "@/lib/onboarding/steps";
+import { createOnboardingSteps } from "@/lib/onboarding/steps";
 import {
   useOnboardingData,
   useOnboardingUI,
 } from "@/lib/stores/onboarding-store";
-import { inferSegment } from "@/lib/onboarding/logic";
 
 export default function OnboardingPage() {
   const { user } = useAuth();
   const router = useRouter();
   const { isOpen: preSignupOpen, setOpen: setPreSignupOpen } =
     useOnboardingUI();
-  const [onboardingOpen, setOnboardingOpen] = useState(false);
 
   const {
     data,
@@ -28,8 +25,6 @@ export default function OnboardingPage() {
     updateData,
     setCurrentStep,
     setBudgetSlider,
-    setCompleted,
-    getFinalData,
   } = useOnboardingData();
 
   const steps = useMemo(
@@ -69,10 +64,15 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (user) {
-      if (!user.onboardingComplete) {
-        setOnboardingOpen(true);
+      // Check if user has basic profile data
+      const hasBasicProfile = user.country && user.fieldOfStudy && user.budget;
+
+
+
+      if (!hasBasicProfile) {
+        setPreSignupOpen(true);
       } else {
-        // User is already onboarded, redirect to dashboard
+        // User has basic data, redirect to dashboard
         router.push("/dashboard");
       }
     } else {
@@ -86,32 +86,11 @@ export default function OnboardingPage() {
     setPreSignupOpen(true);
   }, [setPreSignupOpen]);
 
-  const handleOnboardingComplete = () => {
-    setOnboardingOpen(false);
-    router.push("/dashboard");
-  };
 
-  const handlePreSignupComplete = (finalData: any) => {
-    // Redirect to auth page with initial data
-    const params = new URLSearchParams({
-      country: finalData.country || "",
-      fieldOfStudy: finalData.fieldOfStudy || "",
-      budget: finalData.budget || "",
-    });
-    router.push(`/auth?${params.toString()}`);
-  };
 
   const handleNext = () => {
     if (step < total - 1) {
       setCurrentStep(step + 1);
-    } else {
-      // Onboarding completed
-      const segment = inferSegment(data);
-      const finalData = { ...data, segment };
-      updateData({ segment });
-      setCompleted(true);
-      setPreSignupOpen(false);
-      handlePreSignupComplete(getFinalData());
     }
   };
 
@@ -123,18 +102,9 @@ export default function OnboardingPage() {
     router.push("/");
   };
 
-  // Show AI onboarding for logged-in users
-  if (user && onboardingOpen) {
-    return (
-      <AIOnboardingFlow
-        isOpen={onboardingOpen}
-        onClose={handleOnboardingComplete}
-      />
-    );
-  }
 
-  // Show pre-signup onboarding for non-logged-in users
-  if (!user && preSignupOpen && currentStepData) {
+  // Show pre-signup onboarding for non-logged-in users or users without basic profile
+  if (preSignupOpen && currentStepData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex flex-col">
         {/* Header - Fixed at top */}

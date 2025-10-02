@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface OnboardingState {
   // Current step
@@ -7,16 +8,16 @@ export interface OnboardingState {
   // Form data
   data: {
     studyGoal: "bachelor" | "master" | "second-master" | "";
-    fieldOfStudy: string;
+    fieldOfStudy: string | null;
     destination: "usa" | "uk" | "";
     knowsUniversities: "yes" | "no" | "";
     country: string;
-    gpa: string;
+    gpa: string | null;
     intake: string;
-    budget: string;
+    budget: string | null;
     funding: string;
-    studyBreak: string;
-    visaRefusal: string;
+    studyBreak: boolean | undefined;
+    visaRefusal: boolean | undefined;
     segment: string;
   };
 
@@ -35,9 +36,11 @@ export interface OnboardingState {
   setOpen: (open: boolean) => void;
   reset: () => void;
   getFinalData: () => OnboardingState["data"];
+  clearOnboardingData: () => void;
+  hasOnboardingData: () => boolean;
 }
 
-const initialState = {
+const initialState: Omit<OnboardingState, 'setCurrentStep' | 'updateData' | 'setBudgetSlider' | 'setCompleted' | 'setOpen' | 'reset' | 'getFinalData' | 'clearOnboardingData' | 'hasOnboardingData'> = {
   currentStep: 0,
   data: {
     studyGoal: "",
@@ -49,8 +52,8 @@ const initialState = {
     intake: "",
     budget: "",
     funding: "",
-    studyBreak: "",
-    visaRefusal: "",
+    studyBreak: undefined,
+    visaRefusal: undefined,
     segment: "",
   },
   budgetSlider: [30000],
@@ -58,43 +61,71 @@ const initialState = {
   isOpen: false,
 };
 
-export const useOnboardingStore = create<OnboardingState>()((set, get) => ({
-  ...initialState,
+export const useOnboardingStore = create<OnboardingState>()(
+  persist(
+    (set, get) => ({
+      ...initialState,
 
-  setCurrentStep: (step: number) => {
-    set({ currentStep: step });
-  },
+      setCurrentStep: (step: number) => {
+        set({ currentStep: step });
+      },
 
-  updateData: (updates: Partial<OnboardingState["data"]>) => {
-    set((state) => ({
-      data: { ...state.data, ...updates },
-    }));
-  },
+      updateData: (updates: Partial<OnboardingState["data"]>) => {
+        set((state) => ({
+          data: { ...state.data, ...updates },
+        }));
+      },
 
-  setBudgetSlider: (value: number[]) => {
-    set({ budgetSlider: value });
-  },
+      setBudgetSlider: (value: number[]) => {
+        set({ budgetSlider: value });
+      },
 
-  setCompleted: (completed: boolean) => {
-    set({ isCompleted: completed });
-  },
+      setCompleted: (completed: boolean) => {
+        set({ isCompleted: completed });
+      },
 
-  setOpen: (open: boolean) => {
-    set({ isOpen: open });
-  },
+      setOpen: (open: boolean) => {
+        set({ isOpen: open });
+      },
 
-  reset: () => {
-    set(initialState);
-  },
+      reset: () => {
+        set(initialState);
+      },
 
-  getFinalData: () => {
-    const state = get();
-    return {
-      ...state.data,
-      segment: state.data.segment || "Unknown", // Fallback if segment not set
-    };
-  },
-}));
+      getFinalData: () => {
+        const state = get();
+        return {
+          ...state.data,
+          segment: state.data.segment ?? "Unknown", // Fallback if segment not set
+        };
+      },
+
+      clearOnboardingData: () => {
+        set(initialState);
+      },
+
+      hasOnboardingData: () => {
+        const state = get();
+        return !!(
+          state.data.country &&
+          state.data.fieldOfStudy &&
+          state.data.budget &&
+          state.data.studyGoal &&
+          state.data.destination
+        );
+      },
+    }),
+    {
+      name: "onboarding-store", // unique name for localStorage key
+      partialize: (state) => ({
+        data: state.data,
+        currentStep: state.currentStep,
+        budgetSlider: state.budgetSlider,
+        isCompleted: state.isCompleted,
+      }),
+    }
+  )
+);
 
 // Helper hook for easy access to onboarding data
 export const useOnboardingData = () => {
@@ -109,6 +140,8 @@ export const useOnboardingData = () => {
     setBudgetSlider: store.setBudgetSlider,
     setCompleted: store.setCompleted,
     getFinalData: store.getFinalData,
+    clearOnboardingData: store.clearOnboardingData,
+    hasOnboardingData: store.hasOnboardingData,
   };
 };
 
