@@ -48,10 +48,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
 
   useEffect(() => {
+    let isMounted = true
+
     // Get initial session
     const getInitialSession = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
+        if (!isMounted) return
+
         if (session?.user) {
           await handleSupabaseUser(session.user)
         } else {
@@ -80,7 +84,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(cachedProfile)
         }
       } finally {
-        setLoading(false)
+        if (isMounted) {
+          setLoading(false)
+        }
       }
     }
 
@@ -89,6 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        if (!isMounted) return
+
         console.log("Auth state changed:", event, session?.user?.id)
 
         if (session?.user) {
@@ -103,17 +111,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               setUser(cachedProfile)
             }
           } finally {
-            setLoading(false)
+            if (isMounted) {
+              setLoading(false)
+            }
           }
         } else {
-          // Clear user data on sign out or token expiration
-          if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+          // Clear user data on sign out or when no session
+          if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' || !session) {
             console.log("Clearing user data due to:", event)
             setUser(null)
             localStorage.removeItem("pgadmit_user")
             clearCachedProfile()
           }
-          setLoading(false)
+          if (isMounted) {
+            setLoading(false)
+          }
         }
       }
     )
@@ -134,7 +146,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }, 100)
     }
 
-    return () => subscription.unsubscribe()
+    return () => {
+      isMounted = false
+      subscription.unsubscribe()
+    }
   }, [])
 
   const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
@@ -174,7 +189,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
-
       if (error) {
         console.error('Login error:', error)
         throw new Error(error.message || "Login failed")
@@ -206,7 +220,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         }
       })
-
 
       if (error) {
         console.error('Signup error:', error)
@@ -245,6 +258,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error
       // User will be handled by onAuthStateChange
     } catch (error) {
+      console.error('Google login error:', error)
       throw new Error("Google login failed")
     } finally {
       setLoading(false)
@@ -257,7 +271,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = async () => {
-    setLoading(true)
     try {
       console.log("Logging out user")
       const { error } = await supabase.auth.signOut()
@@ -266,6 +279,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw error
       }
 
+      // Clear user data immediately
       setUser(null)
       localStorage.removeItem("pgadmit_user")
       clearCachedProfile()
@@ -276,9 +290,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null)
       localStorage.removeItem("pgadmit_user")
       clearCachedProfile()
-    } finally {
-      setLoading(false)
     }
+    // Don't set loading state for logout - let onAuthStateChange handle it
   }
 
   const updateProfile = async (data: Partial<User>) => {
