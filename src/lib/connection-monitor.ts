@@ -25,14 +25,12 @@ class ConnectionMonitor {
   }
 
   private handleOnline = () => {
-    console.log("Connection restored")
     this.state.isOnline = true
     this.state.retryCount = 0
     this.notifyListeners(true)
   }
 
   private handleOffline = () => {
-    console.log("Connection lost")
     this.state.isOnline = false
     this.notifyListeners(false)
   }
