@@ -99,11 +99,9 @@ export async function fetchUserProfile(
   // Try to get from cache first
   const cached = getCachedProfile()
   if (cached && cached.id === supabaseUser.id) {
-    console.log("Using cached profile for user:", supabaseUser.id)
     return cached
   }
 
-  console.log("Fetching fresh profile for user:", supabaseUser.id)
 
   try {
     // Fetch profile with retry logic
@@ -120,7 +118,6 @@ export async function fetchUserProfile(
 
     // If profile doesn't exist, create it
     if (error && error.code === 'PGRST116') {
-      console.log("Profile not found, creating new profile for user:", supabaseUser.id)
 
       const { data: newProfile, error: createError } = await fetchWithRetry(async () => {
         const result = await supabase

@@ -97,7 +97,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       async (event, session) => {
         if (!isMounted) return
 
-        console.log("Auth state changed:", event, session?.user?.id)
 
         if (session?.user) {
           setLoading(true)
@@ -118,7 +117,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           // Clear user data on sign out or when no session
           if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' || !session) {
-            console.log("Clearing user data due to:", event)
             setUser(null)
             localStorage.removeItem("pgadmit_user")
             clearCachedProfile()
@@ -180,7 +178,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(userData)
       localStorage.setItem("pgadmit_user", JSON.stringify(userData))
-      console.log("Using fallback user data for:", userData.id)
     }
   }
 
@@ -272,7 +269,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      console.log("Logging out user")
       const { error } = await supabase.auth.signOut()
       if (error) {
         console.error('Logout error:', error)
@@ -283,7 +279,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null)
       localStorage.removeItem("pgadmit_user")
       clearCachedProfile()
-      console.log("User logged out successfully")
     } catch (error) {
       console.error('Logout error:', error)
       // Even if logout fails, clear local data
