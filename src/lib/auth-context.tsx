@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
-import { createBrowserClient } from "@supabase/ssr"
+import { createClient } from "@/utils/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { fetchUserProfile, clearCachedProfile, getCachedProfile } from "./profile-utils"
 
@@ -45,10 +45,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-  )
+  const supabase = createClient()
 
   useEffect(() => {
     // Get initial session
@@ -120,6 +117,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     )
+
+    // Check for auth success parameter and force refresh
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.get('auth') === 'success') {
+      // Force refresh session after successful OAuth
+      setTimeout(async () => {
+        try {
+          const { data: { session } } = await supabase.auth.getSession()
+          if (session?.user) {
+            await handleSupabaseUser(session.user)
+          }
+        } catch (error) {
+          console.error("Error refreshing session after OAuth:", error)
+        }
+      }, 100)
+    }
 
     return () => subscription.unsubscribe()
   }, [])
@@ -219,14 +232,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = async () => {
     setLoading(true)
     try {
-      // Get the correct base URL for current environment
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ||
-        (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
+      // Use current origin for redirect
+      const redirectUrl = `${window.location.origin}/auth/callback`
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${baseUrl}/auth/callback`
+          redirectTo: redirectUrl
         }
       })
 
