@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { useOverflowLock } from "@/hooks/use-overflow-lock";
-import { createOnboardingSteps, OnboardingStep } from "@/lib/onboarding/steps";
+import { createOnboardingSteps } from "@/lib/onboarding/steps";
 import {
   useOnboardingData,
   useOnboardingUI,
@@ -22,6 +22,7 @@ export function PreSignupOnboarding({ onComplete }: PreSignupOnboardingProps) {
     data,
     currentStep: step,
     budgetSlider,
+    isCompleted,
     updateData,
     setCurrentStep,
     setBudgetSlider,
@@ -69,18 +70,26 @@ export function PreSignupOnboarding({ onComplete }: PreSignupOnboardingProps) {
   const progress = ((step + 1) / total) * 100;
   const currentStepData = steps[step];
 
+  useEffect(() => {
+    const isLastStep = step === total - 1;
+
+    if (isLastStep && !isCompleted) {
+      const segment = inferSegment(data);
+      updateData({ segment });
+      setCompleted(true);
+
+      setTimeout(() => {
+        setOpen(false);
+        onComplete(getFinalData());
+      }, 100);
+    }
+  }, [step, total, data, updateData, setCompleted, isCompleted, setOpen, onComplete, getFinalData]);
+
   const handleNext = () => {
     if (step < total - 1) {
       setCurrentStep(step + 1);
-    } else {
-      // Onboarding completed
-      const segment = inferSegment(data);
-      const finalData = { ...data, segment };
-      updateData({ segment });
-      setCompleted(true);
-      setOpen(false);
-      onComplete(getFinalData());
     }
+    // Completion is handled automatically by useEffect when reaching last step
   };
 
   const handleBack = () => {
