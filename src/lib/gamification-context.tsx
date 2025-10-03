@@ -3,28 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { useAuth } from "./auth-context"
-
-export interface Achievement {
-  id: string
-  title: string
-  description: string
-  icon: string
-  category: "profile" | "application" | "visa" | "engagement" | "milestone"
-  unlockedAt?: Date
-  isUnlocked: boolean
-  progress?: number
-  maxProgress?: number
-}
-
-export interface UserStats {
-  currentStreak: number
-  longestStreak: number
-  lastActiveDate: string
-  totalPoints: number
-  level: number
-  completedTasks: number
-  achievements: Achievement[]
-}
+import type { UserStats, Achievement } from "@/types"
 
 interface GamificationContextType {
   userStats: UserStats
@@ -46,7 +25,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Created your PGadmit account",
     icon: "🎉",
     category: "milestone",
-    isUnlocked: false,
+    unlocked: false,
   },
   {
     id: "profile-complete",
@@ -54,7 +33,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Completed your full academic profile",
     icon: "👤",
     category: "profile",
-    isUnlocked: false,
+    unlocked: false,
   },
   {
     id: "first-match",
@@ -62,7 +41,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Used the AI matching tool for the first time",
     icon: "🎯",
     category: "application",
-    isUnlocked: false,
+    unlocked: false,
   },
   {
     id: "first-application",
@@ -70,7 +49,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Started your first university application",
     icon: "📝",
     category: "application",
-    isUnlocked: false,
+    unlocked: false,
   },
   {
     id: "streak-7",
@@ -78,7 +57,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Maintained a 7-day activity streak",
     icon: "🔥",
     category: "engagement",
-    isUnlocked: false,
+    unlocked: false,
   },
   {
     id: "streak-30",
@@ -86,7 +65,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Maintained a 30-day activity streak",
     icon: "💪",
     category: "engagement",
-    isUnlocked: false,
+    unlocked: false,
   },
   {
     id: "ai-chat-10",
@@ -94,7 +73,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Had 10 conversations with your AI counselor",
     icon: "🤖",
     category: "engagement",
-    isUnlocked: false,
+    unlocked: false,
     progress: 0,
     maxProgress: 10,
   },
@@ -104,7 +83,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Successfully obtained your student visa",
     icon: "✈️",
     category: "visa",
-    isUnlocked: false,
+    unlocked: false,
   },
   {
     id: "departure-ready",
@@ -112,7 +91,7 @@ const DEFAULT_ACHIEVEMENTS: Achievement[] = [
     description: "Completed all pre-departure preparations",
     icon: "🎒",
     category: "milestone",
-    isUnlocked: false,
+    unlocked: false,
   },
 ]
 
@@ -177,10 +156,10 @@ export function GamificationProvider({ children }: { children: React.ReactNode }
       }
 
       // Check for streak achievements
-      if (newStreak === 7 && !prev.achievements.find((a) => a.id === "streak-7")?.isUnlocked) {
+      if (newStreak === 7 && !prev.achievements.find((a) => a.id === "streak-7")?.unlocked) {
         setTimeout(() => unlockAchievement("streak-7"), 500)
       }
-      if (newStreak === 30 && !prev.achievements.find((a) => a.id === "streak-30")?.isUnlocked) {
+      if (newStreak === 30 && !prev.achievements.find((a) => a.id === "streak-30")?.unlocked) {
         setTimeout(() => unlockAchievement("streak-30"), 500)
       }
 
@@ -191,10 +170,10 @@ export function GamificationProvider({ children }: { children: React.ReactNode }
   const unlockAchievement = useCallback((achievementId: string) => {
     setUserStats((prev) => {
       const achievement = prev.achievements.find((a) => a.id === achievementId)
-      if (!achievement || achievement.isUnlocked) return prev
+      if (!achievement || achievement.unlocked) return prev
 
       const updatedAchievements = prev.achievements.map((a) =>
-        a.id === achievementId ? { ...a, isUnlocked: true, unlockedAt: new Date() } : a,
+        a.id === achievementId ? { ...a, unlocked: true, unlockedAt: new Date().toISOString() } : a,
       )
 
       // Add points for achievement
@@ -228,7 +207,7 @@ export function GamificationProvider({ children }: { children: React.ReactNode }
       addPoints(10, "Task completed")
 
       // Check for task-based achievements
-      if (taskId.includes("profile") && user?.profileComplete) {
+      if (taskId.includes("profile") && user?.onboardingComplete) {
         setTimeout(() => unlockAchievement("profile-complete"), 500)
       }
     },

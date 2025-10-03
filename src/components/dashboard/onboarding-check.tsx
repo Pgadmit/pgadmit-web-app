@@ -13,27 +13,17 @@ interface OnboardingCheckProps {
 export function OnboardingCheck({ children }: OnboardingCheckProps) {
     const { user, loading } = useAuth();
     const router = useRouter();
-    const [isChecking, setIsChecking] = useState(true);
+    const [isRedirecting, setIsRedirecting] = useState(false);
 
     useEffect(() => {
-        if (!loading) {
-            if (!user) {
-                router.push("/auth");
-                return;
-            }
-
-            const hasBasicProfile = user.country && user.fieldOfStudy && user.budget;
-
-            if (!hasBasicProfile) {
-                router.push("/onboarding");
-                return;
-            }
-
-            setIsChecking(false);
+        if (!loading && !user) {
+            setIsRedirecting(true);
+            router.push("/auth");
+            return;
         }
-    }, [user, loading, router]);
+    }, [loading, user, router]);
 
-    if (loading || isChecking) {
+    if (loading || isRedirecting) {
         return <DashboardLoading />;
     }
 

@@ -7,6 +7,7 @@ import { ApplicationsSection } from "./applications-section";
 import { DeadlinesSection } from "./deadlines-section";
 import { ScholarshipsSection } from "./scholarships-section";
 import { AIRecommendations } from "./ai-recommendations";
+import { ProfileIncompleteBanner } from "./profile-incomplete-banner";
 
 export function DashboardContent() {
   return (
@@ -15,6 +16,7 @@ export function DashboardContent() {
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
         <div className="max-w-6xl mx-auto">
+          <ProfileIncompleteBanner />
           <WelcomeSection />
           <StatsCards />
 

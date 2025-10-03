@@ -9,7 +9,7 @@ export const AdmissionFormSchema = z.object({
   gradingScale: z.string().min(1, 'Select grading scale'),
   gradeAverage: z.string().regex(floatTwoDecimalsRegex, 'Must be a number with up to 2 decimals'),
   standardizedTest: z.string().min(1, 'Select a test'),
-  testScore: z.string().regex(floatTwoDecimalsRegex, 'Must be a number with up to 2 decimals'),
+  testScore: z.string().min(1, 'Test score required'),
   preferredRegions: z.array(z.string()).nonempty('Select at least one region'),
   major: z.string().min(1, 'Required'),
   budget: z.string().regex(wholeNumberRegex, 'Budget must be a whole number'),

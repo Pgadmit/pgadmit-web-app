@@ -1,23 +1,13 @@
 "use client"
 
 import type React from "react"
-import { createContext, useContext, useState, useEffect } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react"
 import { createClient } from "@/utils/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
-import { fetchUserProfile, clearCachedProfile, getCachedProfile } from "./profile-utils"
-
-export interface User {
-  id: string
-  email: string
-  name: string
-  country: string
-  fieldOfStudy?: string
-  budget?: string
-  profileComplete: boolean
-  onboardingComplete?: boolean // Added onboarding completion tracking
-  profileData?: any // Added storage for detailed profile data from onboarding
-  createdAt: string
-}
+import { fetchUserProfile, clearCachedProfile, getCachedProfile, setCachedProfile } from "./profile-utils"
+import { useAuthLoading } from "./loading-context"
+import { clearAllStores } from "./stores/clear-all-stores"
+import type { SignupData, User } from "@/types"
 
 interface AuthContextType {
   user: User | null
@@ -28,61 +18,86 @@ interface AuthContextType {
   logout: () => void
   loading: boolean
   updateProfile: (data: Partial<User>) => Promise<void>
-  updateUser: (userData: User) => Promise<void> // Added updateUser method for onboarding
-}
-
-interface SignupData {
-  email: string
-  password: string
-  name: string
-  country: string
-  fieldOfStudy?: string
-  budget?: string
+  updateUser: (userData: User) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { loading, setLoading } = useAuthLoading()
   const supabase = createClient()
+
+  const updateUserState = (userData: User | null) => {
+    if (user && !userData) {
+      clearAllStores()
+    }
+
+    setUser(userData)
+    if (userData) {
+      setCachedProfile(userData)
+    } else {
+      clearCachedProfile()
+    }
+  }
+
+  const handleSupabaseUser = useCallback(async (supabaseUser: SupabaseUser): Promise<User> => {
+    try {
+      const userData = await fetchUserProfile(supabaseUser, supabase)
+      return userData
+    } catch (error) {
+      console.error('Error fetching profile:', error)
+      return {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: supabaseUser.user_metadata?.full_name ||
+          supabaseUser.user_metadata?.name ||
+          supabaseUser.email!.split('@')[0],
+        onboardingComplete: false,
+        avatar_url: supabaseUser.user_metadata?.avatar_url,
+        createdAt: supabaseUser.created_at,
+      }
+    }
+  }, [])
+
+  const syncOnboarding = useCallback(async (userData: User) => {
+    try {
+      const { syncOnboardingData } = await import("./auth-sync")
+      const syncedUserData = await syncOnboardingData(userData)
+      if (syncedUserData && syncedUserData.id !== userData.id) {
+        updateUserState(syncedUserData)
+      }
+    } catch (error) {
+      console.error('Error syncing onboarding:', error)
+    }
+  }, [])
 
   useEffect(() => {
     let isMounted = true
+    let authChangeTimeout: NodeJS.Timeout | null = null
 
-    // Get initial session
-    const getInitialSession = async () => {
+    const initAuth = async () => {
       try {
+        const cached = getCachedProfile()
+        if (cached && isMounted) {
+          setUser(cached)
+          setLoading(false)
+          return
+        }
+
         const { data: { session } } = await supabase.auth.getSession()
+
         if (!isMounted) return
 
         if (session?.user) {
-          await handleSupabaseUser(session.user)
-        } else {
-          const cachedProfile = getCachedProfile()
-          if (cachedProfile) {
-            setUser(cachedProfile)
-          } else {
-            // Check if we have user data in localStorage but no valid session
-            const savedUser = localStorage.getItem("pgadmit_user")
-            if (savedUser) {
-              try {
-                const userData = JSON.parse(savedUser)
-                setUser(userData)
-              } catch (error) {
-                console.warn("Failed to parse saved user data:", error)
-                localStorage.removeItem("pgadmit_user")
-              }
-            }
-          }
+          const userData = await handleSupabaseUser(session.user)
+          updateUserState(userData)
+          await syncOnboarding(userData)
+        } else if (!cached) {
+          updateUserState(null)
         }
       } catch (error) {
-        console.error("Error getting initial session:", error)
-        // Try to use cached data as fallback
-        const cachedProfile = getCachedProfile()
-        if (cachedProfile) {
-          setUser(cachedProfile)
-        }
+        console.error("Auth initialization error:", error)
       } finally {
         if (isMounted) {
           setLoading(false)
@@ -90,113 +105,75 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    getInitialSession()
+    initAuth()
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+    const handleAuthStateChange = async (event: string, session: any) => {
+      if (!isMounted) return
+
+      if (authChangeTimeout) {
+        clearTimeout(authChangeTimeout)
+      }
+
+      if (event === 'TOKEN_REFRESHED' || event === 'SIGNED_IN') {
+        return
+      }
+
+
+      authChangeTimeout = setTimeout(async () => {
         if (!isMounted) return
 
+        if (event === 'SIGNED_OUT') {
+          updateUserState(null)
+          setLoading(false)
+          return
+        }
 
         if (session?.user) {
-          setLoading(true)
+          const currentUser = getCachedProfile()
+          if (!currentUser || currentUser.id !== session.user.id) {
+            setLoading(true)
+          }
+
           try {
-            await handleSupabaseUser(session.user)
+            const userData = await handleSupabaseUser(session.user)
+            updateUserState(userData)
+            await syncOnboarding(userData)
           } catch (error) {
-            console.error("Error handling auth state change:", error)
-            // Try to use cached data as fallback
-            const cachedProfile = getCachedProfile()
-            if (cachedProfile) {
-              setUser(cachedProfile)
-            }
+            console.error("Auth state change error:", error)
           } finally {
             if (isMounted) {
               setLoading(false)
             }
           }
         } else {
-          // Clear user data on sign out or when no session
-          if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' || !session) {
-            setUser(null)
-            localStorage.removeItem("pgadmit_user")
-            clearCachedProfile()
-          }
-          if (isMounted) {
-            setLoading(false)
-          }
-        }
-      }
-    )
-
-    // Check for auth success parameter and force refresh
-    const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.get('auth') === 'success') {
-      // Force refresh session after successful OAuth
-      setTimeout(async () => {
-        try {
-          const { data: { session } } = await supabase.auth.getSession()
-          if (session?.user) {
-            await handleSupabaseUser(session.user)
-          }
-        } catch (error) {
-          console.error("Error refreshing session after OAuth:", error)
+          updateUserState(null)
+          setLoading(false)
         }
       }, 100)
     }
 
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(handleAuthStateChange)
+
     return () => {
       isMounted = false
+      if (authChangeTimeout) {
+        clearTimeout(authChangeTimeout)
+      }
       subscription.unsubscribe()
     }
   }, [])
-
-  const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
-    try {
-      const userData = await fetchUserProfile(supabaseUser, supabase)
-
-      setUser(userData)
-      localStorage.setItem("pgadmit_user", JSON.stringify(userData))
-    } catch (error) {
-      console.error('Error handling Supabase user:', error)
-
-      // Fallback to basic user data from Supabase user metadata
-      const userData: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email!,
-        name: supabaseUser.user_metadata?.full_name ||
-          supabaseUser.user_metadata?.name ||
-          supabaseUser.email!.split('@')[0],
-        country: supabaseUser.user_metadata?.country || 'South Asia',
-        profileComplete: false,
-        onboardingComplete: false,
-        profileData: {
-          avatar_url: supabaseUser.user_metadata?.avatar_url,
-          picture: supabaseUser.user_metadata?.picture,
-        },
-        createdAt: supabaseUser.created_at,
-      }
-
-      setUser(userData)
-      localStorage.setItem("pgadmit_user", JSON.stringify(userData))
-    }
-  }
 
   const login = async (email: string, password: string) => {
     setLoading(true)
     try {
       const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-
-      if (error) {
-        console.error('Login error:', error)
-        throw new Error(error.message || "Login failed")
-      }
+      if (error) throw new Error(error.message || "Login failed")
 
       if (data.user) {
-        await handleSupabaseUser(data.user)
+        const userData = await handleSupabaseUser(data.user)
+        updateUserState(userData)
+        await syncOnboarding(userData)
       }
-    } catch (error) {
-      console.error('Login error:', error)
-      throw error
     } finally {
       setLoading(false)
     }
@@ -211,125 +188,73 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         options: {
           data: {
             name: userData.name,
-            country: userData.country,
-            field_of_study: userData.fieldOfStudy,
-            budget: userData.budget,
+            avatar_url: userData.avatar_url,
           }
         }
       })
 
-      if (error) {
-        console.error('Signup error:', error)
-        throw new Error(error.message || "Signup failed")
-      }
-
-      // Check if user needs email confirmation
+      if (error) throw new Error(error.message || "Signup failed")
       if (data.user && !data.session) {
         throw new Error("Please check your email to confirm your account")
       }
 
       if (data.user && data.session) {
-        await handleSupabaseUser(data.user)
+        const newUser = await handleSupabaseUser(data.user)
+        updateUserState(newUser)
+        await syncOnboarding(newUser)
       }
-    } catch (error) {
-      console.error('Signup error:', error)
-      throw error
     } finally {
       setLoading(false)
     }
   }
 
   const loginWithGoogle = async () => {
-    setLoading(true)
-    try {
-      // Use current origin for redirect
-      const redirectUrl = `${window.location.origin}/auth/callback`
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: redirectUrl
-        }
-      })
-
-      if (error) throw error
-      // User will be handled by onAuthStateChange
-    } catch (error) {
-      console.error('Google login error:', error)
-      throw new Error("Google login failed")
-    } finally {
-      setLoading(false)
-    }
+    const redirectUrl = `${window.location.origin}/auth/callback`
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: redirectUrl }
+    })
+    if (error) throw new Error("Google login failed")
   }
 
-  const signupWithGoogle = async () => {
-    // For OAuth, signup and login are the same flow
-    return loginWithGoogle()
-  }
+  const signupWithGoogle = loginWithGoogle
 
   const logout = async () => {
     try {
-      const { error } = await supabase.auth.signOut()
-      if (error) {
-        console.error('Logout error:', error)
-        throw error
-      }
+      clearAllStores()
 
-      // Clear user data immediately
-      setUser(null)
-      localStorage.removeItem("pgadmit_user")
-      clearCachedProfile()
+      await supabase.auth.signOut()
     } catch (error) {
       console.error('Logout error:', error)
-      // Even if logout fails, clear local data
-      setUser(null)
-      localStorage.removeItem("pgadmit_user")
-      clearCachedProfile()
+    } finally {
+      updateUserState(null)
     }
-    // Don't set loading state for logout - let onAuthStateChange handle it
   }
 
   const updateProfile = async (data: Partial<User>) => {
     if (!user) return
-
     const updatedUser = { ...user, ...data }
-    setUser(updatedUser)
-    localStorage.setItem("pgadmit_user", JSON.stringify(updatedUser))
-
-    try {
-      const { setCachedProfile } = await import("./profile-utils")
-      setCachedProfile(updatedUser)
-    } catch (error) {
-      console.warn("Failed to update cached profile:", error)
-    }
+    updateUserState(updatedUser)
   }
 
-  const updateUser = async (userData: User) => {
-    setUser(userData)
-    localStorage.setItem("pgadmit_user", JSON.stringify(userData))
-
-    try {
-      const { setCachedProfile } = await import("./profile-utils")
-      setCachedProfile(userData)
-    } catch (error) {
-      console.warn("Failed to update cached user data:", error)
-    }
+  const updateUser = (userData: User) => {
+    updateUserState(userData)
   }
+
+  const contextValue = useMemo(() => ({
+    user,
+    login,
+    signup,
+    loginWithGoogle,
+    signupWithGoogle,
+    logout,
+    loading,
+    updateProfile,
+    updateUser,
+  }), [user, loading])
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        login,
-        signup,
-        loginWithGoogle,
-        signupWithGoogle,
-        logout,
-        loading,
-        updateProfile,
-        updateUser,
-      }}
-    >
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   )

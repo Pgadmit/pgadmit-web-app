@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { User, ArrowRight, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useBlogLoading } from "@/lib/loading-context";
 import {
   getFeaturedBlogPosts,
   getStrapiMediaURL,
@@ -14,7 +15,7 @@ import {
 export function BlogSection() {
   const router = useRouter();
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { loading, setLoading } = useBlogLoading();
 
   useEffect(() => {
     async function loadBlogPosts() {

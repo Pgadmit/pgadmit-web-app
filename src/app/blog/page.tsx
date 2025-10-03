@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { User, ArrowRight, Clock, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useBlogLoading } from "@/lib/loading-context";
 import {
   getBlogPosts,
   getCategories,
@@ -19,7 +20,7 @@ export default function BlogPage() {
   const router = useRouter();
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { loading, setLoading } = useBlogLoading();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);

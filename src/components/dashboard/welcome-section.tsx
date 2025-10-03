@@ -5,10 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { useOnboardingData } from "@/hooks/use-onboarding-data";
 
 export function WelcomeSection() {
   const router = useRouter();
   const { user } = useAuth();
+  const { onboardingData } = useOnboardingData(user?.id ?? null);
 
   const handleAIChat = () => {
     router.push("/ai-chat");
@@ -27,20 +29,20 @@ export function WelcomeSection() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {!user?.profileComplete && (
+            {!user?.onboardingComplete && (
               <Badge variant="outline" className="bg-white text-xs">
                 <Target className="w-3 h-3 mr-1" />
                 Complete Profile Setup
               </Badge>
             )}
-            {user?.country && (
+            {onboardingData?.country && (
               <Badge variant="outline" className="bg-white text-xs">
-                🌍 {user.country}
+                🌍 {onboardingData.country}
               </Badge>
             )}
-            {user?.fieldOfStudy && (
+            {onboardingData?.field_of_study && (
               <Badge variant="outline" className="bg-white text-xs">
-                🎓 {user.fieldOfStudy}
+                🎓 {onboardingData.field_of_study}
               </Badge>
             )}
           </div>

@@ -55,12 +55,10 @@ export function getUserStages(user: any): ApplicationStage[] {
   // Mock logic to determine user's current stage based on profile completeness
   const stages = [...APPLICATION_STAGES]
 
-  // If user has basic info, mark profile as in-progress or completed
-  if (user.country && user.fieldOfStudy && user.budget) {
+  // If user has completed onboarding, mark profile as completed
+  if (user.onboardingComplete) {
     stages[0].status = "completed"
     stages[1].status = "in-progress"
-  } else if (user.country) {
-    stages[0].status = "in-progress"
   }
 
   return stages

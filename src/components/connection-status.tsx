@@ -16,16 +16,16 @@ export function ConnectionStatus({
     const [isChecking, setIsChecking] = useState(false)
 
     useEffect(() => {
-        // Check connection on mount
-        const check = async () => {
-            setIsChecking(true)
-            await checkConnection()
-            setIsChecking(false)
+        if (!isOnline) {
+            const check = async () => {
+                setIsChecking(true)
+                await checkConnection()
+                setIsChecking(false)
+            }
+            check()
         }
-        check()
-    }, [checkConnection])
+    }, [])
 
-    // Don't show anything when online and showWhenOnline is false
     if (isOnline && !showWhenOnline) {
         return null
     }

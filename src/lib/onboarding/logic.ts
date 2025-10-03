@@ -6,11 +6,11 @@ export function gpaPlaceholderForCountry(country: string): string {
 export interface SegmentInput {
   studyGoal: "bachelor" | "master" | "second-master" | ""
   knowsUniversities: "yes" | "no" | ""
-  budget: string
+  budget: string | null
   intake: string
   funding?: string
-  studyBreak?: string
-  visaRefusal?: string
+  studyBreak?: boolean
+  visaRefusal?: boolean
 }
 
 export function inferSegment(input: SegmentInput): string {
@@ -22,7 +22,7 @@ export function inferSegment(input: SegmentInput): string {
   if (input.studyGoal === "master") {
     if (!input.budget) return "Master — Budget-sensitive"
     if (input.funding === "employer") return "Master — Sponsored / Gap-year"
-    if (input.studyBreak === "yes" && input.visaRefusal === "yes") return "Master — Gap-year"
+    if (input.studyBreak === true && input.visaRefusal === true) return "Master — Gap-year"
     return "Master - Planned Candidate"
   }
   return "Master - Planned Candidate"

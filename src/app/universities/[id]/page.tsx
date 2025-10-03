@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter, useParams } from "next/navigation"
 import { UniversityDetailContent } from "@/components/universities/university-detail-content"
@@ -147,16 +147,19 @@ export default function UniversityDetailPage() {
   const router = useRouter()
   const params = useParams()
   const universityId = params.id as string
+  const [isRedirecting, setIsRedirecting] = useState(false)
 
   const university = UNIVERSITY_DATA[universityId as keyof typeof UNIVERSITY_DATA]
 
   useEffect(() => {
     if (!loading && !user) {
+      setIsRedirecting(true)
       router.push("/")
+      return
     }
-  }, [user, loading, router])
+  }, [loading, user, router])
 
-  if (loading) {
+  if (loading || isRedirecting) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
