@@ -22,7 +22,7 @@ export function OnboardingCheck({ children }: OnboardingCheckProps) {
                 return;
             }
 
-            const hasBasicProfile = user.country && user.fieldOfStudy && user.budget;
+            const hasBasicProfile = user.onboardingComplete;
 
             if (!hasBasicProfile) {
                 router.push("/onboarding");
