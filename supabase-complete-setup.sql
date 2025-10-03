@@ -62,7 +62,6 @@ CREATE TABLE IF NOT EXISTS user_onboarding (
   segment TEXT,
   is_completed BOOLEAN DEFAULT false,
   current_step INTEGER DEFAULT 0,
-  budget_slider JSONB DEFAULT '[30000]',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -107,7 +106,6 @@ BEGIN
     segment,
     is_completed,
     current_step,
-    budget_slider,
     updated_at
   )
   VALUES (
@@ -148,10 +146,6 @@ BEGIN
     segment = EXCLUDED.segment,
     is_completed = EXCLUDED.is_completed,
     current_step = EXCLUDED.current_step,
-    budget_slider = CASE 
-      WHEN EXCLUDED.budget_slider IS NOT NULL 
-      THEN EXCLUDED.budget_slider
-      ELSE '[30000]'::JSONB
     END,
     updated_at = NOW();
 END;
@@ -174,7 +168,6 @@ RETURNS TABLE (
   segment TEXT,
   is_completed BOOLEAN,
   current_step INTEGER,
-  budget_slider JSONB
 ) AS $$
 BEGIN
   RETURN QUERY
@@ -193,7 +186,6 @@ BEGIN
     uo.segment,
     uo.is_completed,
     uo.current_step,
-    uo.budget_slider
   FROM user_onboarding uo
   WHERE uo.id = user_id;
 END;
