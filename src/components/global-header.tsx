@@ -69,7 +69,7 @@ export function GlobalHeader() {
                 <img
                   src="/logo.png"
                   alt="PGadmit Logo"
-                  className="h-8 w-auto sm:h-10 md:h-12 transition-transform group-hover:scale-105"
+                  className="max-w-[120px] sm:max-w-[140px] md:max-w-[160px] h-auto object-contain transition-transform group-hover:scale-105"
                 />
               </div>
 

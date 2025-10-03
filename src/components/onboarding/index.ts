@@ -1,3 +1,2 @@
-export { PreSignupOnboarding } from "./presignup-onboarding"
-export { AIOnboardingFlow } from "./ai-onboarding-flow"
+export { OnboardingWidget } from "./onboarding-widget"
 

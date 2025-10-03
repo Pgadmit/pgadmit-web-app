@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Clock, Calendar, ArrowRight } from "lucide-react";
 import { MarkdownContent } from "@/components/ui/markdown-content";
+import { useBlogLoading } from "@/lib/loading-context";
 import {
   getBlogPost,
   getBlogPosts,
@@ -23,7 +24,7 @@ export default function BlogPostPage() {
 
   const [post, setPost] = useState<BlogPost | null>(null);
   const [relatedPosts, setRelatedPosts] = useState<BlogPost[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { loading, setLoading } = useBlogLoading();
 
   const loadPost = useCallback(async () => {
     try {

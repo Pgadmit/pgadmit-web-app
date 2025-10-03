@@ -1,7 +1,7 @@
 "use client";
 
 import type React from "react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,45 +9,74 @@ import { useAuth } from "@/lib/auth-context";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface SignupFormProps {
-  onSuccess?: () => void;
-  initialData?: {
-    country?: string;
-    fieldOfStudy?: string;
-    budget?: string;
-  };
+interface SignupFormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
-export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
-  const [formData, setFormData] = useState({
+interface SignupFormProps {
+  onSuccess?: () => void;
+}
+
+export function SignupForm({ onSuccess }: SignupFormProps) {
+  const [formData, setFormData] = useState<SignupFormData>({
     name: "",
     email: "",
     password: "",
-    country: initialData?.country || "",
-    fieldOfStudy: initialData?.fieldOfStudy || "",
-    budget: initialData?.budget || "",
+    confirmPassword: "",
   });
-
-  // Update form data when initialData changes
-  useEffect(() => {
-    if (initialData) {
-      setFormData((prev) => ({
-        ...prev,
-        country: initialData.country || prev.country,
-        fieldOfStudy: initialData.fieldOfStudy || prev.fieldOfStudy,
-        budget: initialData.budget || prev.budget,
-      }));
-    }
-  }, [initialData]);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const { signup, signupWithGoogle, loading } = useAuth();
   const { toast } = useToast();
+
+  const validatePasswords = () => {
+    if (formData.password !== formData.confirmPassword) {
+      setPasswordError("Passwords do not match");
+      return false;
+    }
+    setPasswordError("");
+    return true;
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setFormData({ ...formData, password: value });
+    if (formData.confirmPassword && value !== formData.confirmPassword) {
+      setPasswordError("Passwords do not match");
+    } else {
+      setPasswordError("");
+    }
+  };
+
+  const handleConfirmPasswordChange = (value: string) => {
+    setFormData({ ...formData, confirmPassword: value });
+    if (formData.password && value !== formData.password) {
+      setPasswordError("Passwords do not match");
+    } else {
+      setPasswordError("");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!validatePasswords()) {
+      return;
+    }
+
     try {
-      await signup(formData);
+      const signupData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        id: "",
+        createdAt: new Date().toISOString(),
+      };
+
+      await signup(signupData);
       toast({
         title: "Welcome to PGadmit!",
         description: "Your account has been created successfully.",
@@ -181,9 +210,7 @@ export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
               type={showPassword ? "text" : "password"}
               placeholder="Create a strong password"
               value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
+              onChange={(e) => handlePasswordChange(e.target.value)}
               className="transition-all duration-300 ease-in-out focus:ring-2 focus:ring-primary/20 cursor-text"
               required
             />
@@ -201,6 +228,45 @@ export function SignupForm({ onSuccess, initialData }: SignupFormProps) {
               )}
             </Button>
           </div>
+        </div>
+
+        <div className="space-y-2 transition-all duration-300 ease-in-out">
+          <Label
+            htmlFor="confirmPassword"
+            className="transition-all duration-300 ease-in-out hover:text-primary/70"
+          >
+            Confirm Password
+          </Label>
+          <div className="relative transition-all duration-300 ease-in-out">
+            <Input
+              id="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Confirm your password"
+              value={formData.confirmPassword}
+              onChange={(e) => handleConfirmPasswordChange(e.target.value)}
+              className={`transition-all duration-300 ease-in-out focus:ring-2 focus:ring-primary/20 cursor-text ${passwordError ? "border-destructive focus:ring-destructive/20" : ""
+                }`}
+              required
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent transition-all duration-300 ease-in-out hover:scale-110 active:scale-95 cursor-pointer"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            >
+              {showConfirmPassword ? (
+                <EyeOff className="h-4 w-4 transition-all duration-300 ease-in-out hover:rotate-12 cursor-pointer" />
+              ) : (
+                <Eye className="h-4 w-4 transition-all duration-300 ease-in-out hover:rotate-12 cursor-pointer" />
+              )}
+            </Button>
+          </div>
+          {passwordError && (
+            <p className="text-sm text-destructive transition-all duration-300 ease-in-out">
+              {passwordError}
+            </p>
+          )}
         </div>
 
         <div className="mt-auto pt-6">

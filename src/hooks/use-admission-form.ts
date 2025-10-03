@@ -27,17 +27,9 @@ export function useAdmissionForm() {
         },
     });
 
-    // Check rate limits on component mount and set up interval
+    // Check rate limits on component mount only
     useEffect(() => {
         checkRateLimits();
-
-        const interval = setInterval(() => {
-            checkRateLimits();
-        }, 1000);
-
-        return () => {
-            clearInterval(interval);
-        };
     }, [checkRateLimits]);
 
     const onSubmit = (values: AdmissionFormSchemaValues) => {
