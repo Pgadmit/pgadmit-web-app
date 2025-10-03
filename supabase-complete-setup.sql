@@ -4,11 +4,6 @@
 CREATE TABLE IF NOT EXISTS profiles (
   id UUID REFERENCES auth.users(id) PRIMARY KEY,
   name TEXT,
-  country TEXT DEFAULT 'India',
-  field_of_study TEXT,
-  budget TEXT,
-  current_education TEXT,
-  gpa TEXT,
   avatar_url TEXT,
   picture TEXT,
   onboarding_complete BOOLEAN DEFAULT false,
@@ -33,13 +28,10 @@ CREATE POLICY "Users can update own profile" ON profiles
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, name, country, field_of_study, budget, avatar_url, picture)
+  INSERT INTO public.profiles (id, name, avatar_url, picture)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.raw_user_meta_data->>'full_name', split_part(NEW.email, '@', 1)),
-    COALESCE(NEW.raw_user_meta_data->>'country', 'India'),
-    NEW.raw_user_meta_data->>'field_of_study',
-    NEW.raw_user_meta_data->>'budget',
     NEW.raw_user_meta_data->>'avatar_url',
     NEW.raw_user_meta_data->>'picture'
   );
@@ -68,10 +60,9 @@ CREATE TABLE IF NOT EXISTS user_onboarding (
   study_break BOOLEAN,
   visa_refusal BOOLEAN,
   segment TEXT,
-  onboarding_data JSONB,
   is_completed BOOLEAN DEFAULT false,
   current_step INTEGER DEFAULT 0,
-  budget_slider INTEGER[] DEFAULT ARRAY[30000],
+  budget_slider JSONB DEFAULT '[30000]',
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -88,6 +79,10 @@ CREATE POLICY "Users can insert own onboarding data" ON user_onboarding
 
 CREATE POLICY "Users can update own onboarding data" ON user_onboarding
   FOR UPDATE USING (auth.uid() = id);
+
+-- Drop existing functions first to avoid conflicts
+DROP FUNCTION IF EXISTS public.get_onboarding_data(UUID);
+DROP FUNCTION IF EXISTS public.upsert_onboarding_data(UUID, JSONB);
 
 -- Create function to upsert onboarding data
 CREATE OR REPLACE FUNCTION public.upsert_onboarding_data(
@@ -110,7 +105,6 @@ BEGIN
     study_break,
     visa_refusal,
     segment,
-    onboarding_data,
     is_completed,
     current_step,
     budget_slider,
@@ -130,10 +124,13 @@ BEGIN
     (onboarding_data->>'studyBreak')::BOOLEAN,
     (onboarding_data->>'visaRefusal')::BOOLEAN,
     (onboarding_data->>'segment')::TEXT,
-    onboarding_data,
     (onboarding_data->>'isCompleted')::BOOLEAN,
     (onboarding_data->>'currentStep')::INTEGER,
-    (onboarding_data->>'budgetSlider')::INTEGER[],
+    CASE 
+      WHEN onboarding_data->'budgetSlider' IS NOT NULL 
+      THEN onboarding_data->'budgetSlider'
+      ELSE '[30000]'::JSONB
+    END,
     NOW()
   )
   ON CONFLICT (id) DO UPDATE SET
@@ -149,10 +146,13 @@ BEGIN
     study_break = EXCLUDED.study_break,
     visa_refusal = EXCLUDED.visa_refusal,
     segment = EXCLUDED.segment,
-    onboarding_data = EXCLUDED.onboarding_data,
     is_completed = EXCLUDED.is_completed,
     current_step = EXCLUDED.current_step,
-    budget_slider = EXCLUDED.budget_slider,
+    budget_slider = CASE 
+      WHEN EXCLUDED.budget_slider IS NOT NULL 
+      THEN EXCLUDED.budget_slider
+      ELSE '[30000]'::JSONB
+    END,
     updated_at = NOW();
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -172,10 +172,9 @@ RETURNS TABLE (
   study_break BOOLEAN,
   visa_refusal BOOLEAN,
   segment TEXT,
-  onboarding_data JSONB,
   is_completed BOOLEAN,
   current_step INTEGER,
-  budget_slider INTEGER[]
+  budget_slider JSONB
 ) AS $$
 BEGIN
   RETURN QUERY
@@ -192,7 +191,6 @@ BEGIN
     uo.study_break,
     uo.visa_refusal,
     uo.segment,
-    uo.onboarding_data,
     uo.is_completed,
     uo.current_step,
     uo.budget_slider
@@ -228,3 +226,5 @@ CREATE INDEX IF NOT EXISTS idx_user_onboarding_completed ON user_onboarding(is_c
 CREATE INDEX IF NOT EXISTS idx_user_onboarding_study_goal ON user_onboarding(study_goal);
 CREATE INDEX IF NOT EXISTS idx_user_onboarding_destination ON user_onboarding(destination);
 CREATE INDEX IF NOT EXISTS idx_user_onboarding_segment ON user_onboarding(segment);
+CREATE INDEX IF NOT EXISTS idx_user_onboarding_country ON user_onboarding(country);
+CREATE INDEX IF NOT EXISTS idx_user_onboarding_field_of_study ON user_onboarding(field_of_study);
