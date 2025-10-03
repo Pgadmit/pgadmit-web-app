@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/user-avatar";
 import { useAuth } from "@/lib/auth-context";
+import { useOnboardingData } from "@/hooks/use-onboarding-data";
 import {
   User,
   Settings,
@@ -25,6 +26,7 @@ export function UserMenu() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const { isActivePath, mounted } = useActivePath();
+  const { onboardingData } = useOnboardingData(user?.id || null);
 
   if (!user) return null;
 
@@ -67,9 +69,9 @@ export function UserMenu() {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
-            {user.country && (
+            {onboardingData?.country && (
               <p className="text-xs leading-none text-muted-foreground">
-                🌍 {user.country}
+                🌍 {onboardingData.country}
               </p>
             )}
           </div>
@@ -78,8 +80,8 @@ export function UserMenu() {
         <DropdownMenuItem
           onClick={handleDashboard}
           className={`cursor-pointer transition-colors ${mounted && isActivePath("/dashboard", false)
-              ? "bg-blue-50 text-blue-700 font-semibold"
-              : "hover:bg-gray-50"
+            ? "bg-blue-50 text-blue-700 font-semibold"
+            : "hover:bg-gray-50"
             }`}
         >
           <LayoutDashboard className="cursor-pointer  mr-2 h-4 w-4" />
@@ -88,8 +90,8 @@ export function UserMenu() {
         <DropdownMenuItem
           onClick={handleApplications}
           className={`cursor-pointer transition-colors ${mounted && isActivePath("/applications", false)
-              ? "bg-blue-50 text-blue-700 font-semibold"
-              : "hover:bg-gray-50"
+            ? "bg-blue-50 text-blue-700 font-semibold"
+            : "hover:bg-gray-50"
             }`}
         >
           <FileText className="cursor-pointer mr-2 h-4 w-4" />
@@ -98,8 +100,8 @@ export function UserMenu() {
         <DropdownMenuItem
           onClick={handleProfile}
           className={`cursor-pointer transition-colors ${mounted && isActivePath("/profile", false)
-              ? "bg-blue-50 text-blue-700 font-semibold"
-              : "hover:bg-gray-50"
+            ? "bg-blue-50 text-blue-700 font-semibold"
+            : "hover:bg-gray-50"
             }`}
         >
           <User className="cursor-pointer mr-2 h-4 w-4" />
@@ -108,8 +110,8 @@ export function UserMenu() {
         <DropdownMenuItem
           onClick={handleSettings}
           className={`cursor-pointer transition-colors ${mounted && isActivePath("/settings", false)
-              ? "bg-blue-50 text-blue-700 font-semibold"
-              : "hover:bg-gray-50"
+            ? "bg-blue-50 text-blue-700 font-semibold"
+            : "hover:bg-gray-50"
             }`}
         >
           <Settings className="cursor-pointer mr-2 h-4 w-4" />

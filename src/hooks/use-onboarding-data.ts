@@ -20,7 +20,6 @@ export function useOnboardingData(userId: string | null) {
             return;
         }
 
-        // Check if user has completed onboarding before making the request
         if (user && !user.onboardingComplete) {
             setOnboardingData(null);
             setLoading(false);
