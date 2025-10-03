@@ -6,11 +6,9 @@ import { getCollegeSuggestions, sendToN8nWebhook } from '@/actions/ai-workflow';
 import { AdmissionFormSchema, AdmissionFormSchemaValues } from '@/lib/validations';
 import { useSuggestUniversities } from '@/lib/stores/suggest-universities-store';
 import { useRateLimitStore } from '@/lib/stores/rate-limit-store';
-import { useAdmissionLoading } from '@/lib/loading-context';
 
 export function useAdmissionForm() {
-    const { setUniversities, setError, universities } = useSuggestUniversities();
-    const { loading, setLoading } = useAdmissionLoading();
+    const { setUniversities, setLoading, setError, universities, loading } = useSuggestUniversities();
     const {
         isOpenAILimited,
         canMakeOpenAIRequest,
@@ -29,18 +27,10 @@ export function useAdmissionForm() {
         },
     });
 
-    // Check rate limits on component mount and set up interval
+    // Check rate limits on component mount only
     useEffect(() => {
         checkRateLimits();
-
-        const interval = setInterval(() => {
-            checkRateLimits();
-        }, 1000);
-
-        return () => {
-            clearInterval(interval);
-        };
-    }, []);
+    }, [checkRateLimits]);
 
     const onSubmit = (values: AdmissionFormSchemaValues) => {
         if (!canMakeOpenAIRequest()) {

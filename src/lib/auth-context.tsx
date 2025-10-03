@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react"
-import { useRouter } from "next/navigation"
 import { createClient } from "@/utils/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { fetchUserProfile, clearCachedProfile, getCachedProfile, setCachedProfile } from "./profile-utils"
@@ -27,14 +26,9 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const { loading, setLoading } = useAuthLoading()
-  const router = useRouter()
   const supabase = createClient()
 
   const updateUserState = (userData: User | null) => {
-    if (user && userData && user.id !== userData.id) {
-      clearAllStores()
-    }
-
     if (user && !userData) {
       clearAllStores()
     }
@@ -84,9 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const initAuth = async () => {
       try {
-
-        clearAllStores()
-
         const cached = getCachedProfile()
         if (cached && isMounted) {
           setUser(cached)
