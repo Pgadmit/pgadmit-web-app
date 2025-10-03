@@ -6,9 +6,11 @@ import { getCollegeSuggestions, sendToN8nWebhook } from '@/actions/ai-workflow';
 import { AdmissionFormSchema, AdmissionFormSchemaValues } from '@/lib/validations';
 import { useSuggestUniversities } from '@/lib/stores/suggest-universities-store';
 import { useRateLimitStore } from '@/lib/stores/rate-limit-store';
+import { useAdmissionLoading } from '@/lib/loading-context';
 
 export function useAdmissionForm() {
-    const { setUniversities, setLoading, setError, universities, loading } = useSuggestUniversities();
+    const { setUniversities, setError, universities } = useSuggestUniversities();
+    const { loading, setLoading } = useAdmissionLoading();
     const {
         isOpenAILimited,
         canMakeOpenAIRequest,
@@ -38,7 +40,7 @@ export function useAdmissionForm() {
         return () => {
             clearInterval(interval);
         };
-    }, [checkRateLimits]);
+    }, []);
 
     const onSubmit = (values: AdmissionFormSchemaValues) => {
         if (!canMakeOpenAIRequest()) {

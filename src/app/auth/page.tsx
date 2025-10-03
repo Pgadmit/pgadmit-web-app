@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, Suspense, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,42 +12,45 @@ import { SignupForm } from "@/components/auth/signup-form";
 
 function AuthPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState("login");
-  const [initialData, setInitialData] = useState<{
-    country?: string;
-    fieldOfStudy?: string;
-    budget?: string;
-  }>({});
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
+  useEffect(() => {
+    if (!loading && user) {
+      setIsRedirecting(true);
+      router.push("/profile");
+      return;
+    }
+  }, [loading, user, router]);
 
   const handleLoginSuccess = () => {
-    router.push("/dashboard");
+    router.push("/profile");
   };
 
   const handleSignupSuccess = () => {
     router.push("/onboarding");
   };
 
-  useEffect(() => {
-    // Get initial data from URL parameters
-    const country = searchParams.get("country");
-    const fieldOfStudy = searchParams.get("fieldOfStudy");
-    const budget = searchParams.get("budget");
-
-    if (country || fieldOfStudy || budget) {
-      setInitialData({
-        country: country || undefined,
-        fieldOfStudy: fieldOfStudy || undefined,
-        budget: budget || undefined,
-      });
-      // Switch to signup tab if we have initial data
-      setActiveTab("signup");
-    }
-  }, [searchParams]);
-
   const handleBackToHome = () => {
     router.push("/");
   };
+
+  // Show loading while checking auth status or redirecting
+  if (loading || isRedirecting) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div className="w-full max-w-md py-4 sm:py-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">
+              {isRedirecting ? "Redirecting..." : "Loading..."}
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
@@ -109,7 +113,6 @@ function AuthPageContent() {
               >
                 <SignupForm
                   onSuccess={handleSignupSuccess}
-                  initialData={initialData}
                 />
               </TabsContent>
             </Tabs>

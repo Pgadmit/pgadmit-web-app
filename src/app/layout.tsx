@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Open_Sans, Montserrat } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import { LoadingProvider } from "@/lib/loading-context";
 import { AIProvider } from "@/lib/ai-context";
 import { GamificationProvider } from "@/lib/gamification-context";
 import { SidebarProvider } from "@/lib/sidebar-context";
@@ -10,6 +11,7 @@ import { AchievementCelebration } from "@/components/gamification/achievement-ce
 import { Toaster } from "@/components/ui/toaster";
 import { ConditionalHeader } from "@/components/conditional-header";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
+import { GlobalLoading } from "@/components/global-loading";
 
 const openSans = Open_Sans({
   subsets: ["latin"],
@@ -125,19 +127,22 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <AuthProvider>
-          <GamificationProvider>
-            <AIProvider>
-              <SidebarProvider>
-                <ConditionalHeader />
-                {children}
-                <AchievementCelebration />
-                <Toaster />
-                <MobileBottomNav />
-              </SidebarProvider>
-            </AIProvider>
-          </GamificationProvider>
-        </AuthProvider>
+        <LoadingProvider>
+          <AuthProvider>
+            <GamificationProvider>
+              <AIProvider>
+                <SidebarProvider>
+                  <ConditionalHeader />
+                  {children}
+                  <AchievementCelebration />
+                  <Toaster />
+                  <MobileBottomNav />
+                  <GlobalLoading />
+                </SidebarProvider>
+              </AIProvider>
+            </GamificationProvider>
+          </AuthProvider>
+        </LoadingProvider>
       </body>
     </html>
   );
