@@ -61,7 +61,6 @@ CREATE TABLE IF NOT EXISTS user_onboarding (
   visa_refusal BOOLEAN,
   segment TEXT,
   is_completed BOOLEAN DEFAULT false,
-  current_step INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -105,7 +104,6 @@ BEGIN
     visa_refusal,
     segment,
     is_completed,
-    current_step,
     updated_at
   )
   VALUES (
@@ -123,12 +121,6 @@ BEGIN
     (onboarding_data->>'visaRefusal')::BOOLEAN,
     (onboarding_data->>'segment')::TEXT,
     (onboarding_data->>'isCompleted')::BOOLEAN,
-    (onboarding_data->>'currentStep')::INTEGER,
-    CASE 
-      WHEN onboarding_data->'budgetSlider' IS NOT NULL 
-      THEN onboarding_data->'budgetSlider'
-      ELSE '[30000]'::JSONB
-    END,
     NOW()
   )
   ON CONFLICT (id) DO UPDATE SET
@@ -145,8 +137,6 @@ BEGIN
     visa_refusal = EXCLUDED.visa_refusal,
     segment = EXCLUDED.segment,
     is_completed = EXCLUDED.is_completed,
-    current_step = EXCLUDED.current_step,
-    END,
     updated_at = NOW();
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -166,8 +156,7 @@ RETURNS TABLE (
   study_break BOOLEAN,
   visa_refusal BOOLEAN,
   segment TEXT,
-  is_completed BOOLEAN,
-  current_step INTEGER,
+  is_completed BOOLEAN
 ) AS $$
 BEGIN
   RETURN QUERY
@@ -184,8 +173,7 @@ BEGIN
     uo.study_break,
     uo.visa_refusal,
     uo.segment,
-    uo.is_completed,
-    uo.current_step,
+    uo.is_completed
   FROM user_onboarding uo
   WHERE uo.id = user_id;
 END;
