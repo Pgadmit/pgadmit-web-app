@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/features/auth";
 import { UserMenu } from "@/components/user-menu";
 import { useRouter } from "next/navigation";
 import { useActivePath, navigationItems } from "@/lib/navigation-utils";
@@ -45,18 +45,16 @@ export function GlobalHeader() {
                 >
                   <div className="relative w-5 h-5">
                     <Menu
-                      className={`h-5 w-5 absolute transition-all duration-200 ${
-                        sidebarOpen
-                          ? "opacity-0 rotate-180"
-                          : "opacity-100 rotate-0"
-                      }`}
+                      className={`h-5 w-5 absolute transition-all duration-200 ${sidebarOpen
+                        ? "opacity-0 rotate-180"
+                        : "opacity-100 rotate-0"
+                        }`}
                     />
                     <X
-                      className={`h-5 w-5 absolute transition-all duration-200 ${
-                        sidebarOpen
-                          ? "opacity-100 rotate-0"
-                          : "opacity-0 -rotate-180"
-                      }`}
+                      className={`h-5 w-5 absolute transition-all duration-200 ${sidebarOpen
+                        ? "opacity-100 rotate-0"
+                        : "opacity-0 -rotate-180"
+                        }`}
                     />
                   </div>
                 </Button>
@@ -84,11 +82,10 @@ export function GlobalHeader() {
                             key={item.href}
                             variant="ghost"
                             onClick={() => router.push(item.href)}
-                            className={`px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${
-                              isActive
-                                ? "bg-blue-600 text-white shadow-md hover:bg-blue-700"
-                                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
-                            }`}
+                            className={`px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${isActive
+                              ? "bg-blue-600 text-white shadow-md hover:bg-blue-700"
+                              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+                              }`}
                           >
                             {item.label.toUpperCase()}
                           </Button>
@@ -111,11 +108,10 @@ export function GlobalHeader() {
                       variant="outline"
                       size="sm"
                       onClick={() => router.push("/dashboard")}
-                      className={`md:hidden px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${
-                        isActivePath("/dashboard", false)
-                          ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-                          : "hover:bg-gray-100"
-                      }`}
+                      className={`md:hidden px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${isActivePath("/dashboard", false)
+                        ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                        : "hover:bg-gray-100"
+                        }`}
                     >
                       Dashboard
                     </Button>
@@ -129,7 +125,7 @@ export function GlobalHeader() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => router.push("/auth")}
+                    onClick={() => router.push("/login")}
                     className="hidden sm:inline-flex"
                   >
                     Login

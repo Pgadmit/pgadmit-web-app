@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button, Input, Label } from '@/shared/ui'
-import { useLogin } from '../../model/use-login'
+import { useAuth } from '@/features/auth'
 import { validateLoginForm } from '@/shared/lib/validations'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import type { LoginCredentials } from '@/shared/lib/validations/auth'
@@ -20,7 +20,9 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false)
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
-    const { login, loginWithGoogle, isLoading, error } = useLogin()
+    const { signIn, signInWithGoogle } = useAuth()
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -28,16 +30,34 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
         // Validate form        
         const errors = validateLoginForm(credentials)
         if (Object.keys(errors).length > 0) {
-            setValidationErrors(errors)
+            setValidationErrors(errors as Record<string, string>)
             return
         }
 
         setValidationErrors({})
-        await login(credentials, onSuccess)
+
+        try {
+            setIsLoading(true)
+            setError(null)
+            await signIn(credentials.email, credentials.password)
+            onSuccess?.()
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Login failed')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleGoogleLogin = async () => {
-        await loginWithGoogle()
+        try {
+            setIsLoading(true)
+            setError(null)
+            await signInWithGoogle()
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Google login failed')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +74,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
             <Button
                 type="button"
                 variant="outline"
-                className="w-full bg-transparent hover:bg-accent/10 hover:scale-[1.02] active:scale-[0.98]"
+                className="w-full bg-transparent hover:bg-accent/10 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                 onClick={handleGoogleLogin}
                 disabled={isLoading}
             >
@@ -83,7 +103,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
                 Continue with Google
             </Button>
 
-            <div className="relative">
+            <div className="relative py-2">
                 <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t" />
                 </div>
@@ -128,7 +148,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
                             type="button"
                             variant="ghost"
                             size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
                             onClick={() => setShowPassword(!showPassword)}
                         >
                             {showPassword ? (
@@ -152,7 +172,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
 
                 <Button
                     type="submit"
-                    className="w-full hover:scale-[1.02] active:scale-[0.98] disabled:scale-100"
+                    className="w-full hover:scale-[1.02] active:scale-[0.98] disabled:scale-100 cursor-pointer"
                     disabled={isLoading}
                 >
                     {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, FileText, MessageCircle } from "lucide-react";
 import { useAI } from "@/lib/ai-context";
-import type { User } from "@/lib/auth-context";
+import type { User } from "@/types";
 
 interface QuickActionsProps {
   user: User;

@@ -1,8 +1,8 @@
 "use client"
 
 import { Button } from '@/shared/ui'
-import { useLogout } from '../../model/use-logout'
 import { Loader2, LogOut } from 'lucide-react'
+import { useAuth } from '@/features/auth'
 
 interface LogoutButtonProps {
     variant?: 'button' | 'icon'
@@ -15,19 +15,19 @@ export function LogoutButton({
     children,
     className
 }: LogoutButtonProps) {
-    const { logout, isLoading } = useLogout()
+    const { signOut, loading } = useAuth()
 
     if (variant === 'icon') {
         return (
             <Button
                 variant="ghost"
                 size="sm"
-                onClick={logout}
-                disabled={isLoading}
-                className={className}
+                onClick={signOut}
+                disabled={loading}
+                className={`${className} cursor-pointer`}
                 title="Sign out"
             >
-                {isLoading ? (
+                {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                     <LogOut className="h-4 w-4" />
@@ -39,11 +39,11 @@ export function LogoutButton({
     return (
         <Button
             variant="outline"
-            onClick={logout}
-            disabled={isLoading}
-            className={className}
+            onClick={signOut}
+            disabled={loading}
+            className={`${className} cursor-pointer`}
         >
-            {isLoading ? (
+            {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
                 <LogOut className="mr-2 h-4 w-4" />

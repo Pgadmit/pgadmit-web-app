@@ -8,15 +8,18 @@ import { DeadlinesSection } from "./deadlines-section";
 import { ScholarshipsSection } from "./scholarships-section";
 import { AIRecommendations } from "./ai-recommendations";
 import { ProfileIncompleteBanner } from "./profile-incomplete-banner";
+import { useOnboardingData } from "@/hooks/use-onboarding-data";
 
 export function DashboardContent() {
+  const { onboardingData, loading } = useOnboardingData();
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <DashboardSidebar />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto">
         <div className="max-w-6xl mx-auto">
-          <ProfileIncompleteBanner />
+          <ProfileIncompleteBanner onboardingData={onboardingData} loading={loading} />
           <WelcomeSection />
           <StatsCards />
 

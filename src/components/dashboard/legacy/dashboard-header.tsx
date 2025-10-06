@@ -6,7 +6,7 @@ import { Bell, MessageCircle } from "lucide-react";
 import { useAI } from "@/lib/ai-context";
 import { StreakCounter } from "@/components/gamification/streak-counter";
 import { LevelProgress } from "@/components/gamification/level-progress";
-import type { User } from "@/lib/auth-context";
+import type { User } from "@/types";
 
 interface DashboardHeaderProps {
   user: User;

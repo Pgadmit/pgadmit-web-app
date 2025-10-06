@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useCallback } from "react"
-import { useAuth } from "./auth-context"
+import { useAuth } from "@/features/auth"
 
 export interface ChatMessage {
   id: string
@@ -39,7 +39,7 @@ export function AIProvider({ children }: { children: React.ReactNode }) {
       const lowerMessage = userMessage.toLowerCase()
 
       if (context === "university-matching" || lowerMessage.includes("university") || lowerMessage.includes("school")) {
-        return `Based on your profile (${user?.country}, ${user?.fieldOfStudy}), I'd recommend looking at universities that match your academic background and budget. Would you like me to help you create a personalized shortlist? I can consider factors like program rankings, location preferences, and scholarship opportunities.`
+        return `Based on your profile, I'd recommend looking at universities that match your academic background and budget. Would you like me to help you create a personalized shortlist? I can consider factors like program rankings, location preferences, and scholarship opportunities.`
       }
 
       if (context === "application-help" || lowerMessage.includes("application") || lowerMessage.includes("essay")) {

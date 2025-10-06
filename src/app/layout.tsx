@@ -2,7 +2,7 @@ import type React from "react";
 import type { Metadata } from "next";
 import { Open_Sans, Montserrat } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth-context";
+import { AuthProvider } from "@/features/auth";
 import { LoadingProvider } from "@/lib/loading-context";
 import { AIProvider } from "@/lib/ai-context";
 import { GamificationProvider } from "@/lib/gamification-context";

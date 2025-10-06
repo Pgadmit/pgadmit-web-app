@@ -4,22 +4,22 @@ import { useState, Suspense, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { LoginForm, RegisterForm } from '@/features/auth'
-import { useIsAuthenticated, useSessionLoading } from '@/entities/session'
 import { Button, TabsTrigger, TabsContent, TabsList, Tabs, Card, CardHeader, CardTitle, CardContent } from '@/shared/ui'
+import { useAuth } from '@/features/auth'
 
 function LoginPageContent() {
     const router = useRouter()
-    const isAuthenticated = useIsAuthenticated()
-    const isLoading = useSessionLoading()
     const [activeTab, setActiveTab] = useState('login')
     const [isRedirecting, setIsRedirecting] = useState(false)
 
+    const { user, loading } = useAuth()
+
     useEffect(() => {
-        if (!isLoading && isAuthenticated) {
+        if (user && !loading) {
             setIsRedirecting(true)
             router.push('/dashboard')
         }
-    }, [isLoading, isAuthenticated, router])
+    }, [user, loading, router])
 
     const handleLoginSuccess = () => {
         router.push('/dashboard')
@@ -33,8 +33,7 @@ function LoginPageContent() {
         router.push('/')
     }
 
-    // Show loading while checking auth status or redirecting
-    if (isLoading || isRedirecting) {
+    if (isRedirecting) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5 flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
                 <div className="w-full max-w-md py-4 sm:py-8">
@@ -57,7 +56,7 @@ function LoginPageContent() {
                     <Button
                         variant="ghost"
                         onClick={handleBackToHome}
-                        className="mb-4 text-muted-foreground hover:text-foreground"
+                        className="mb-4 text-muted-foreground hover:text-foreground cursor-pointer"
                     >
                         <ArrowLeft className="h-4 w-4 mr-2" />
                         Back to Home
@@ -84,13 +83,13 @@ function LoginPageContent() {
                         >
                             <TabsList className="grid w-full grid-cols-2 transition-all duration-200">
                                 <TabsTrigger
-                                    className="transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                                    className="transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:cursor-default cursor-pointer"
                                     value="login"
                                 >
                                     Sign In
                                 </TabsTrigger>
                                 <TabsTrigger
-                                    className="transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                                    className="transition-all duration-200 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:cursor-default cursor-pointer"
                                     value="register"
                                 >
                                     Sign Up

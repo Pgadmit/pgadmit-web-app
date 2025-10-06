@@ -10,8 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/user-avatar";
-import { useCurrentUser } from "@/entities/user";
-import { useLogout } from "@/features/auth";
+import { useAuth } from "@/features/auth";
 import { useOnboardingData } from "@/hooks/use-onboarding-data";
 import {
   User,
@@ -24,11 +23,10 @@ import { useRouter } from "next/navigation";
 import { useActivePath } from "@/lib/navigation-utils";
 
 export function UserMenu() {
-  const user = useCurrentUser();
-  const { logout } = useLogout();
+  const { user, signOut } = useAuth();
   const router = useRouter();
   const { isActivePath, mounted } = useActivePath();
-  const { onboardingData } = useOnboardingData(user?.id || null);
+  const { onboardingData } = useOnboardingData();
 
   if (!user) return null;
 
@@ -50,10 +48,11 @@ export function UserMenu() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await signOut();
+      router.push("/login");
     } catch (error) {
       console.error('Logout failed:', error);
-      router.push("/");
+      router.push("/login");
     }
   };
 
