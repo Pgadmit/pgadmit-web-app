@@ -1,5 +1,10 @@
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
+    import { ProtectedRoute } from "@/features/auth";
 
 export default function DashboardPage() {
-    return <DashboardContent />;
+    return (
+        <ProtectedRoute>
+            <DashboardContent />
+        </ProtectedRoute>
+    );
 }

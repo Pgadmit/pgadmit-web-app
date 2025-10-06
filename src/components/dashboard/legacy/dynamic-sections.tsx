@@ -22,7 +22,7 @@ import { AchievementsGrid } from "@/components/gamification/achievements-grid";
 import { StreakCounter } from "@/components/gamification/streak-counter";
 import { LevelProgress } from "@/components/gamification/level-progress";
 import { getUserStages, getCurrentStage } from "@/lib/dashboard-utils";
-import type { User as UserType } from "@/lib/auth-context";
+import type { User as UserType } from "@/types";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useAI } from "@/lib/ai-context";

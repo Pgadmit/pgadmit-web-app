@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/features/auth";
 
 interface UserAvatarProps {
   size?: "sm" | "md" | "lg";

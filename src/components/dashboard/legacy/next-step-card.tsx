@@ -9,7 +9,7 @@ import {
   getNextSteps,
 } from "@/lib/dashboard-utils";
 import { useGamification } from "@/lib/gamification-context";
-import type { User } from "@/lib/auth-context";
+import type { User } from "@/types";
 
 interface NextStepCardProps {
   user: User;

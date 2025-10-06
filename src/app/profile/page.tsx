@@ -1,13 +1,13 @@
 "use client"
 
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/features/auth"
 import { useOnboardingData } from "@/hooks/use-onboarding-data"
 import { useProfile } from "@/hooks/use-profile"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, GraduationCap, User, } from "lucide-react"
-import { ProtectedRoute } from "@/components/auth/protected-route"
+import { ProtectedRoute } from "@/features/auth"
 import { ProfileIncompleteBanner } from "@/components/dashboard/profile-incomplete-banner"
 
 export default function ProfilePage() {

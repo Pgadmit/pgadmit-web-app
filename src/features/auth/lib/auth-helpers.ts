@@ -1,4 +1,4 @@
-import type { AuthError } from './types'
+import type { AuthError } from '@/shared/lib/validations/auth'
 
 export const handleAuthError = (error: any): string => {
     if (typeof error === 'string') {

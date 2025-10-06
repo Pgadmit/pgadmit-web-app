@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/features/auth";
 import { UserMenu } from "@/components/user-menu";
 import { useRouter } from "next/navigation";
 import { useActivePath, navigationItems } from "@/lib/navigation-utils";

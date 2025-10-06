@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/features/auth"
 import { useRouter, useParams } from "next/navigation"
 import { UniversityDetailContent } from "@/components/universities/university-detail-content"
 

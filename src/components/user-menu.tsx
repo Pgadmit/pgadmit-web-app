@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/user-avatar";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/features/auth";
 import { useOnboardingData } from "@/hooks/use-onboarding-data";
 import {
   User,

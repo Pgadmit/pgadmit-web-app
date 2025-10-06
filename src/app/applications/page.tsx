@@ -1,12 +1,12 @@
 "use client"
 
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/features/auth"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, FileText, Clock, CheckCircle, AlertCircle } from "lucide-react"
-import { ProtectedRoute } from "@/components/auth/protected-route"
+import { ProtectedRoute } from "@/features/auth"
 
 export default function ApplicationsPage() {
   const { user } = useAuth()

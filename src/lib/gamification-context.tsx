@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
-import { useAuth } from "./auth-context"
+import { useAuth } from "@/features/auth"
 import type { UserStats, Achievement } from "@/types"
 
 interface GamificationContextType {

@@ -1,41 +1,46 @@
-"use client"
+"use client";
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useCurrentUser, useUserLoading } from '@/entities/user'
+import { useAuth } from "@/features/auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode
-  redirectTo?: string
-  fallback?: React.ReactNode
+  children: React.ReactNode;
+  redirectTo?: string;
+  requireOnboarding?: boolean;
 }
 
 export function ProtectedRoute({
   children,
-  redirectTo = '/login',
-  fallback
+  redirectTo = "/",
+  requireOnboarding = false
 }: ProtectedRouteProps) {
-  const isAuthenticated = useCurrentUser()
-  const isLoading = useUserLoading()
-  const router = useRouter()
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      router.push(redirectTo)
+    if (!loading && !user) {
+      setIsRedirecting(true);
+      router.push(redirectTo);
+      return;
     }
-  }, [isAuthenticated, isLoading, router, redirectTo])
 
-  if (isLoading) {
-    return fallback || (
-      <div className="flex items-center justify-center min-h-screen">
+    // Only redirect to onboarding if explicitly required
+    if (!loading && user && requireOnboarding && !user.onboardingComplete) {
+      setIsRedirecting(true);
+      router.push("/onboarding");
+      return;
+    }
+  }, [loading, user, router, redirectTo, requireOnboarding]);
+
+  if (loading || isRedirecting) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
-    )
+    );
   }
 
-  if (!isAuthenticated) {
-    return null
-  }
-
-  return <>{children}</>
+  return <>{children}</>;
 }

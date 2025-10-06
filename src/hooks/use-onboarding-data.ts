@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { useOnboardingLoading } from '@/lib/loading-context';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/features/auth';
 import type { UserOnboarding } from '@/types';
 
 export function useOnboardingData() {

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/features/auth";
 import { useOnboardingData } from "@/hooks/use-onboarding-data";
 
 export function WelcomeSection() {

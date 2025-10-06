@@ -2,7 +2,7 @@
 
 import { Button } from '@/shared/ui'
 import { Loader2, LogOut } from 'lucide-react'
-import { useAuth } from '@/lib/auth-context'
+import { useAuth } from '@/features/auth'
 
 interface LogoutButtonProps {
     variant?: 'button' | 'icon'
@@ -24,7 +24,7 @@ export function LogoutButton({
                 size="sm"
                 onClick={signOut}
                 disabled={loading}
-                className={className}
+                className={`${className} cursor-pointer`}
                 title="Sign out"
             >
                 {loading ? (
@@ -41,7 +41,7 @@ export function LogoutButton({
             variant="outline"
             onClick={signOut}
             disabled={loading}
-            className={className}
+            className={`${className} cursor-pointer`}
         >
             {loading ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
