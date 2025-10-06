@@ -74,9 +74,26 @@ export const signUpWithEmail = async (data: Omit<RegisterData, 'confirmPassword'
 export const signOut = async (): Promise<AuthResult> => {
     try {
         const supabase = createClient()
+
+        const { data: { session } } = await supabase.auth.getSession()
+
+        if (!session) {
+            return {
+                data: null,
+                error: null,
+            }
+        }
+
         const { error } = await supabase.auth.signOut()
 
         if (error) {
+            if (error.message?.toLowerCase().includes('auth session missing')) {
+                return {
+                    data: null,
+                    error: null,
+                }
+            }
+
             return {
                 data: null,
                 error: {
@@ -91,6 +108,13 @@ export const signOut = async (): Promise<AuthResult> => {
             error: null,
         }
     } catch (error) {
+        if (error instanceof Error && error.message?.toLowerCase().includes('auth session missing')) {
+            return {
+                data: null,
+                error: null,
+            }
+        }
+
         return {
             data: null,
             error: {

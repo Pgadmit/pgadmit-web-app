@@ -2,6 +2,7 @@
 
 import { useAuth } from "@/lib/auth-context"
 import { useOnboardingData } from "@/hooks/use-onboarding-data"
+import { useProfile } from "@/hooks/use-profile"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -12,8 +13,63 @@ import { ProfileIncompleteBanner } from "@/components/dashboard/profile-incomple
 export default function ProfilePage() {
   const { user } = useAuth()
   const router = useRouter()
-  const { onboardingData } = useOnboardingData(user?.id ?? null)
+  const { profile, isLoading: isLoadingProfile, error, reloadProfile } = useProfile(user?.id ?? null)
+
+  const { onboardingData } = useOnboardingData()
+
   if (!user) return null
+
+  if (isLoadingProfile) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-6 max-w-4xl">
+            <div className="flex items-center gap-4 mb-6">
+              <Button variant="outline" onClick={() => router.back()}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+              <h1 className="text-2xl font-bold">My Profile</h1>
+            </div>
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading profile...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ProtectedRoute>
+    )
+  }
+
+  if (error) {
+    return (
+      <ProtectedRoute>
+        <div className="min-h-screen bg-background">
+          <div className="container mx-auto px-4 py-6 max-w-4xl">
+            <div className="flex items-center gap-4 mb-6">
+              <Button variant="outline" onClick={() => router.back()}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </Button>
+              <h1 className="text-2xl font-bold">My Profile</h1>
+            </div>
+            <div className="flex items-center justify-center py-12">
+              <div className="text-center">
+                <div className="text-red-500 text-6xl mb-4">⚠</div>
+                <h2 className="text-xl font-semibold mb-2">Failed to load profile</h2>
+                <p className="text-muted-foreground mb-4">{error}</p>
+                <Button onClick={reloadProfile}>
+                  Try Again
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ProtectedRoute>
+    )
+  }
 
   return (
     <ProtectedRoute>
@@ -27,7 +83,7 @@ export default function ProfilePage() {
             <h1 className="text-2xl font-bold">My Profile</h1>
           </div>
 
-          <ProfileIncompleteBanner />
+          <ProfileIncompleteBanner onboardingData={onboardingData} loading={isLoadingProfile} />
 
           <div className="grid gap-6">
             <Card>
@@ -41,7 +97,7 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Name</label>
-                    <p className="text-lg">{user.name ?? 'Not provided'}</p>
+                    <p className="text-lg">{profile?.name || user.name || 'Not provided'}</p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Email</label>
@@ -54,7 +110,7 @@ export default function ProfilePage() {
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Profile Status</label>
                     <p className="text-lg">
-                      {user.onboardingComplete ? (
+                      {profile?.onboardingComplete ? (
                         <span className="text-green-600">✓ Complete</span>
                       ) : (
                         <span className="text-orange-600">⚠ Incomplete</span>

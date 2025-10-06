@@ -10,7 +10,7 @@ import { useOnboardingData } from "@/hooks/use-onboarding-data";
 export function WelcomeSection() {
   const router = useRouter();
   const { user } = useAuth();
-  const { onboardingData } = useOnboardingData(user?.id ?? null);
+  const { onboardingData } = useOnboardingData();
 
   const handleAIChat = () => {
     router.push("/ai-chat");
@@ -29,7 +29,7 @@ export function WelcomeSection() {
           </p>
 
           <div className="flex flex-wrap gap-2">
-            {!user?.onboardingComplete && (
+            {!onboardingData && (
               <Badge variant="outline" className="bg-white text-xs">
                 <Target className="w-3 h-3 mr-1" />
                 Complete Profile Setup

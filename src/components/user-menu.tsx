@@ -26,7 +26,7 @@ export function UserMenu() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const { isActivePath, mounted } = useActivePath();
-  const { onboardingData } = useOnboardingData(user?.id || null);
+  const { onboardingData } = useOnboardingData();
 
   if (!user) return null;
 

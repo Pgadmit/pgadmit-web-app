@@ -40,7 +40,6 @@ export async function fetchUserProfile(
       onboardingComplete: profileData?.onboardingComplete || supabaseUser.onboarding_complete,
       createdAt: supabaseUser.created_at,
     }
-    console.log('userProfile', userProfile)
     return userProfile
 
   } catch (error) {
