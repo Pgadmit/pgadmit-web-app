@@ -4,12 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/auth-context";
+import { useCurrentUser } from "@/entities/user";
 import { useOnboardingData } from "@/hooks/use-onboarding-data";
 
 export function WelcomeSection() {
   const router = useRouter();
-  const { user } = useAuth();
+  const user = useCurrentUser();
   const { onboardingData } = useOnboardingData(user?.id ?? null);
 
   const handleAIChat = () => {

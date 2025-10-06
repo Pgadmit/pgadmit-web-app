@@ -145,12 +145,12 @@ export function UniversityGrid() {
             </div>
 
             <div className="flex flex-wrap gap-1">
-              {university.programs.slice(0, 3).map((program) => (
+              {university.programs && university.programs.length > 0 && university.programs.slice(0, 3).map((program) => (
                 <Badge key={program} variant="outline" className="text-xs">
                   {program}
                 </Badge>
               ))}
-              {university.programs.length > 3 && (
+              {university.programs && university.programs.length > 3 && (
                 <Badge variant="outline" className="text-xs">
                   +{university.programs.length - 3} more
                 </Badge>
