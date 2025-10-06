@@ -81,7 +81,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Budget Range</label>
-                      <p className="text-lg">{onboardingData.budget.length > 0 ? onboardingData.budget : "Not provided"}</p>
+                      <p className="text-lg">{onboardingData.budget && onboardingData.budget.length > 0 ? onboardingData.budget : "Not provided"}</p>
                     </div>
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">GPA</label>

@@ -38,7 +38,7 @@ export default function BlogPostPage() {
 
       const response = await getBlogPost(slug);
 
-      if (response.data.length > 0) {
+      if (response.data && response.data.length > 0) {
         const currentPost = response.data[0];
         setPost(currentPost);
 

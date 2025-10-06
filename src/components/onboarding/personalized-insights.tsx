@@ -105,7 +105,7 @@ export function PersonalizedInsights({ isOpen, onClose, userData }: Personalized
     insights.push(academicInsight)
 
     // Country-Specific Guidance
-    if (data.preferredCountries.length > 0) {
+    if (data.preferredCountries && data.preferredCountries.length > 0) {
       const countryInsight: Insight = {
         icon: <MapPin className="h-5 w-5" />,
         title: "Destination Strategy",
@@ -127,7 +127,7 @@ export function PersonalizedInsights({ isOpen, onClose, userData }: Personalized
     }
 
     // Challenge-Based Support
-    if (data.challenges.length > 0) {
+    if (data.challenges && data.challenges.length > 0) {
       const challengeInsight: Insight = {
         icon: <AlertCircle className="h-5 w-5" />,
         title: "Overcoming Your Concerns",

@@ -10,7 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/user-avatar";
-import { useAuth } from "@/lib/auth-context";
+import { useCurrentUser } from "@/entities/user";
+import { useLogout } from "@/features/auth";
 import { useOnboardingData } from "@/hooks/use-onboarding-data";
 import {
   User,
@@ -23,7 +24,8 @@ import { useRouter } from "next/navigation";
 import { useActivePath } from "@/lib/navigation-utils";
 
 export function UserMenu() {
-  const { user, logout } = useAuth();
+  const user = useCurrentUser();
+  const { logout } = useLogout();
   const router = useRouter();
   const { isActivePath, mounted } = useActivePath();
   const { onboardingData } = useOnboardingData(user?.id || null);

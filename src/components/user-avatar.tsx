@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useAuth } from "@/lib/auth-context";
+import { useCurrentUser } from "@/entities/user";
 
 interface UserAvatarProps {
   size?: "sm" | "md" | "lg";
@@ -10,13 +10,13 @@ interface UserAvatarProps {
 }
 
 export function UserAvatar({ size = "md", showName = false, className = "" }: UserAvatarProps) {
-  const { user } = useAuth();
+  const user = useCurrentUser();
 
   if (!user) return null;
 
   const sizeClasses = {
     sm: "h-8 w-8",
-    md: "h-10 w-10", 
+    md: "h-10 w-10",
     lg: "h-12 w-12"
   };
 
@@ -26,16 +26,16 @@ export function UserAvatar({ size = "md", showName = false, className = "" }: Us
     .join("")
     .toUpperCase() || "U";
 
-  // Try to get avatar from Google profile data
-  const avatarUrl = user.profileData?.avatar_url || user.profileData?.picture;
+  // Get avatar from user data
+  const avatarUrl = user.avatar_url;
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
       <Avatar className={sizeClasses[size]}>
         {avatarUrl && (
-          <AvatarImage 
-            src={avatarUrl} 
-            alt={user.name || "User"} 
+          <AvatarImage
+            src={avatarUrl}
+            alt={user.name || "User"}
             className="object-cover"
           />
         )}

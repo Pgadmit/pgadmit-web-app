@@ -9,8 +9,8 @@ import { Trophy, Lock } from "lucide-react"
 export function AchievementsGrid() {
   const { userStats } = useGamification()
 
-  const unlockedAchievements = userStats.achievements.filter((a) => a.isUnlocked)
-  const lockedAchievements = userStats.achievements.filter((a) => !a.isUnlocked)
+  const unlockedAchievements = userStats.achievements?.filter((a) => a.isUnlocked) || []
+  const lockedAchievements = userStats.achievements?.filter((a) => !a.isUnlocked) || []
 
   return (
     <Card className="bg-card shadow-sm">
@@ -19,7 +19,7 @@ export function AchievementsGrid() {
           <Trophy className="h-5 w-5 text-primary" />
           Achievements
           <Badge variant="secondary" className="ml-auto">
-            {unlockedAchievements.length}/{userStats.achievements.length}
+            {unlockedAchievements.length}/{userStats.achievements?.length || 0}
           </Badge>
         </CardTitle>
       </CardHeader>

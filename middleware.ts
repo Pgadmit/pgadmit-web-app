@@ -1,26 +1,35 @@
-import { createServerClient } from '@supabase/ssr'
+import { createMiddlewareClient } from '@/shared/lib/supabase/server-only'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const protectedRoutes = [
+  '/dashboard',
+  '/profile',
+  '/settings',
+  '/applications',
+  '/universities',
+  '/community',
+  '/resources',
+  '/onboarding',
+]
+
+const authRoutes = ['/auth', '/login', '/register']
+
 export async function middleware(request: NextRequest) {
-  // Check if this is an OAuth callback with code parameter on root path
   const { pathname, searchParams } = new URL(request.url)
   const code = searchParams.get('code')
-  
+
+  // Handle OAuth callback redirects
   if (pathname === '/' && code) {
-    // Redirect OAuth callback to proper callback route
     const redirectUrl = new URL('/auth/callback', request.url)
     redirectUrl.searchParams.set('code', code)
-    // Copy other relevant parameters
     searchParams.forEach((value, key) => {
       if (key !== 'code') {
         redirectUrl.searchParams.set(key, value)
       }
     })
-    
     return NextResponse.redirect(redirectUrl)
   }
 
-  // Also handle OAuth callback on /auth path
   if (pathname === '/auth' && code) {
     const redirectUrl = new URL('/auth/callback', request.url)
     redirectUrl.searchParams.set('code', code)
@@ -29,42 +38,29 @@ export async function middleware(request: NextRequest) {
         redirectUrl.searchParams.set(key, value)
       }
     })
-    
     return NextResponse.redirect(redirectUrl)
   }
 
-  let supabaseResponse = NextResponse.next({
-    request,
-  })
-
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
-          supabaseResponse = NextResponse.next({
-            request,
-          })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
-        },
-      },
-    }
-  )
-
-  // IMPORTANT: Avoid writing any logic between createServerClient and
-  // supabase.auth.getUser(). A simple mistake could make it very hard to debug
-  // issues with users being randomly logged out.
+  const { supabase, supabaseResponse } = createMiddlewareClient(request)
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
+
+  const isAuthenticated = !!user
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route))
+
+  if (isProtectedRoute && !isAuthenticated) {
+    const redirectUrl = new URL('/auth', request.url)
+    redirectUrl.searchParams.set('redirectTo', pathname)
+    return NextResponse.redirect(redirectUrl)
+  }
+
+  if (isAuthRoute && isAuthenticated) {
+    const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+    return NextResponse.redirect(new URL(redirectTo, request.url))
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're
   // creating a new response object with NextResponse.next() make sure to:
