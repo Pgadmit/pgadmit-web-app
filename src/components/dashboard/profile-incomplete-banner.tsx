@@ -1,16 +1,20 @@
 "use client";
 
-import { useCurrentUser } from "@/entities/user";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, ArrowRight } from "lucide-react";
+import type { UserOnboarding } from "@/types";
 
-export function ProfileIncompleteBanner() {
-    const user = useCurrentUser();
+interface ProfileIncompleteBannerProps {
+    onboardingData: UserOnboarding | null;
+    loading?: boolean;
+}
+
+export function ProfileIncompleteBanner({ onboardingData, loading = false }: ProfileIncompleteBannerProps) {
     const router = useRouter();
 
-    if (!user || user.onboardingComplete) {
+    if (loading || onboardingData) {
         return null;
     }
 

@@ -1,37 +1,21 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/features/auth"
 import { useRouter } from "next/navigation"
 import { UniversitySearch } from "@/components/universities/university-search"
 import { UniversityGrid } from "@/components/universities/university-grid"
 import { SavedUniversities } from "@/components/universities/saved-universities"
 import { DeadlineTracker } from "@/components/universities/deadline-tracker"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ProtectedRoute } from "@/features/auth"
 
 export default function UniversitiesPage() {
-  const { user, loading } = useAuth()
+  const { user } = useAuth()
   const router = useRouter()
-  const [isRedirecting, setIsRedirecting] = useState(false)
-
-  useEffect(() => {
-    if (!loading && !user) {
-      setIsRedirecting(true)
-      router.push("/")
-      return
-    }
-  }, [loading, user, router])
-
-  if (loading || isRedirecting) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
 
   return (
-    <div className="min-h-screen bg-background">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">University Discovery</h1>
@@ -72,6 +56,7 @@ export default function UniversitiesPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   )
 }

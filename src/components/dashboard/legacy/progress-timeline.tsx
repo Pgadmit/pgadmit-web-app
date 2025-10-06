@@ -3,7 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Circle, Clock } from "lucide-react";
 import { getUserStages } from "@/lib/dashboard-utils";
-import type { User } from "@/lib/auth-context";
+import type { User } from "@/types";
 
 interface ProgressTimelineProps {
   user: User;

@@ -1,37 +1,21 @@
 "use client"
 
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/features/auth"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { MessageCircle, Users, Heart, Share2, Calendar } from "lucide-react"
+import { ProtectedRoute } from "@/features/auth"
 
 export default function CommunityPage() {
-  const { user, loading } = useAuth()
+  const { user } = useAuth()
   const router = useRouter()
-  const [isRedirecting, setIsRedirecting] = useState(false)
-
-  useEffect(() => {
-    if (!loading && !user) {
-      setIsRedirecting(true)
-      router.push("/")
-      return
-    }
-  }, [loading, user, router])
-
-  if (loading || isRedirecting) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 py-8">
+    <ProtectedRoute>
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 py-8">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">PGadmit Community</h1>
@@ -215,6 +199,7 @@ export default function CommunityPage() {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </ProtectedRoute>
   )
 }

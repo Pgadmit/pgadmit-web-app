@@ -1,4 +1,4 @@
-import type { AuthError } from './types'
+import type { AuthError } from '@/shared/lib/validations/auth'
 
 export const handleAuthError = (error: any): string => {
     if (typeof error === 'string') {
@@ -32,6 +32,10 @@ export const handleAuthError = (error: any): string => {
             return 'Too many attempts. Please wait a moment before trying again.'
         }
 
+        if (message.includes('auth session missing')) {
+            return 'No active session found. You are already signed out.'
+        }
+
         return error.message
     }
 
@@ -42,7 +46,6 @@ export const extractUserFromAuthResponse = (response: any) => {
     if (!response?.user) return null
 
     const { user } = response
-
     return {
         id: user.id,
         email: user.email,
@@ -50,7 +53,7 @@ export const extractUserFromAuthResponse = (response: any) => {
             user.user_metadata?.full_name ||
             user.email?.split('@')[0] || '',
         avatar_url: user.user_metadata?.avatar_url,
-        onboardingComplete: false,
+        onboardingComplete: user.is_completed,
         createdAt: user.created_at,
     }
 }

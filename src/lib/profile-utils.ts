@@ -2,67 +2,16 @@ import { createBrowserClient } from "@supabase/ssr"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { fetchWithRetry } from "./retry-utils"
 import { connectionMonitor } from "./connection-monitor"
-import type { UserProfile, CachedProfile, UserOnboarding } from "@/types"
+import type { UserProfile, UserOnboarding } from "@/types"
 
-const PROFILE_CACHE_KEY = "pgadmit_profile_cache"
-const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
-
-export function getCachedProfile(): UserProfile | null {
-  try {
-    const cached = localStorage.getItem(PROFILE_CACHE_KEY)
-    if (!cached) return null
-
-    const { data, timestamp } = JSON.parse(cached) as CachedProfile
-
-    // Check if cache is still valid
-    if (Date.now() - timestamp > CACHE_DURATION) {
-      localStorage.removeItem(PROFILE_CACHE_KEY)
-      return null
-    }
-
-    return data
-  } catch (error) {
-    console.warn("Failed to get cached profile:", error)
-    localStorage.removeItem(PROFILE_CACHE_KEY)
-    return null
-  }
-}
-
-export function setCachedProfile(profile: UserProfile): void {
-  try {
-    const cached: CachedProfile = {
-      data: profile,
-      timestamp: Date.now(),
-      version: "1.0"
-    }
-    localStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(cached))
-  } catch (error) {
-    console.warn("Failed to cache profile:", error)
-  }
-}
-
-export function clearCachedProfile(): void {
-  localStorage.removeItem(PROFILE_CACHE_KEY)
-}
 
 export async function fetchUserProfile(
   supabaseUser: SupabaseUser,
   supabase: ReturnType<typeof createBrowserClient>
 ): Promise<UserProfile> {
-  // Check connection status
   if (!connectionMonitor.isOnline()) {
     console.warn("No internet connection, using cached profile if available")
-    const cached = getCachedProfile()
-    if (cached && cached.id === supabaseUser.id) {
-      return cached
-    }
     throw new Error("No internet connection and no cached profile available")
-  }
-
-  // Try to get from cache first
-  const cached = getCachedProfile()
-  if (cached && cached.id === supabaseUser.id) {
-    return cached
   }
 
   try {
@@ -76,7 +25,6 @@ export async function fetchUserProfile(
       if (result.error) throw result.error
       return result
     })
-
     if (profileError) {
       console.warn("Error fetching profile data:", profileError)
     }
@@ -89,11 +37,9 @@ export async function fetchUserProfile(
         supabaseUser.user_metadata?.name ||
         supabaseUser.email!.split('@')[0],
       avatar_url: profileData?.avatar_url || supabaseUser.user_metadata?.avatar_url,
-      onboardingComplete: profileData?.onboarding_complete || false,
+      onboardingComplete: profileData?.onboardingComplete || supabaseUser.onboarding_complete,
       createdAt: supabaseUser.created_at,
     }
-
-    setCachedProfile(userProfile)
     return userProfile
 
   } catch (error) {
@@ -106,16 +52,15 @@ export async function fetchUserProfile(
         supabaseUser.user_metadata?.name ||
         supabaseUser.email!.split('@')[0],
       avatar_url: supabaseUser.user_metadata?.avatar_url,
-      onboardingComplete: false,
+      onboardingComplete: supabaseUser.onboarding_complete,
       createdAt: supabaseUser.created_at,
     }
 
-    setCachedProfile(fallbackProfile)
     return fallbackProfile
   }
 }
 
-  export async function fetchUserOnboarding(
+export async function fetchUserOnboarding(
   userId: string,
   supabase: ReturnType<typeof createBrowserClient>
 ): Promise<UserOnboarding | null> {

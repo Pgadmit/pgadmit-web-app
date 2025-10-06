@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
-import { useRegister } from '../../model/use-register'
+import { signUpWithEmail, signInWithGoogle } from '@/actions/auth'
 import { validateRegisterForm } from '@/shared/lib/validations'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import type { RegisterData } from '@/shared/lib/validations/auth'
@@ -24,28 +24,46 @@ export function RegisterForm({ onSuccess, className }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
-  
-  const { register, registerWithGoogle, isLoading, error } = useRegister()
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validate form
     const errors = validateRegisterForm(formData)
     if (Object.keys(errors).length > 0) {
-      setValidationErrors(errors)
+      setValidationErrors(errors as Record<string, string>)
       return
     }
-    
+
     setValidationErrors({})
-    
-    // Remove confirmPassword before sending to API
-    const { confirmPassword, ...registerData } = formData
-    await register(registerData, onSuccess)
+
+    try {
+      setIsLoading(true)
+      setError(null)
+      // Remove confirmPassword before sending to API
+      const { confirmPassword, ...registerData } = formData
+      await signUpWithEmail(registerData)
+      onSuccess?.()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registration failed')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleGoogleRegister = async () => {
-    await registerWithGoogle()
+    try {
+      setIsLoading(true)
+      setError(null)
+      await signInWithGoogle()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google registration failed')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +80,7 @@ export function RegisterForm({ onSuccess, className }: RegisterFormProps) {
       <Button
         type="button"
         variant="outline"
-        className="w-full bg-transparent hover:bg-accent/10 hover:scale-[1.02] active:scale-[0.98]"
+        className="w-full bg-transparent hover:bg-accent/10 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
         onClick={handleGoogleRegister}
         disabled={isLoading}
       >
@@ -91,7 +109,7 @@ export function RegisterForm({ onSuccess, className }: RegisterFormProps) {
         Continue with Google
       </Button>
 
-      <div className="relative">
+      <div className="relative py-2">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
@@ -151,7 +169,7 @@ export function RegisterForm({ onSuccess, className }: RegisterFormProps) {
               type="button"
               variant="ghost"
               size="sm"
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? (
@@ -182,7 +200,7 @@ export function RegisterForm({ onSuccess, className }: RegisterFormProps) {
               type="button"
               variant="ghost"
               size="sm"
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent cursor-pointer"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? (
@@ -206,7 +224,7 @@ export function RegisterForm({ onSuccess, className }: RegisterFormProps) {
 
         <Button
           type="submit"
-          className="w-full hover:scale-[1.02] active:scale-[0.98] disabled:scale-100"
+          className="w-full hover:scale-[1.02] active:scale-[0.98] disabled:scale-100 cursor-pointer"
           disabled={isLoading}
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

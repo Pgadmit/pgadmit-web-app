@@ -1,64 +1,76 @@
-import { useState, useEffect } from 'react';
-import { createClient } from '@/utils/supabase/client';
-import { fetchUserOnboarding } from '@/lib/profile-utils';
+import { useState, useEffect, useRef } from 'react';
+import { supabaseBrowser } from '@/lib/supabase/client';
 import { useOnboardingLoading } from '@/lib/loading-context';
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/features/auth';
 import type { UserOnboarding } from '@/types';
 
-export function useOnboardingData(userId: string | null) {
+export function useOnboardingData() {
     const [onboardingData, setOnboardingData] = useState<UserOnboarding | null>(null);
     const { loading, setLoading } = useOnboardingLoading();
     const [error, setError] = useState<string | null>(null);
     const { user } = useAuth();
+    const hasFetched = useRef(false);
+    const currentUserId = useRef<string | null>(null);
 
     useEffect(() => {
-        // Reset state if no user
-        if (!userId) {
+        if (!user?.id) {
             setOnboardingData(null);
             setLoading(false);
             setError(null);
+            hasFetched.current = false;
+            currentUserId.current = null;
             return;
         }
 
-        if (user && !user.onboardingComplete) {
-            setOnboardingData(null);
-            setLoading(false);
-            setError(null);
+        if (hasFetched.current && currentUserId.current === user.id) {
             return;
         }
 
-        let isMounted = true;
+        hasFetched.current = true;
+        currentUserId.current = user.id;
 
         const fetchData = async () => {
+            if (!user?.id) {
+                return;
+            }
+
             setLoading(true);
             setError(null);
 
             try {
-                const supabase = createClient();
-                const data = await fetchUserOnboarding(userId, supabase);
+                const supabase = supabaseBrowser();
 
-                if (isMounted) {
-                    setOnboardingData(data);
+                const { data, error } = await supabase
+                    .from('user_onboarding')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (!user?.id) {
+                    return;
+                }
+
+                if (error) {
+                    if (error.code === 'PGRST116') {
+                        setOnboardingData(null);
+                    } else {
+                        console.error('❌ [useOnboardingData] Database error:', error);
+                        throw error;
+                    }
+                } else {
+                    setOnboardingData(data as UserOnboarding);
                 }
             } catch (err) {
-                if (isMounted) {
-                    const errorMessage = err instanceof Error ? err.message : 'Failed to fetch onboarding data';
-                    setError(errorMessage);
-                    console.error('Error fetching onboarding data:', err);
-                }
+                const errorMessage = err instanceof Error ? err.message : 'Failed to fetch onboarding data';
+                console.error('💥 [useOnboardingData] Fetch error:', err);
+                setError(errorMessage);
             } finally {
-                if (isMounted) {
-                    setLoading(false);
-                }
+                setLoading(false);
             }
         };
 
         fetchData();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [userId, user]);
+    }, [user?.id]);
 
     return { onboardingData, loading, error };
-}   
+}

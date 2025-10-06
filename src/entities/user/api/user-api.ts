@@ -21,7 +21,7 @@ export const getProfile = async (userId: string): Promise<UserProfile | null> =>
             email: '', // Will be filled from session
             name: data?.name || '',
             avatar_url: data?.avatar_url,
-            onboardingComplete: data?.onboarding_complete || false,
+            onboardingComplete: data?.onboarding_complete || undefined,
             createdAt: '', // Will be filled from session
         }
     } catch (error) {
@@ -66,7 +66,7 @@ export const createProfile = async (userId: string, data: Partial<UserProfile>):
                 id: userId,
                 name: data.name,
                 avatar_url: data.avatar_url,
-                onboarding_complete: data.onboardingComplete || false,
+                onboarding_complete: data.onboardingComplete || undefined,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
             })
