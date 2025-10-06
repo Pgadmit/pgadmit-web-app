@@ -1,16 +1,14 @@
 import { useEffect, useCallback } from 'react'
 import { createClient } from '@/shared/lib/supabase'
-import { useSessionActions } from '@/entities/session'
 import { useUserActions } from '@/entities/user'
 import { getProfile, createProfile } from '@/entities/user'
 
 export const useAuthState = () => {
-    const { setSession, clearSession, setLoading } = useSessionActions()
+    const { setLoading } = useUserActions()
     const { setUser, clearUser } = useUserActions()
 
     const handleAuthStateChange = useCallback(async (event: string, session: any) => {
         if (event === 'SIGNED_OUT') {
-            clearSession()
             clearUser()
             setLoading(false)
             return
@@ -18,7 +16,7 @@ export const useAuthState = () => {
 
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
             if (session?.user) {
-                setSession(session)
+                setUser(session)
 
                 const userData = {
                     id: session.user.id,
@@ -55,7 +53,7 @@ export const useAuthState = () => {
                 }, 50)
             }
         }
-    }, [setSession, clearSession, setUser, clearUser, setLoading])
+    }, [setUser, clearUser, setLoading])
 
     useEffect(() => {
         let isMounted = true

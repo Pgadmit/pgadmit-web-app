@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button, Input, Label } from '@/shared/ui'
-import { useLogin } from '../../model/use-login'
+import { signInWithEmail, signInWithGoogle } from '@/actions/auth'
 import { validateLoginForm } from '@/shared/lib/validations'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import type { LoginCredentials } from '@/shared/lib/validations/auth'
@@ -20,7 +20,8 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false)
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
-    const { login, loginWithGoogle, isLoading, error } = useLogin()
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -33,11 +34,29 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
         }
 
         setValidationErrors({})
-        await login(credentials, onSuccess)
+
+        try {
+            setIsLoading(true)
+            setError(null)
+            await signInWithEmail(credentials)
+            onSuccess?.()
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Login failed')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleGoogleLogin = async () => {
-        await loginWithGoogle()
+        try {
+            setIsLoading(true)
+            setError(null)
+            await signInWithGoogle()
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Google login failed')
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {

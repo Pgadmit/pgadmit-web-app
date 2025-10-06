@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
             return NextResponse.redirect(redirectUrl.toString())
         } else {
             console.error('OAuth exchange error:', error)
-            const errorUrl = new URL(`${origin}/auth/auth-code-error`)
+            const errorUrl = new URL(`${origin}/(auth)/auth-code-error`)
             if (error) {
                 errorUrl.searchParams.set('error', error.message)
             }
@@ -26,5 +26,5 @@ export async function GET(request: NextRequest) {
         }
     }
 
-    return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+    return NextResponse.redirect(`${origin}/(auth)/auth-code-error`)
 }

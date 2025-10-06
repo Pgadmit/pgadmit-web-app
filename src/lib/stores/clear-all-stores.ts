@@ -1,25 +1,21 @@
 import { useOnboardingStore } from './onboarding-store';
 import { useSuggestUniversitiesStore } from './suggest-universities-store';
 import { useRateLimitStore } from './rate-limit-store';
-import { clearCachedProfile } from '../profile-utils';
 
 export function clearAllStores() {
     try {
         useOnboardingStore.getState().clearOnboardingData();
-
         useSuggestUniversitiesStore.getState().reset();
 
         const rateLimitStore = useRateLimitStore.getState();
         rateLimitStore.setLastOpenAIRequest(0);
         rateLimitStore.setLastN8nRequest(0);
 
-        clearCachedProfile();
-
+        // Clear only necessary localStorage keys
         const keysToRemove = [
             'onboarding-store',
             'suggest-universities-storage',
-            'rate-limit-storage',
-            'pgadmit_profile_cache'
+            'rate-limit-storage'
         ];
 
         keysToRemove.forEach(key => {

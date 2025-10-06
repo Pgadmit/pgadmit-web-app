@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useIsAuthenticated, useSessionLoading } from '@/entities/session'
+import { useCurrentUser, useUserLoading } from '@/entities/user'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -10,13 +10,13 @@ interface ProtectedRouteProps {
   fallback?: React.ReactNode
 }
 
-export function ProtectedRoute({ 
-  children, 
-  redirectTo = '/auth',
-  fallback 
+export function ProtectedRoute({
+  children,
+  redirectTo = '/login',
+  fallback
 }: ProtectedRouteProps) {
-  const isAuthenticated = useIsAuthenticated()
-  const isLoading = useSessionLoading()
+  const isAuthenticated = useCurrentUser()
+  const isLoading = useUserLoading()
   const router = useRouter()
 
   useEffect(() => {

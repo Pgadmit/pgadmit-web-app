@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { signUpWithEmail, signInWithGoogle } from '../lib/auth-api'
 import { handleAuthError, extractUserFromAuthResponse } from '../lib/auth-helpers'
-import { useSessionActions } from '@/entities/session'
 import { useUserActions } from '@/entities/user'
 import { createProfile } from '@/entities/user'
 import type { RegisterData } from '@/shared/lib/validations/auth'
@@ -10,7 +9,6 @@ export const useRegister = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    const { setSession } = useSessionActions()
     const { setUser } = useUserActions()
 
     const register = async (data: Omit<RegisterData, 'confirmPassword'>, onSuccess?: () => void) => {
@@ -26,7 +24,7 @@ export const useRegister = () => {
             }
 
             if (result.data?.user && result.data?.session) {
-                setSession(result.data.session)
+                setUser(result.data.session)
 
                 const userData = extractUserFromAuthResponse(result.data)
                 if (userData) {

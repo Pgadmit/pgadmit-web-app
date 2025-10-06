@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
-import { useRegister } from '../../model/use-register'
+import { signUpWithEmail, signInWithGoogle } from '@/actions/auth'
 import { validateRegisterForm } from '@/shared/lib/validations'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import type { RegisterData } from '@/shared/lib/validations/auth'
@@ -24,28 +24,46 @@ export function RegisterForm({ onSuccess, className }: RegisterFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
-  
-  const { register, registerWithGoogle, isLoading, error } = useRegister()
+
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validate form
     const errors = validateRegisterForm(formData)
     if (Object.keys(errors).length > 0) {
       setValidationErrors(errors)
       return
     }
-    
+
     setValidationErrors({})
-    
-    // Remove confirmPassword before sending to API
-    const { confirmPassword, ...registerData } = formData
-    await register(registerData, onSuccess)
+
+    try {
+      setIsLoading(true)
+      setError(null)
+      // Remove confirmPassword before sending to API
+      const { confirmPassword, ...registerData } = formData
+      await signUpWithEmail(registerData)
+      onSuccess?.()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Registration failed')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleGoogleRegister = async () => {
-    await registerWithGoogle()
+    try {
+      setIsLoading(true)
+      setError(null)
+      await signInWithGoogle()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Google registration failed')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {

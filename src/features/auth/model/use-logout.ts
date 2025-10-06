@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { signOut } from '../lib/auth-api'
 import { handleAuthError } from '../lib/auth-helpers'
-import { useSessionActions } from '@/entities/session'
 import { useUserActions } from '@/entities/user'
 
 export const useLogout = () => {
@@ -10,7 +9,6 @@ export const useLogout = () => {
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
 
-    const { clearSession } = useSessionActions()
     const { clearUser } = useUserActions()
 
     const logout = async () => {
@@ -25,10 +23,9 @@ export const useLogout = () => {
                 return
             }
 
-            clearSession()
             clearUser()
 
-            router.push('/auth')
+            router.push('/login')
         } catch (err) {
             setError(handleAuthError(err))
         } finally {
