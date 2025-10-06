@@ -1,7 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useCurrentUser } from "@/entities/user";
+import { useAuth } from "@/lib/auth-context";
 
 interface UserAvatarProps {
   size?: "sm" | "md" | "lg";
@@ -10,7 +10,7 @@ interface UserAvatarProps {
 }
 
 export function UserAvatar({ size = "md", showName = false, className = "" }: UserAvatarProps) {
-  const user = useCurrentUser();
+  const { user } = useAuth();
 
   if (!user) return null;
 

@@ -1,15 +1,14 @@
 "use client";
 
-import { useCurrentUser } from "@/entities/user";
+import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, ArrowRight } from "lucide-react";
 
 export function ProfileIncompleteBanner() {
-    const user = useCurrentUser();
+    const { user } = useAuth();
     const router = useRouter();
-
     if (!user || user.onboardingComplete) {
         return null;
     }

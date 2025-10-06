@@ -33,14 +33,14 @@ export async function updateSession(request: NextRequest) {
         }
     )
 
-    // Get user session
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Define protected routes
+    const { data: { session } } = await supabase.auth.getSession()
+
     const PROTECTED_ROUTES = [
-        '/dashboard', 
-        '/profile', 
-        '/settings', 
+        '/dashboard',
+        '/profile',
+        '/settings',
         '/onboarding',
         '/applications',
         '/universities',
@@ -51,19 +51,19 @@ export async function updateSession(request: NextRequest) {
 
     const isProtected = PROTECTED_ROUTES.some(path => pathname.startsWith(path))
 
-    // Redirect to login if accessing protected route without auth
-    if (isProtected && !user) {
+    const isAuthenticated = !!(user && session)
+
+    if (isProtected && !isAuthenticated) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         url.searchParams.set('redirect', pathname)
         return NextResponse.redirect(url)
     }
 
-    // Redirect to dashboard if accessing auth pages while logged in
     const AUTH_ROUTES = ['/login', '/signup', '/auth']
     const isAuthRoute = AUTH_ROUTES.some(path => pathname.startsWith(path))
 
-    if (isAuthRoute && user) {
+    if (isAuthRoute && isAuthenticated) {
         const url = request.nextUrl.clone()
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)

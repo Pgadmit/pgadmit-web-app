@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Button, Input, Label } from '@/shared/ui'
-import { signInWithEmail, signInWithGoogle } from '@/actions/auth'
+import { useAuth } from '@/lib/auth-context'
 import { validateLoginForm } from '@/shared/lib/validations'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import type { LoginCredentials } from '@/shared/lib/validations/auth'
@@ -20,6 +20,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
     const [showPassword, setShowPassword] = useState(false)
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
 
+    const { signIn, signInWithGoogle } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -29,7 +30,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
         // Validate form        
         const errors = validateLoginForm(credentials)
         if (Object.keys(errors).length > 0) {
-            setValidationErrors(errors)
+            setValidationErrors(errors as Record<string, string>)
             return
         }
 
@@ -38,7 +39,7 @@ export function LoginForm({ onSuccess, className }: LoginFormProps) {
         try {
             setIsLoading(true)
             setError(null)
-            await signInWithEmail(credentials)
+            await signIn(credentials.email, credentials.password)
             onSuccess?.()
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Login failed')
