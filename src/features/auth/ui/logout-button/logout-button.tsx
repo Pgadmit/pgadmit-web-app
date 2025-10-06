@@ -48,7 +48,7 @@ export function LogoutButton({
             ) : (
                 <LogOut className="mr-2 h-4 w-4" />
             )}
-            {children || 'Sign Out'}
+            {children ?? 'Sign Out'}
         </Button>
     )
 }

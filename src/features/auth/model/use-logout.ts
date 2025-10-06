@@ -28,7 +28,7 @@ export const useLogout = () => {
             clearSession()
             clearUser()
 
-            router.push('/')
+            router.push('/auth')
         } catch (err) {
             setError(handleAuthError(err))
         } finally {
