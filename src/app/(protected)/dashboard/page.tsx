@@ -1,10 +1,17 @@
+"use client";
+
 import { DashboardContent } from "@/components/dashboard/dashboard-content";
-    import { ProtectedRoute } from "@/features/auth";
+import { MobileDashboardLayout } from "@/features/dashboard/ui";
+import { ProtectedRoute } from "@/features/auth";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { useEffect } from "react";
 
 export default function DashboardPage() {
+    const isMobile = useIsMobile();
+    console.log(isMobile);
     return (
         <ProtectedRoute>
-            <DashboardContent />
+            {isMobile ? <MobileDashboardLayout /> : <DashboardContent />}
         </ProtectedRoute>
     );
 }

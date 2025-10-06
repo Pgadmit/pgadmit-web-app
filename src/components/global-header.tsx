@@ -10,6 +10,7 @@ import {
   MobileNavigationSkeleton,
 } from "@/components/navigation-skeleton";
 import { useSidebar } from "@/lib/sidebar-context";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Menu, X } from "lucide-react";
 
 export function GlobalHeader() {
@@ -17,9 +18,13 @@ export function GlobalHeader() {
   const router = useRouter();
   const { isActivePath, mounted, pathname } = useActivePath();
   const { sidebarOpen, toggleSidebar } = useSidebar();
+  const isMobile = useIsMobile();
 
   // Check if we're on dashboard pages - show burger immediately on first render
   const isDashboardPage = pathname.startsWith("/dashboard");
+  
+  // Hide dashboard button on mobile when on dashboard page
+  const shouldShowDashboardButton = !(isMobile && isDashboardPage);
 
   const handleLogoClick = () => {
     router.push("/");
@@ -104,19 +109,21 @@ export function GlobalHeader() {
               {user ? (
                 <div className="cursor-pointer flex items-center gap-2">
                   {mounted ? (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => router.push("/dashboard")}
-                      className={`md:hidden px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${isActivePath("/dashboard", false)
-                        ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
-                        : "hover:bg-gray-100"
-                        }`}
-                    >
-                      Dashboard
-                    </Button>
+                    shouldShowDashboardButton && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => router.push("/dashboard")}
+                        className={`md:hidden px-4 py-2 text-sm font-semibold cursor-pointer transition-colors ${isActivePath("/dashboard", false)
+                          ? "bg-blue-600 text-white border-blue-600 hover:bg-blue-700"
+                          : "hover:bg-gray-100"
+                          }`}
+                      >
+                        Dashboard
+                      </Button>
+                    )
                   ) : (
-                    <MobileNavigationSkeleton />
+                    shouldShowDashboardButton && <MobileNavigationSkeleton />
                   )}
                   <UserMenu />
                 </div>

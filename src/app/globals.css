@@ -5,6 +5,24 @@
 @media (max-width: 768px) {
   body {
     padding-bottom: 70px;
+    overflow-x: hidden;
+  }
+
+  html {
+    overflow-x: hidden;
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  * {
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  /* Additional mobile scroll prevention */
+  .mobile-no-scroll {
+    overflow-x: hidden !important;
+    max-width: 100vw !important;
+    width: 100% !important;
   }
 }
 

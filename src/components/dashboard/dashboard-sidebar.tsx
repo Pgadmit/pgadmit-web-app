@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useSidebar } from "@/lib/sidebar-context";
 import {
@@ -122,13 +121,8 @@ export function DashboardSidebar() {
       <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
         <SheetContent side="left" className="w-80 p-0">
           <SheetTitle className="sr-only">Dashboard Navigation</SheetTitle>
-          <div className="flex items-center justify-between p-4 border-b">
+          <div className="p-4 border-b">
             <h2 className="text-lg font-semibold">Navigation</h2>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setSidebarOpen(false)}
-            />
           </div>
           <SidebarContent />
         </SheetContent>
