@@ -12,7 +12,7 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({
   children,
-  redirectTo = '/',
+  redirectTo = '/login',
   requireOnboarding = false,
 }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
