@@ -1,8 +1,14 @@
 # 🔐 Authentication System Documentation
 
+## Summary
+- **Purpose:** Manage user authentication, session flow, and route protection
+- **Scope:** Login, registration, OAuth (Google), password reset, user management
+- **Stack:** Next.js 15, Supabase Auth, TypeScript, React Context, Server Actions
+- **Status:** ✅ Completed (v1.0.0)
+
 ## Overview
 
-This document provides a comprehensive overview of the authentication system implemented in the PGAdmit web application. The system is built using **Supabase Auth** with **Next.js 14** and follows modern security best practices.
+This document provides a comprehensive overview of the authentication system implemented in the PGAdmit web application. The system is built using **Supabase Auth** with **Next.js 15** and follows modern security best practices.
 
 ## 🏗️ Architecture
 
@@ -233,6 +239,19 @@ graph TD
 - **Desktop**: Full-featured desktop experience
 - **Tablet**: Adaptive layout for tablet screens
 
+## Dependencies
+
+This feature depends on the following shared utilities and components:
+
+- `lib/supabase/client.ts` — Supabase client configuration
+- `lib/supabase/server.ts` — Server-side Supabase client
+- `lib/supabase/middleware.ts` — Authentication middleware
+- `useToast()` — Global toast notification hook
+- `shared/lib/validations/auth.ts` — Authentication form validation schemas
+- `shared/ui/*` — Common UI components (Button, Input, Card, etc.)
+- `components/ui/badge` — Badge component for user status
+- `components/ui/avatar` — User avatar component
+
 ## 🔧 Configuration
 
 ### Environment Variables
@@ -333,6 +352,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 
 ---
 
-**Last Updated**: October 2025  
-**Version**: 1.0.0  
-**Maintainer**: Development Team
+**Author:** gmoinbong  
+**Version:** 1.0.0  
+**Last Updated:** 2025-10-08  
+**Status:** Production-ready
