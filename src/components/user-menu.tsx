@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { UserAvatar } from "@/components/user-avatar";
 import { useAuth } from "@/features/auth";
-import { useOnboardingData } from "@/hooks/use-onboarding-data";
+// Removed onboarding data dependency - not needed for user menu
 import {
   User,
   Settings,
@@ -26,7 +26,7 @@ export function UserMenu() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const { isActivePath, mounted } = useActivePath();
-  const { onboardingData } = useOnboardingData();
+  // Removed onboarding data - not needed for user menu
 
   if (!user) return null;
 
@@ -70,11 +70,7 @@ export function UserMenu() {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
-            {onboardingData?.country && (
-              <p className="text-xs leading-none text-muted-foreground">
-                🌍 {onboardingData.country}
-              </p>
-            )}
+            {/* Removed country display - not critical for user menu */}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

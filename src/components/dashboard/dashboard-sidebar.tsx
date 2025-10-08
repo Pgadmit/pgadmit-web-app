@@ -2,6 +2,7 @@
 
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { useSidebar } from "@/lib/sidebar-context";
+import { Button } from "@/shared/ui";
 import {
   MessageCircle,
   ChevronRight,
@@ -57,28 +58,24 @@ export function DashboardSidebar() {
           {journeySteps.map((step, index) => (
             <div
               key={index}
-              className={`flex items-center space-x-2 md:space-x-3 p-2 md:p-3 rounded-lg cursor-pointer transition-colors ${
-                step.active
-                  ? "bg-blue-50 border border-blue-200"
-                  : "hover:bg-gray-50"
-              }`}
+              className={`flex items-center space-x-2 md:space-x-3 p-2 md:p-3 rounded-lg cursor-pointer transition-colors ${step.active
+                ? "bg-blue-50 border border-blue-200"
+                : "hover:bg-gray-50"
+                }`}
               onClick={() => setSidebarOpen(false)}
             >
               <div
-                className={`p-1.5 md:p-2 rounded-lg ${
-                  step.active ? "bg-blue-100" : "bg-gray-100"
-                }`}
+                className={`p-1.5 md:p-2 rounded-lg ${step.active ? "bg-blue-100" : "bg-gray-100"
+                  }`}
               >
                 <step.icon
-                  className={`w-3.5 h-3.5 md:w-4 md:h-4 ${
-                    step.active ? "text-blue-600" : "text-gray-600"
-                  }`}
+                  className={`w-3.5 h-3.5 md:w-4 md:h-4 ${step.active ? "text-blue-600" : "text-gray-600"
+                    }`}
                 />
               </div>
               <span
-                className={`text-xs md:text-sm font-medium flex-1 ${
-                  step.active ? "text-blue-900" : "text-gray-700"
-                }`}
+                className={`text-xs md:text-sm font-medium flex-1 ${step.active ? "text-blue-900" : "text-gray-700"
+                  }`}
               >
                 {step.title}
               </span>
