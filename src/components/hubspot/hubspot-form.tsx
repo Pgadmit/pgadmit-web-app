@@ -19,7 +19,7 @@ export default function HubSpotForm({
   portalId,
   formId,
   target = 'hubspot-form',
-  className = ''
+  className = '',
 }: HubSpotFormProps) {
   const formRef = useRef<HTMLDivElement>(null);
 
@@ -47,12 +47,9 @@ export default function HubSpotForm({
           portalId,
           formId,
           target: `#${target}`,
-          onFormReady: (form: unknown) => {
-          },
-          onFormSubmit: (form: unknown) => {
-          },
-          onFormSubmitted: (form: unknown) => {
-          }
+          onFormReady: (form: unknown) => {},
+          onFormSubmit: (form: unknown) => {},
+          onFormSubmitted: (form: unknown) => {},
         });
       }
     }
@@ -65,11 +62,5 @@ export default function HubSpotForm({
     };
   }, [portalId, formId, target]);
 
-  return (
-    <div
-      ref={formRef}
-      id={target}
-      className={className}
-    />
-  );
+  return <div ref={formRef} id={target} className={className} />;
 }

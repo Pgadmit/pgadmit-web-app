@@ -1,21 +1,21 @@
-"use client"
+'use client';
 
-import { useLoading } from "@/lib/loading-context"
-import { Loader2 } from "lucide-react"
+import { useLoading } from '@/lib/loading-context';
+import { Loader2 } from 'lucide-react';
 
 export function GlobalLoading() {
-  const { isLoading } = useLoading()
+  const { isLoading } = useLoading();
 
   if (!isLoading()) {
-    return null
+    return null;
   }
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground">Loading...</p>
+    <div className='fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center'>
+      <div className='flex flex-col items-center gap-4'>
+        <Loader2 className='h-8 w-8 animate-spin text-primary' />
+        <p className='text-sm text-muted-foreground'>Loading...</p>
       </div>
     </div>
-  )
+  );
 }

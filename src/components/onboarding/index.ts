@@ -1,2 +1,1 @@
-export { OnboardingWidget } from "./onboarding-widget"
-
+export { OnboardingWidget } from './onboarding-widget';

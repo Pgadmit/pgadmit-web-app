@@ -19,7 +19,7 @@ export interface Achievement {
   title: string;
   description: string;
   icon: string;
-  category: "profile" | "application" | "visa" | "engagement" | "milestone";
+  category: 'profile' | 'application' | 'visa' | 'engagement' | 'milestone';
   unlocked: boolean;
   unlockedAt?: string;
   progress?: number;

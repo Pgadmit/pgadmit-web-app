@@ -1,24 +1,24 @@
 const STRAPI_URL =
   process.env.NEXT_PUBLIC_STRAPI_URL ??
-  "https://refreshing-acoustics-4f6486bcd4.strapiapp.com";
+  'https://refreshing-acoustics-4f6486bcd4.strapiapp.com';
 const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
 // Content block types
 interface RichTextBlock {
-  __component: "shared.rich-text";
+  __component: 'shared.rich-text';
   id: number;
   body: string;
 }
 
 interface QuoteBlock {
-  __component: "shared.quote";
+  __component: 'shared.quote';
   id: number;
   title: string;
   body?: string;
 }
 
 interface MediaBlock {
-  __component: "shared.media";
+  __component: 'shared.media';
   id: number;
   file: {
     url: string;
@@ -145,9 +145,9 @@ interface Author {
 }
 
 // Helper function to build Strapi URL
-function getStrapiURL(path: string = ""): string {
+function getStrapiURL(path: string = ''): string {
   // Use Vercel proxy to avoid CORS issues
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     return `/strapi-api${path}`;
   }
   // For server-side requests, use direct URL
@@ -161,7 +161,7 @@ async function fetchAPI(
 ): Promise<unknown> {
   const defaultOptions: RequestInit = {
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       ...(STRAPI_API_TOKEN && { Authorization: `Bearer ${STRAPI_API_TOKEN}` }),
     },
   };
@@ -201,25 +201,25 @@ export async function getBlogPosts(
   const { page = 1, pageSize = 10, featured, category, search } = options;
 
   const params = new URLSearchParams({
-    "pagination[page]": page.toString(),
-    "pagination[pageSize]": pageSize.toString(),
-    "populate[cover]": "true",
-    "populate[author][populate][avatar]": "true",
-    "populate[category]": "true",
-    sort: "createdAt:desc",
+    'pagination[page]': page.toString(),
+    'pagination[pageSize]': pageSize.toString(),
+    'populate[cover]': 'true',
+    'populate[author][populate][avatar]': 'true',
+    'populate[category]': 'true',
+    sort: 'createdAt:desc',
   });
 
   // Add filters
   if (featured !== undefined) {
-    params.append("filters[is_featured][$eq]", featured.toString());
+    params.append('filters[is_featured][$eq]', featured.toString());
   }
 
   if (category) {
-    params.append("filters[category][slug][$eq]", category);
+    params.append('filters[category][slug][$eq]', category);
   }
 
   if (search) {
-    params.append("filters[title][$containsi]", search);
+    params.append('filters[title][$containsi]', search);
   }
 
   const response = (await fetchAPI(
@@ -240,11 +240,11 @@ export async function getBlogPost(
 ): Promise<StrapiResponse<BlogPost[]>> {
   // First try to get by slug
   let params = new URLSearchParams({
-    "filters[slug][$eq]": slug,
-    "populate[cover]": "true",
-    "populate[author][populate][avatar]": "true",
-    "populate[category]": "true",
-    "populate[blocks]": "true",
+    'filters[slug][$eq]': slug,
+    'populate[cover]': 'true',
+    'populate[author][populate][avatar]': 'true',
+    'populate[category]': 'true',
+    'populate[blocks]': 'true',
   });
 
   let response = (await fetchAPI(
@@ -254,10 +254,10 @@ export async function getBlogPost(
   // If not found by slug, try to get all posts and find by generated slug
   if (response.data.length === 0) {
     params = new URLSearchParams({
-      "populate[cover]": "true",
-      "populate[author][populate][avatar]": "true",
-      "populate[category]": "true",
-      "populate[blocks]": "true",
+      'populate[cover]': 'true',
+      'populate[author][populate][avatar]': 'true',
+      'populate[category]': 'true',
+      'populate[blocks]': 'true',
     });
 
     const allPostsResponse = (await fetchAPI(
@@ -266,7 +266,7 @@ export async function getBlogPost(
     const postsWithSlugs = allPostsResponse.data.map(ensurePostSlug);
 
     // Find post by generated slug
-    const foundPost = postsWithSlugs.find((post) => post.slug === slug);
+    const foundPost = postsWithSlugs.find(post => post.slug === slug);
 
     if (foundPost) {
       response = {
@@ -294,7 +294,7 @@ export async function getFeaturedBlogPosts(
 // Categories API functions
 export async function getCategories(): Promise<StrapiResponse<Category[]>> {
   const params = new URLSearchParams({
-    sort: "name:asc",
+    sort: 'name:asc',
   });
 
   return fetchAPI(`/categories?${params.toString()}`) as Promise<
@@ -306,7 +306,7 @@ export async function getCategory(
   slug: string
 ): Promise<StrapiResponse<Category[]>> {
   const params = new URLSearchParams({
-    "filters[slug][$eq]": slug,
+    'filters[slug][$eq]': slug,
   });
 
   return fetchAPI(`/categories?${params.toString()}`) as Promise<
@@ -317,8 +317,8 @@ export async function getCategory(
 // Authors API functions
 export async function getAuthors(): Promise<StrapiResponse<Author[]>> {
   const params = new URLSearchParams({
-    "populate[avatar]": "true",
-    sort: "name:asc",
+    'populate[avatar]': 'true',
+    sort: 'name:asc',
   });
 
   return fetchAPI(`/authors?${params.toString()}`) as Promise<
@@ -328,7 +328,7 @@ export async function getAuthors(): Promise<StrapiResponse<Author[]>> {
 
 export async function getAuthor(id: number): Promise<StrapiResponse<Author>> {
   const params = new URLSearchParams({
-    "populate[avatar]": "true",
+    'populate[avatar]': 'true',
   });
 
   return fetchAPI(`/authors/${id}?${params.toString()}`) as Promise<
@@ -339,23 +339,23 @@ export async function getAuthor(id: number): Promise<StrapiResponse<Author>> {
 // Helper function to get media URL with optional size preference
 export function getStrapiMediaURL(
   media: StrapiMedia | { url?: string } | null | undefined,
-  size: "thumbnail" | "small" | "medium" | "large" | "original" = "original"
+  size: 'thumbnail' | 'small' | 'medium' | 'large' | 'original' = 'original'
 ): string | null {
   if (!media) return null;
 
   // Handle new StrapiMedia structure
-  if ("formats" in media && media.formats && size !== "original") {
+  if ('formats' in media && media.formats && size !== 'original') {
     const format = media.formats[size];
     if (format?.url) {
       // If it's already a full HTTP/HTTPS URL, return as is
       if (
-        format.url.startsWith("http://") ||
-        format.url.startsWith("https://")
+        format.url.startsWith('http://') ||
+        format.url.startsWith('https://')
       ) {
         return format.url;
       }
       // If it's a relative path, prepend the base URL
-      if (format.url.startsWith("/")) {
+      if (format.url.startsWith('/')) {
         return `${STRAPI_URL}${format.url}`;
       }
       return `${STRAPI_URL}/${format.url}`;
@@ -363,16 +363,16 @@ export function getStrapiMediaURL(
   }
 
   // Fallback to main URL
-  const mainUrl = "url" in media ? media.url : undefined;
+  const mainUrl = 'url' in media ? media.url : undefined;
   if (!mainUrl) return null;
 
   // If it's already a full HTTP/HTTPS URL, return as is
-  if (mainUrl.startsWith("http://") || mainUrl.startsWith("https://")) {
+  if (mainUrl.startsWith('http://') || mainUrl.startsWith('https://')) {
     return mainUrl;
   }
 
   // If it's a relative path (starts with /), prepend the base URL
-  if (mainUrl.startsWith("/")) {
+  if (mainUrl.startsWith('/')) {
     return `${STRAPI_URL}${mainUrl}`;
   }
 
@@ -384,9 +384,9 @@ export function getStrapiMediaURL(
 export function generateSlugFromTitle(title: string): string {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with single
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
     .trim();
 }
 

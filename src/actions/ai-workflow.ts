@@ -11,7 +11,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
 });
 
-export async function getCollegeSuggestions(formData: z.infer<typeof AdmissionFormSchema>) {
+export async function getCollegeSuggestions(
+  formData: z.infer<typeof AdmissionFormSchema>
+) {
   const prompt = `
 Given the following student profile, suggest 5 universities.
 Return the result strictly as a JSON object with a property "universities" that is an array of strings.
@@ -68,7 +70,11 @@ export async function sendToN8nWebhook(payload: any) {
     });
 
     if (!res.ok) {
-      console.error('n8n webhook returned error:', res.status, await res.text());
+      console.error(
+        'n8n webhook returned error:',
+        res.status,
+        await res.text()
+      );
       return null;
     }
 
