@@ -157,4 +157,3 @@ export interface LegacyUniversity {
   description: string;
   isBookmarked: boolean;
 }
-

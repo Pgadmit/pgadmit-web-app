@@ -1,5 +1,1 @@
-export {
-    getProfile,
-    updateProfile,
-    createProfile,
-} from './user-api'
+export { getProfile, updateProfile, createProfile } from './user-api';

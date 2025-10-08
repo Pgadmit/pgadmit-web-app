@@ -1,12 +1,14 @@
 # 🧩 Universities Feature Documentation
 
 ## Summary
+
 - **Purpose:** Manage university data, search, filtering, and CRUD operations
 - **Scope:** University search, filtering, detailed views, bookmarking, data management
 - **Stack:** Next.js 15, TypeScript, Supabase, Zustand, React Hook Form, Tailwind CSS
 - **Status:** 🧩 In Progress (v0.8.0)
 
 ## Overview
+
 The Universities feature provides comprehensive university management capabilities including search, filtering, detailed information display, and user bookmarking. This feature serves as the core data management system for the PGAdmit platform.
 
 ## Architecture
@@ -27,33 +29,36 @@ src/features/universities/
 ## Implementation Details
 
 ### Key Components
+
 - **UniversityGrid** - Displays universities in a responsive grid layout
 - **UniversitySearch** - Search and filtering interface
 - **UniversityDetail** - Detailed university information view
 - **UniversityCard** - Individual university card component
 
 ### State Management
+
 Uses Zustand for global state management with the following structure:
 
 ```typescript
 interface UniversityStore {
-  universities: University[]
-  filteredUniversities: University[]
-  searchQuery: string
-  filters: SearchFilters
-  loading: boolean
-  bookmarkedIds: Set<number>
-  
+  universities: University[];
+  filteredUniversities: University[];
+  searchQuery: string;
+  filters: SearchFilters;
+  loading: boolean;
+  bookmarkedIds: Set<number>;
+
   // Actions
-  setUniversities: (universities: University[]) => void
-  updateSearchQuery: (query: string) => void
-  updateFilters: (filters: Partial<SearchFilters>) => void
-  toggleBookmark: (id: number) => void
-  searchUniversities: () => Promise<void>
+  setUniversities: (universities: University[]) => void;
+  updateSearchQuery: (query: string) => void;
+  updateFilters: (filters: Partial<SearchFilters>) => void;
+  toggleBookmark: (id: number) => void;
+  searchUniversities: () => Promise<void>;
 }
 ```
 
 ### Data Flow
+
 1. **Initial Load** - Fetch universities from Supabase
 2. **Search/Filter** - Update store state and re-render components
 3. **Bookmarking** - Update local state and persist to database
@@ -77,6 +82,7 @@ This feature depends on the following shared utilities and components:
 ## Flows
 
 ### University Search Flow
+
 1. User enters search query
 2. Debounced search triggers API call
 3. Results update in Zustand store
@@ -84,6 +90,7 @@ This feature depends on the following shared utilities and components:
 5. Loading states and error handling
 
 ### University Detail Flow
+
 1. User clicks on university card
 2. Navigate to detail page with university ID
 3. Fetch detailed university data
@@ -91,6 +98,7 @@ This feature depends on the following shared utilities and components:
 5. Enable bookmarking and sharing
 
 ### Bookmarking Flow
+
 1. User clicks bookmark button
 2. Update local state optimistically
 3. Call API to update database
@@ -108,21 +116,25 @@ This feature depends on the following shared utilities and components:
 ## UX Features
 
 ### Loading States
+
 - **Skeleton Loading** - Placeholder content during data fetch
 - **Progressive Loading** - Load critical data first
 - **Infinite Scroll** - Load more universities as user scrolls
 
 ### Error Handling
+
 - **Network Errors** - Retry mechanisms and fallback UI
 - **Empty States** - Helpful messages when no results found
 - **Validation Errors** - Clear feedback for invalid inputs
 
 ### Responsiveness
+
 - **Mobile-First** - Optimized for mobile devices
 - **Tablet Layout** - Adaptive grid for tablet screens
 - **Desktop** - Full-featured desktop experience
 
 ### Accessibility
+
 - **Keyboard Navigation** - Full keyboard support
 - **Screen Readers** - Proper ARIA labels and semantic HTML
 - **Color Contrast** - WCAG compliant color schemes
@@ -131,16 +143,19 @@ This feature depends on the following shared utilities and components:
 ## Performance
 
 ### Bundle Size
+
 - **Code Splitting** - Lazy load university detail pages
 - **Tree Shaking** - Only import used components
 - **Image Optimization** - Next.js Image component for logos
 
 ### Rendering
+
 - **Virtual Scrolling** - Handle large university lists efficiently
 - **Memoization** - React.memo for expensive components
 - **Debounced Search** - Prevent excessive API calls
 
 ### Data Fetching
+
 - **Caching** - Supabase built-in caching
 - **Pagination** - Load universities in chunks
 - **Real-time** - Efficient real-time subscriptions
@@ -148,11 +163,13 @@ This feature depends on the following shared utilities and components:
 ## Testing
 
 ### Test Types
+
 - **Unit Tests** - Component logic and utility functions
 - **Integration Tests** - API integration and state management
 - **E2E Tests** - Complete user journeys
 
 ### Test Coverage
+
 - **Components** - All UI components tested
 - **Hooks** - Custom hooks and state management
 - **API** - Data fetching and error handling
@@ -161,17 +178,20 @@ This feature depends on the following shared utilities and components:
 ## Maintenance
 
 ### Known Issues
+
 - **Search Performance** - Large datasets may cause slow searches
 - **Mobile UX** - Filter UI needs mobile optimization
 - **Real-time Sync** - Occasional sync issues with bookmarks
 
 ### Future Enhancements
+
 - **Advanced Filters** - More sophisticated filtering options
 - **Comparison Tool** - Side-by-side university comparison
 - **Recommendations** - AI-powered university suggestions
 - **Export Features** - Export search results and bookmarks
 
 ### Monitoring
+
 - **Search Analytics** - Track popular search terms
 - **Performance Metrics** - Monitor load times and user interactions
 - **Error Tracking** - Monitor and alert on errors
@@ -179,6 +199,7 @@ This feature depends on the following shared utilities and components:
 ## API Reference
 
 ### Endpoints
+
 ```
 GET /api/universities          - List universities with pagination
 GET /api/universities/search   - Search universities
@@ -188,42 +209,46 @@ DELETE /api/universities/bookmark/:id - Remove bookmark
 ```
 
 ### Data Types
+
 ```typescript
 interface University {
-  id: number
-  name: string
-  country?: string
-  city?: string
-  university_type?: string
-  qs_world_ranking?: number
-  us_news_ranking?: number
-  students_total?: string
-  international_students_percent?: number
+  id: number;
+  name: string;
+  country?: string;
+  city?: string;
+  university_type?: string;
+  qs_world_ranking?: number;
+  us_news_ranking?: number;
+  students_total?: string;
+  international_students_percent?: number;
   // ... other fields
 }
 
 interface SearchFilters {
-  query: string
-  country: string
-  university_type: string
-  min_ranking: number
-  max_ranking: number
+  query: string;
+  country: string;
+  university_type: string;
+  min_ranking: number;
+  max_ranking: number;
 }
 ```
 
 ## Troubleshooting
 
 ### Common Problems
+
 - **Search Not Working** - Check network connection and API status
 - **Slow Loading** - Verify database indexes and query optimization
 - **Bookmark Issues** - Check authentication status and permissions
 
 ### Debug Tips
+
 - **Network Tab** - Monitor API calls and responses
 - **Redux DevTools** - Inspect Zustand store state
 - **Console Logs** - Check for JavaScript errors
 
 ## Related Documentation
+
 - [Authentication System](../auth/AUTHENTICATION.md)
 - [Database Schema](../../scripts/supabase-universities-setup.sql)
 - [API Documentation](../../shared/api/universities/)

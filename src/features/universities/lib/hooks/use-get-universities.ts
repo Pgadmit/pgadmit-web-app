@@ -1,6 +1,6 @@
-import { getUniversities } from "@/shared/api/universities/api";
-import { useUniversitiesStore } from "../../model/store";
-import { useCallback, useEffect } from "react";
+import { getUniversities } from '@/shared/api/universities/api';
+import { useUniversitiesStore } from '../../model/store';
+import { useCallback, useEffect } from 'react';
 
 export function useGetUniversities() {
   const {
@@ -26,7 +26,7 @@ export function useGetUniversities() {
       return response.data;
     } catch (error) {
       setUniversitiesError(
-        error instanceof Error ? error.message : "Unknown error"
+        error instanceof Error ? error.message : 'Unknown error'
       );
       return [];
     } finally {

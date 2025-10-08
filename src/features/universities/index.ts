@@ -1,7 +1,7 @@
-export { useUniversitiesStore } from "./model";
+export { useUniversitiesStore } from './model';
 export {
   useUniversityTypes,
   useGetUniversityById,
   useGetUniversities,
-} from "./lib";
-export { UniversitySearch, UniversityGrid, UniversityDetail } from "./ui";
+} from './lib';
+export { UniversitySearch, UniversityGrid, UniversityDetail } from './ui';

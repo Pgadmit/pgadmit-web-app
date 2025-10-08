@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,9 +8,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { UserAvatar } from "@/components/user-avatar";
-import { useAuth } from "@/features/auth";
+} from '@/components/ui/dropdown-menu';
+import { UserAvatar } from '@/components/user-avatar';
+import { useAuth } from '@/features/auth';
 // Removed onboarding data dependency - not needed for user menu
 import {
   User,
@@ -18,9 +18,9 @@ import {
   LogOut,
   LayoutDashboard,
   FileText,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useActivePath } from "@/lib/navigation-utils";
+} from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useActivePath } from '@/lib/navigation-utils';
 
 export function UserMenu() {
   const { user, signOut } = useAuth();
@@ -31,43 +31,48 @@ export function UserMenu() {
   if (!user) return null;
 
   const handleDashboard = () => {
-    router.push("/dashboard");
+    router.push('/dashboard');
   };
 
   const handleProfile = () => {
-    router.push("/profile");
+    router.push('/profile');
   };
 
   const handleSettings = () => {
-    router.push("/settings");
+    router.push('/settings');
   };
 
   const handleApplications = () => {
-    router.push("/applications");
+    router.push('/applications');
   };
 
   const handleLogout = async () => {
     try {
       await signOut();
-      router.push("/login");
+      router.push('/login');
     } catch (error) {
       console.error('Logout failed:', error);
-      router.push("/login");
+      router.push('/login');
     }
   };
 
   return (
-    <DropdownMenu >
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0 cursor-pointer">
-          <UserAvatar size="md" />
+        <Button
+          variant='ghost'
+          className='relative h-10 w-10 rounded-full p-0 cursor-pointer'
+        >
+          <UserAvatar size='md' />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">{user.name ?? user.email ?? 'User'}</p>
-            <p className="text-xs leading-none text-muted-foreground">
+      <DropdownMenuContent className='w-56' align='end' forceMount>
+        <DropdownMenuLabel className='font-normal'>
+          <div className='flex flex-col space-y-1'>
+            <p className='text-sm font-medium leading-none'>
+              {user.name ?? user.email ?? 'User'}
+            </p>
+            <p className='text-xs leading-none text-muted-foreground'>
               {user.email}
             </p>
             {/* Removed country display - not critical for user menu */}
@@ -76,47 +81,51 @@ export function UserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleDashboard}
-          className={`cursor-pointer transition-colors ${mounted && isActivePath("/dashboard", false)
-            ? "bg-blue-50 text-blue-700 font-semibold"
-            : "hover:bg-gray-50"
-            }`}
+          className={`cursor-pointer transition-colors ${
+            mounted && isActivePath('/dashboard', false)
+              ? 'bg-blue-50 text-blue-700 font-semibold'
+              : 'hover:bg-gray-50'
+          }`}
         >
-          <LayoutDashboard className="cursor-pointer  mr-2 h-4 w-4" />
+          <LayoutDashboard className='cursor-pointer  mr-2 h-4 w-4' />
           <span>Dashboard</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleApplications}
-          className={`cursor-pointer transition-colors ${mounted && isActivePath("/applications", false)
-            ? "bg-blue-50 text-blue-700 font-semibold"
-            : "hover:bg-gray-50"
-            }`}
+          className={`cursor-pointer transition-colors ${
+            mounted && isActivePath('/applications', false)
+              ? 'bg-blue-50 text-blue-700 font-semibold'
+              : 'hover:bg-gray-50'
+          }`}
         >
-          <FileText className="cursor-pointer mr-2 h-4 w-4" />
+          <FileText className='cursor-pointer mr-2 h-4 w-4' />
           <span>Applications</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleProfile}
-          className={`cursor-pointer transition-colors ${mounted && isActivePath("/profile", false)
-            ? "bg-blue-50 text-blue-700 font-semibold"
-            : "hover:bg-gray-50"
-            }`}
+          className={`cursor-pointer transition-colors ${
+            mounted && isActivePath('/profile', false)
+              ? 'bg-blue-50 text-blue-700 font-semibold'
+              : 'hover:bg-gray-50'
+          }`}
         >
-          <User className="cursor-pointer mr-2 h-4 w-4" />
+          <User className='cursor-pointer mr-2 h-4 w-4' />
           <span>Profile</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={handleSettings}
-          className={`cursor-pointer transition-colors ${mounted && isActivePath("/settings", false)
-            ? "bg-blue-50 text-blue-700 font-semibold"
-            : "hover:bg-gray-50"
-            }`}
+          className={`cursor-pointer transition-colors ${
+            mounted && isActivePath('/settings', false)
+              ? 'bg-blue-50 text-blue-700 font-semibold'
+              : 'hover:bg-gray-50'
+          }`}
         >
-          <Settings className="cursor-pointer mr-2 h-4 w-4" />
+          <Settings className='cursor-pointer mr-2 h-4 w-4' />
           <span>Settings</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
-          <LogOut className="cursor-pointer mr-2 h-4 w-4" />
+        <DropdownMenuItem className='cursor-pointer' onClick={handleLogout}>
+          <LogOut className='cursor-pointer mr-2 h-4 w-4' />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

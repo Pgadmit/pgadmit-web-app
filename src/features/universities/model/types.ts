@@ -1,4 +1,8 @@
-import type { University, UniversitySearchParams, UniversitySearchResult } from '@/entities/universities';
+import type {
+  University,
+  UniversitySearchParams,
+  UniversitySearchResult,
+} from '@/entities/universities';
 
 export interface UniversitiesState {
   universities: University[];
@@ -29,7 +33,9 @@ export interface UniversitiesActions {
   resetPagination: () => void;
 }
 
-export interface UseUniversitiesReturn extends UniversitiesState, UniversitiesActions {
+export interface UseUniversitiesReturn
+  extends UniversitiesState,
+    UniversitiesActions {
   // Computed values
   hasUniversities: boolean;
   hasSearchResults: boolean;
@@ -39,4 +45,3 @@ export interface UseUniversitiesReturn extends UniversitiesState, UniversitiesAc
   getUniversityById: (id: number) => University | undefined;
   getSearchResultById: (id: number) => UniversitySearchResult | undefined;
 }
-

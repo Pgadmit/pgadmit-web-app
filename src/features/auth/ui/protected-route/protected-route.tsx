@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useAuth } from "@/features/auth";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useAuth } from '@/features/auth';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,8 +12,8 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({
   children,
-  redirectTo = "/",
-  requireOnboarding = false
+  redirectTo = '/',
+  requireOnboarding = false,
 }: ProtectedRouteProps) {
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -29,15 +29,15 @@ export function ProtectedRoute({
     // Only redirect to onboarding if explicitly required
     if (!loading && user && requireOnboarding && !user.onboardingComplete) {
       setIsRedirecting(true);
-      router.push("/onboarding");
+      router.push('/onboarding');
       return;
     }
   }, [loading, user, router, redirectTo, requireOnboarding]);
 
   if (loading || isRedirecting) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className='min-h-screen bg-background flex items-center justify-center'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
       </div>
     );
   }

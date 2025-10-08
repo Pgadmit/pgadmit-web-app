@@ -3,6 +3,7 @@
 Welcome to the PGAdmit web application documentation. This comprehensive guide covers all aspects of the project, from architecture to deployment.
 
 ## Summary
+
 - **Purpose:** Comprehensive documentation for PGAdmit university admission platform
 - **Scope:** Authentication, universities management, dashboard, user onboarding
 - **Stack:** Next.js 15, React 19, TypeScript, Supabase, Zustand, Tailwind CSS
@@ -19,16 +20,17 @@ Welcome to the PGAdmit web application documentation. This comprehensive guide c
 
 ## 🔗 Feature Documentation Index
 
-| Feature | Description | Status | Last Updated | Documentation |
-|---------|-------------|--------|--------------|---------------|
-| **Authentication** | Login, registration, OAuth, route protection | ✅ Completed | 2025-10-08 | [Auth System](./auth/AUTHENTICATION.md) |
-| **Universities** | University search, filtering, CRUD operations | 🧩 In Progress | 2025-10-08 | [Universities Guide](./features/UNIVERSITIES.md) |
-| **Dashboard** | User dashboard, metrics, analytics | 📋 Planned | — | [Dashboard Guide](./features/DASHBOARD.md) |
-| **User Onboarding** | Multi-step user registration flow | 📋 Planned | — | [Onboarding Guide](./features/ONBOARDING.md) |
-| **AI Chat** | AI-powered university recommendations | 📋 Planned | — | [AI Chat Guide](./features/AI_CHAT.md) |
-| **Community** | User community features | 📋 Planned | — | [Community Guide](./features/COMMUNITY.md) |
+| Feature             | Description                                   | Status         | Last Updated | Documentation                                    |
+| ------------------- | --------------------------------------------- | -------------- | ------------ | ------------------------------------------------ |
+| **Authentication**  | Login, registration, OAuth, route protection  | ✅ Completed   | 2025-10-08   | [Auth System](./auth/AUTHENTICATION.md)          |
+| **Universities**    | University search, filtering, CRUD operations | 🧩 In Progress | 2025-10-08   | [Universities Guide](./features/UNIVERSITIES.md) |
+| **Dashboard**       | User dashboard, metrics, analytics            | 📋 Planned     | —            | [Dashboard Guide](./features/DASHBOARD.md)       |
+| **User Onboarding** | Multi-step user registration flow             | 📋 Planned     | —            | [Onboarding Guide](./features/ONBOARDING.md)     |
+| **AI Chat**         | AI-powered university recommendations         | 📋 Planned     | —            | [AI Chat Guide](./features/AI_CHAT.md)           |
+| **Community**       | User community features                       | 📋 Planned     | —            | [Community Guide](./features/COMMUNITY.md)       |
 
 ### 📋 Documentation Templates
+
 - [Feature Template](./templates/feature-template.md) - Standard template for new features
 - [API Template](./templates/api-template.md) - Template for API documentation
 
@@ -36,7 +38,7 @@ Welcome to the PGAdmit web application documentation. This comprehensive guide c
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recommended) or npm
 - Supabase account
 - Google OAuth credentials (optional)
@@ -115,12 +117,14 @@ pgadmit-web-app/
 ### Technology Stack
 
 #### Core Framework & Language
+
 - **Next.js 15.2.4** - React framework with App Router for server-side rendering and static generation
 - **React 19** - Modern React with concurrent features and improved performance
 - **TypeScript 5** - Type-safe JavaScript with strict mode enabled
 - **Node.js 18+** - JavaScript runtime environment
 
 #### Styling & UI
+
 - **Tailwind CSS 4.1.9** - Utility-first CSS framework for rapid UI development
 - **Radix UI** - Accessible, unstyled UI primitives for building design systems
 - **shadcn/ui** - Pre-built components built on Radix UI and Tailwind CSS
@@ -129,12 +133,14 @@ pgadmit-web-app/
 - **next-themes** - Theme switching with system preference detection
 
 #### State Management & Data
+
 - **Zustand 5.0.8** - Lightweight state management for complex application state
 - **React Context** - Built-in state management for authentication and global state
 - **React Hook Form 7.60.0** - Performant forms with easy validation
 - **Zod 3.25.67** - TypeScript-first schema validation
 
 #### Backend & Database
+
 - **Supabase** - Backend-as-a-Service platform
   - **Supabase Auth** - Authentication and user management
   - **Supabase PostgreSQL** - Relational database with real-time subscriptions
@@ -142,11 +148,13 @@ pgadmit-web-app/
 - **Server Actions** - Next.js server-side functions for data mutations
 
 #### External Services & APIs
+
 - **OpenAI 5.23.0** - AI integration for intelligent features
 - **HubSpot API** - CRM integration for lead management
 - **Strapi** - Headless CMS for content management
 
 #### UI Components & Interactions
+
 - **Radix UI Components** - Complete set of accessible UI primitives:
   - Accordion, Alert Dialog, Avatar, Checkbox, Collapsible
   - Context Menu, Dialog, Dropdown Menu, Hover Card, Label
@@ -161,6 +169,7 @@ pgadmit-web-app/
 - **Input OTP** - One-time password input component
 
 #### Data Visualization & Content
+
 - **Recharts 2.15.4** - Composable charting library for data visualization
 - **React Markdown** - Markdown rendering with React components
 - **Remark GFM** - GitHub Flavored Markdown support
@@ -168,6 +177,7 @@ pgadmit-web-app/
 - **World Countries** - Country data for international features
 
 #### Utilities & Helpers
+
 - **clsx** - Utility for constructing className strings conditionally
 - **tailwind-merge** - Merge Tailwind CSS classes without conflicts
 - **class-variance-authority** - Component variant styling
@@ -175,6 +185,7 @@ pgadmit-web-app/
 - **Sonner** - Toast notification system
 
 #### Development Tools
+
 - **pnpm** - Fast, disk space efficient package manager
 - **ESLint** - Code linting and quality assurance
 - **Prettier** - Code formatting
@@ -213,29 +224,33 @@ The project follows a **Feature-Driven Development** approach:
 The application uses a **hybrid state management approach** combining multiple strategies:
 
 #### 1. Zustand Stores (`src/lib/stores/`)
+
 - **Global Application State** - Cross-feature state management
 - **Persistent State** - Data that survives page refreshes
 - **Complex State Logic** - Business logic and derived state
 - **Performance Critical** - High-frequency updates and subscriptions
 
 **Example Zustand Store:**
+
 ```typescript
 interface UniversityStore {
-  universities: University[]
-  filters: SearchFilters
-  loading: boolean
-  setUniversities: (universities: University[]) => void
-  updateFilters: (filters: Partial<SearchFilters>) => void
-  searchUniversities: (query: string) => Promise<void>
+  universities: University[];
+  filters: SearchFilters;
+  loading: boolean;
+  setUniversities: (universities: University[]) => void;
+  updateFilters: (filters: Partial<SearchFilters>) => void;
+  searchUniversities: (query: string) => Promise<void>;
 }
 ```
 
 #### 2. React Context (`src/features/auth/`)
+
 - **Authentication State** - User session and auth status
 - **Theme Management** - Dark/light mode preferences
 - **Global UI State** - Modals, notifications, loading states
 
 #### 3. Local Component State
+
 - **Form State** - React Hook Form for form management
 - **UI Interactions** - Toggle states, animations, temporary data
 - **Component-specific** - State that doesn't need to be shared
@@ -243,42 +258,48 @@ interface UniversityStore {
 ### Technology Integration Patterns
 
 #### Form Management
+
 ```typescript
 // React Hook Form + Zod validation
 const form = useForm<LoginFormData>({
   resolver: zodResolver(loginSchema),
-  defaultValues: { email: '', password: '' }
-})
+  defaultValues: { email: '', password: '' },
+});
 ```
 
 #### State Synchronization
+
 ```typescript
 // Zustand store with Supabase real-time
 useEffect(() => {
   const subscription = supabase
     .channel('universities')
-    .on('postgres_changes', { event: '*', schema: 'public', table: 'universities' }, 
-        (payload) => updateUniversities(payload))
-    .subscribe()
-  
-  return () => subscription.unsubscribe()
-}, [])
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'universities' },
+      payload => updateUniversities(payload)
+    )
+    .subscribe();
+
+  return () => subscription.unsubscribe();
+}, []);
 ```
 
 #### Server State Management
+
 ```typescript
 // Server Actions with optimistic updates
 const updateUniversity = async (id: number, data: UniversityUpdate) => {
   // Optimistic update
-  setUniversities(prev => prev.map(u => u.id === id ? {...u, ...data} : u))
-  
+  setUniversities(prev => prev.map(u => (u.id === id ? { ...u, ...data } : u)));
+
   try {
-    await updateUniversityAction(id, data)
+    await updateUniversityAction(id, data);
   } catch (error) {
     // Revert on error
-    setUniversities(prev => prev.map(u => u.id === id ? originalData : u))
+    setUniversities(prev => prev.map(u => (u.id === id ? originalData : u)));
   }
-}
+};
 ```
 
 ### Key Libraries & Their Usage
@@ -286,12 +307,14 @@ const updateUniversity = async (id: number, data: UniversityUpdate) => {
 #### UI Component Libraries
 
 **Radix UI** - The foundation of our design system
+
 - **Accessibility First** - WCAG compliant components out of the box
 - **Headless Components** - Unstyled primitives for maximum customization
 - **Keyboard Navigation** - Full keyboard support for all interactions
 - **Screen Reader Support** - Proper ARIA attributes and semantic HTML
 
 **shadcn/ui** - Pre-built component library
+
 - **Copy-Paste Components** - Own your components, customize freely
 - **TypeScript Native** - Full type safety and IntelliSense support
 - **Tailwind Integration** - Seamless styling with utility classes
@@ -300,12 +323,14 @@ const updateUniversity = async (id: number, data: UniversityUpdate) => {
 #### State Management Solutions
 
 **Zustand** - Lightweight global state management
+
 - **Minimal Boilerplate** - Simple API with powerful features
 - **TypeScript Support** - Full type inference and safety
 - **DevTools Integration** - Redux DevTools support for debugging
 - **Middleware Support** - Persist, subscribe, and custom middleware
 
 **React Hook Form** - Performant form management
+
 - **Uncontrolled Components** - Better performance with large forms
 - **Built-in Validation** - Integration with Zod, Yup, and custom validators
 - **Error Handling** - Comprehensive error management and display
@@ -314,12 +339,14 @@ const updateUniversity = async (id: number, data: UniversityUpdate) => {
 #### Data & API Management
 
 **Supabase** - Backend-as-a-Service platform
+
 - **Real-time Subscriptions** - Live data updates across the application
 - **Row Level Security** - Database-level security policies
 - **Edge Functions** - Serverless functions for custom business logic
 - **Storage** - File upload and management capabilities
 
 **Zod** - Schema validation and type inference
+
 - **Runtime Validation** - Validate data at runtime with TypeScript types
 - **Form Integration** - Seamless integration with React Hook Form
 - **API Validation** - Validate API responses and user input
@@ -328,12 +355,14 @@ const updateUniversity = async (id: number, data: UniversityUpdate) => {
 #### Styling & Theming
 
 **Tailwind CSS** - Utility-first CSS framework
+
 - **Responsive Design** - Mobile-first responsive utilities
 - **Dark Mode** - Built-in dark mode support with next-themes
 - **Custom Design System** - Consistent spacing, colors, and typography
 - **Performance** - Purged CSS for optimal bundle size
 
 **next-themes** - Theme management
+
 - **System Preference** - Automatic theme detection
 - **Persistence** - Theme preference saved across sessions
 - **Smooth Transitions** - CSS transitions for theme changes
@@ -342,6 +371,7 @@ const updateUniversity = async (id: number, data: UniversityUpdate) => {
 #### Data Visualization
 
 **Recharts** - Composable charting library
+
 - **Responsive Charts** - Automatic responsive behavior
 - **Customizable** - Highly customizable appearance and behavior
 - **TypeScript Support** - Full type safety for chart configurations
@@ -350,12 +380,14 @@ const updateUniversity = async (id: number, data: UniversityUpdate) => {
 #### Development Experience
 
 **TypeScript** - Type-safe JavaScript
+
 - **Strict Mode** - Maximum type safety and error prevention
 - **IntelliSense** - Enhanced IDE support and autocomplete
 - **Refactoring** - Safe code refactoring with type checking
 - **Documentation** - Self-documenting code with type annotations
 
 **ESLint + Prettier** - Code quality and formatting
+
 - **Consistent Style** - Enforced coding standards across the team
 - **Error Prevention** - Catch common mistakes and anti-patterns
 - **Auto-formatting** - Automatic code formatting on save
@@ -366,6 +398,7 @@ const updateUniversity = async (id: number, data: UniversityUpdate) => {
 This project depends on the following shared utilities and external services:
 
 #### Core Dependencies
+
 - `lib/supabase/*` — Supabase client and server configurations
 - `lib/stores/*` — Zustand state management stores
 - `shared/ui/*` — Common UI components and utilities
@@ -373,6 +406,7 @@ This project depends on the following shared utilities and external services:
 - `shared/types/*` — TypeScript type definitions
 
 #### External Services
+
 - **Supabase** — Backend-as-a-Service platform
 - **Vercel** — Deployment and hosting platform
 - **Google OAuth** — Authentication provider
@@ -380,6 +414,7 @@ This project depends on the following shared utilities and external services:
 - **HubSpot** — CRM integration
 
 #### Development Dependencies
+
 - `@types/*` — TypeScript type definitions
 - `eslint` — Code linting and quality assurance
 - `prettier` — Code formatting
@@ -393,18 +428,19 @@ See [Authentication Documentation](./auth/AUTHENTICATION.md) for detailed implem
 ### Technology Usage Examples
 
 #### Zustand Store Implementation
+
 ```typescript
 // src/lib/stores/university-store.ts
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface UniversityStore {
-  universities: University[]
-  filters: SearchFilters
-  loading: boolean
-  setUniversities: (universities: University[]) => void
-  updateFilters: (filters: Partial<SearchFilters>) => void
-  searchUniversities: (query: string) => Promise<void>
+  universities: University[];
+  filters: SearchFilters;
+  loading: boolean;
+  setUniversities: (universities: University[]) => void;
+  updateFilters: (filters: Partial<SearchFilters>) => void;
+  searchUniversities: (query: string) => Promise<void>;
 }
 
 export const useUniversityStore = create<UniversityStore>()(
@@ -413,31 +449,32 @@ export const useUniversityStore = create<UniversityStore>()(
       universities: [],
       filters: { query: '', country: '', type: '' },
       loading: false,
-      
-      setUniversities: (universities) => set({ universities }),
-      
-      updateFilters: (newFilters) => 
-        set((state) => ({ 
-          filters: { ...state.filters, ...newFilters } 
+
+      setUniversities: universities => set({ universities }),
+
+      updateFilters: newFilters =>
+        set(state => ({
+          filters: { ...state.filters, ...newFilters },
         })),
-      
-      searchUniversities: async (query) => {
-        set({ loading: true })
+
+      searchUniversities: async query => {
+        set({ loading: true });
         try {
-          const results = await searchUniversitiesAPI(query)
-          set({ universities: results, loading: false })
+          const results = await searchUniversitiesAPI(query);
+          set({ universities: results, loading: false });
         } catch (error) {
-          set({ loading: false })
-          throw error
+          set({ loading: false });
+          throw error;
         }
-      }
+      },
     }),
     { name: 'university-store' }
   )
-)
+);
 ```
 
 #### Form Management with React Hook Form + Zod
+
 ```typescript
 // src/features/auth/ui/login-form.tsx
 import { useForm } from 'react-hook-form'
@@ -478,86 +515,92 @@ export function LoginForm() {
 ```
 
 #### Real-time Data with Supabase
+
 ```typescript
 // src/hooks/use-realtime-universities.ts
-import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabase/client'
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase/client';
 
 export function useRealtimeUniversities() {
-  const [universities, setUniversities] = useState<University[]>([])
+  const [universities, setUniversities] = useState<University[]>([]);
 
   useEffect(() => {
     const subscription = supabase
       .channel('universities')
-      .on('postgres_changes', 
-          { event: '*', schema: 'public', table: 'universities' },
-          (payload) => {
-            switch (payload.eventType) {
-              case 'INSERT':
-                setUniversities(prev => [...prev, payload.new as University])
-                break
-              case 'UPDATE':
-                setUniversities(prev => 
-                  prev.map(u => u.id === payload.new.id ? payload.new as University : u)
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'universities' },
+        payload => {
+          switch (payload.eventType) {
+            case 'INSERT':
+              setUniversities(prev => [...prev, payload.new as University]);
+              break;
+            case 'UPDATE':
+              setUniversities(prev =>
+                prev.map(u =>
+                  u.id === payload.new.id ? (payload.new as University) : u
                 )
-                break
-              case 'DELETE':
-                setUniversities(prev => 
-                  prev.filter(u => u.id !== payload.old.id)
-                )
-                break
-            }
-          })
-      .subscribe()
+              );
+              break;
+            case 'DELETE':
+              setUniversities(prev =>
+                prev.filter(u => u.id !== payload.old.id)
+              );
+              break;
+          }
+        }
+      )
+      .subscribe();
 
-    return () => subscription.unsubscribe()
-  }, [])
+    return () => subscription.unsubscribe();
+  }, []);
 
-  return universities
+  return universities;
 }
 ```
 
 #### Server Actions with Optimistic Updates
+
 ```typescript
 // src/actions/university-actions.ts
-'use server'
+'use server';
 
-import { createClient } from '@/lib/supabase/server'
-import { revalidatePath } from 'next/cache'
+import { createClient } from '@/lib/supabase/server';
+import { revalidatePath } from 'next/cache';
 
 export async function updateUniversity(id: number, data: Partial<University>) {
-  const supabase = await createClient()
-  
+  const supabase = await createClient();
+
   const { error } = await supabase
     .from('universities')
     .update(data)
-    .eq('id', id)
+    .eq('id', id);
 
   if (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
 
-  revalidatePath('/universities')
-  return { success: true }
+  revalidatePath('/universities');
+  return { success: true };
 }
 
 // Client-side usage with optimistic updates
 export function useUpdateUniversity() {
-  const updateStore = useUniversityStore(state => state.setUniversities)
-  
+  const updateStore = useUniversityStore(state => state.setUniversities);
+
   return useMutation({
     mutationFn: updateUniversity,
-    onMutate: async (variables) => {
+    onMutate: async variables => {
       // Optimistic update
-      updateStore(prev => 
-        prev.map(u => u.id === variables.id ? { ...u, ...variables.data } : u)
-      )
+      updateStore(prev =>
+        prev.map(u => (u.id === variables.id ? { ...u, ...variables.data } : u))
+      );
     },
     onError: (error, variables, context) => {
       // Revert on error
       // Implementation depends on your error handling strategy
-    }
-  })
+    },
+  });
 }
 ```
 
@@ -629,7 +672,7 @@ src/
     └── __tests__/          # Shared utility tests
 ```
 
-### Running Tests 
+### Running Tests
 
 ```bash
 # Unit tests

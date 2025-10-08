@@ -1,6 +1,7 @@
 # 🏗️ Authentication Architecture Diagrams
 
 ## Summary
+
 - **Purpose:** Visual representation of authentication system architecture and flows
 - **Scope:** System diagrams, user flows, component relationships, data flow
 - **Stack:** Mermaid diagrams, system architecture documentation
@@ -16,18 +17,18 @@ graph TB
         B --> D[Protected Routes]
         B --> E[User Menu]
     end
-    
+
     subgraph "Server Side"
         F[Next.js Middleware] --> G[Server Actions]
         G --> H[Supabase Client]
         H --> I[Supabase Auth]
     end
-    
+
     subgraph "External Services"
         J[Google OAuth]
         K[Email Service]
     end
-    
+
     A --> F
     C --> G
     D --> F
@@ -46,7 +47,7 @@ sequenceDiagram
     participant SA as Server Action
     participant SB as Supabase
     participant DB as Database
-    
+
     U->>UI: Enter credentials
     UI->>AC: signIn(email, password)
     AC->>SA: signInWithEmail()
@@ -69,7 +70,7 @@ sequenceDiagram
     participant SB as Supabase
     participant GO as Google OAuth
     participant CB as Callback Handler
-    
+
     U->>UI: Click Google login
     UI->>AC: signInWithGoogle()
     AC->>SB: auth.signInWithOAuth()
@@ -105,20 +106,20 @@ graph TD
     B --> C[Layout]
     C --> D[ConditionalHeader]
     C --> E[Main Content]
-    
+
     E --> F[Public Routes]
     E --> G[Protected Routes]
-    
+
     F --> H[Home Page]
     F --> I[Login Page]
-    
+
     G --> J[Dashboard]
     G --> K[Profile]
     G --> L[Settings]
-    
+
     I --> M[LoginForm]
     I --> N[RegisterForm]
-    
+
     M --> O[Auth Context]
     N --> O
     J --> P[ProtectedRoute]
@@ -134,19 +135,19 @@ graph LR
         A --> C[Loading State]
         A --> D[Error State]
     end
-    
+
     subgraph "Server State"
         E[Supabase Session] --> F[Access Token]
         E --> G[Refresh Token]
         E --> H[User Metadata]
     end
-    
+
     subgraph "Database"
         I[Users Table] --> J[Profile Data]
         I --> K[Onboarding Status]
         I --> L[Preferences]
     end
-    
+
     A <--> E
     E <--> I
     B --> J
@@ -163,25 +164,25 @@ graph TB
         B[XSS Protection]
         C[CSRF Tokens]
     end
-    
+
     subgraph "Network Security"
         D[HTTPS Only]
         E[Secure Cookies]
         F[CORS Policy]
     end
-    
+
     subgraph "Server Security"
         G[Session Validation]
         H[Rate Limiting]
         I[Input Sanitization]
     end
-    
+
     subgraph "Database Security"
         J[Row Level Security]
         K[Encrypted Storage]
         L[Access Policies]
     end
-    
+
     A --> D
     B --> E
     C --> F
@@ -200,22 +201,22 @@ flowchart TD
     A[Auth Operation] --> B{Success?}
     B -->|Yes| C[Update State]
     B -->|No| D[Error Type?]
-    
+
     D --> E[Network Error]
     D --> F[Validation Error]
     D --> G[Auth Error]
     D --> H[Server Error]
-    
+
     E --> I[Show Network Message]
     F --> J[Show Field Errors]
     G --> K[Show Auth Message]
     H --> L[Show Server Message]
-    
+
     I --> M[Retry Option]
     J --> N[Fix Input]
     K --> O[Try Again]
     L --> P[Contact Support]
-    
+
     C --> Q[Redirect/Continue]
     M --> A
     N --> A
@@ -273,7 +274,7 @@ src/
 
 ---
 
-**Author:** gmoinbong 
+**Author:** gmoinbong
 **Version:** 1.0.0  
 **Last Updated:** 2025-10-08  
 **Status:** Production-ready

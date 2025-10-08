@@ -1,6 +1,6 @@
-import { create } from "zustand";
-import { devtools } from "zustand/middleware";
-import type { UniversityTypeInfo, University } from "@/entities/universities";
+import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
+import type { UniversityTypeInfo, University } from '@/entities/universities';
 
 interface UniversitiesStore {
   // University types (categories)
@@ -49,30 +49,30 @@ const initialState = {
 
 export const useUniversitiesStore = create<UniversitiesStore>()(
   devtools(
-    (set) => ({
+    set => ({
       ...initialState,
 
       // Actions
-      setUniversityTypes: (types) => set({ universityTypes: types }),
-      setLoadingTypes: (loading) => set({ isLoadingTypes: loading }),
-      setTypesError: (error) => set({ typesError: error }),
+      setUniversityTypes: types => set({ universityTypes: types }),
+      setLoadingTypes: loading => set({ isLoadingTypes: loading }),
+      setTypesError: error => set({ typesError: error }),
 
-      setCurrentUniversity: (university) =>
+      setCurrentUniversity: university =>
         set({ currentUniversity: university }),
-      setLoadingUniversity: (loading) => set({ isLoadingUniversity: loading }),
-      setUniversityError: (error) => set({ universityError: error }),
+      setLoadingUniversity: loading => set({ isLoadingUniversity: loading }),
+      setUniversityError: error => set({ universityError: error }),
 
       // Universities
-      setUniversities: (universities) => set({ universities: universities }),
-      setLoadingUniversities: (loading) =>
+      setUniversities: universities => set({ universities: universities }),
+      setLoadingUniversities: loading =>
         set({ isLoadingUniversities: loading }),
-      setUniversitiesError: (error) => set({ universitiesError: error }),
+      setUniversitiesError: error => set({ universitiesError: error }),
 
       // Reset
       reset: () => set(initialState),
     }),
     {
-      name: "universities-store",
+      name: 'universities-store',
     }
   )
 );

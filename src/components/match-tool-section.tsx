@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import type React from 'react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 // import { Label } from "@/components/ui/label";
 // import {
@@ -15,11 +15,11 @@ import { Button } from "@/components/ui/button";
 import {
   //  ArrowRight,
   Sparkles,
-} from "lucide-react";
+} from 'lucide-react';
 // import { useAuth } from "@/lib/auth-context";
 // import { useRouter } from "next/navigation";
 // import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 
 // const OnboardingMatchTool = () => {
 //   const { user } = useAuth();
@@ -169,29 +169,29 @@ export function MatchToolSection() {
   const router = useRouter();
 
   return (
-    <section data-section="match-tool" className="py-16 md:py-24 bg-background">
-      <div className="container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-semibold mb-4">
-            <Sparkles className="h-4 w-4" />
+    <section data-section='match-tool' className='py-16 md:py-24 bg-background'>
+      <div className='container mx-auto px-4 max-w-6xl'>
+        <div className='text-center mb-12'>
+          <div className='inline-flex items-center gap-2 bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-semibold mb-4'>
+            <Sparkles className='h-4 w-4' />
             AI-Powered Matching
           </div>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-black mb-6 text-foreground">
+          <h2 className='text-3xl md:text-4xl lg:text-5xl font-black mb-6 text-foreground'>
             Discover Your Perfect University
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className='text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed'>
             Let our AI-powered tool guide you to universities that fit your
             aspirations, budget, and academic profile.
           </p>
         </div>
         {/* Call to Action */}
-        <div className="text-center">
+        <div className='text-center'>
           <Button
-            size="lg"
-            onClick={() => router.push("/onboarding")}
-            className="cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 text-lg"
+            size='lg'
+            onClick={() => router.push('/onboarding')}
+            className='cursor-pointer bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-8 py-4 text-lg'
           >
-            <Sparkles className="h-5 w-5 mr-2" />
+            <Sparkles className='h-5 w-5 mr-2' />
             Get Started with AI Matching
           </Button>
         </div>

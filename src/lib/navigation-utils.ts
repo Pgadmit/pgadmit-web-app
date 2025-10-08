@@ -1,5 +1,5 @@
-import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 export function useActivePath() {
   const pathname = usePathname();
@@ -24,69 +24,69 @@ export function useActivePath() {
 
   return {
     isActivePath,
-    pathname: pathname ?? "",
+    pathname: pathname ?? '',
     mounted,
     // Helper functions for specific navigation items
-    isDashboardActive: () => isActivePath("/dashboard"),
-    isApplicationsActive: () => isActivePath("/applications"),
-    isUniversitiesActive: () => isActivePath("/universities"),
-    isAIChatActive: () => isActivePath("/ai-chat"),
-    isCommunityActive: () => isActivePath("/community"),
-    isResourcesActive: () => isActivePath("/resources"),
-    isBlogActive: () => isActivePath("/blog"),
-    isProfileActive: () => isActivePath("/profile"),
-    isSettingsActive: () => isActivePath("/settings"),
+    isDashboardActive: () => isActivePath('/dashboard'),
+    isApplicationsActive: () => isActivePath('/applications'),
+    isUniversitiesActive: () => isActivePath('/universities'),
+    isAIChatActive: () => isActivePath('/ai-chat'),
+    isCommunityActive: () => isActivePath('/community'),
+    isResourcesActive: () => isActivePath('/resources'),
+    isBlogActive: () => isActivePath('/blog'),
+    isProfileActive: () => isActivePath('/profile'),
+    isSettingsActive: () => isActivePath('/settings'),
   };
 }
 
 // Navigation items configuration
 export const navigationItems = [
   {
-    label: "Dashboard",
-    href: "/dashboard",
+    label: 'Dashboard',
+    href: '/dashboard',
     exact: false, // Should match /dashboard and /dashboard/*
   },
   {
-    label: "Applications",
-    href: "/applications",
+    label: 'Applications',
+    href: '/applications',
     exact: false,
   },
   {
-    label: "Universities",
-    href: "/universities",
+    label: 'Universities',
+    href: '/universities',
     exact: false,
   },
   {
-    label: "AI Chat",
-    href: "/ai-chat",
+    label: 'AI Chat',
+    href: '/ai-chat',
     exact: false,
   },
   {
-    label: "Community",
-    href: "/community",
+    label: 'Community',
+    href: '/community',
     exact: false,
   },
   {
-    label: "Resources",
-    href: "/resources",
+    label: 'Resources',
+    href: '/resources',
     exact: false,
   },
   {
-    label: "Blog",
-    href: "/blog",
+    label: 'Blog',
+    href: '/blog',
     exact: false,
   },
 ] as const;
 
 export const userMenuItems = [
   {
-    label: "Profile",
-    href: "/profile",
+    label: 'Profile',
+    href: '/profile',
     exact: false,
   },
   {
-    label: "Settings",
-    href: "/settings",
+    label: 'Settings',
+    href: '/settings',
     exact: false,
   },
 ] as const;

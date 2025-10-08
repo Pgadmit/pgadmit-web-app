@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 /* Mobile bottom navigation spacing */
 @media (max-width: 768px) {
@@ -141,8 +141,8 @@
   --color-primary-blue-foreground: #ffffff;
 
   /* Added custom font families for PGadmit */
-  --font-sans: "Open Sans", system-ui, sans-serif;
-  --font-heading: "Montserrat", system-ui, sans-serif;
+  --font-sans: 'Open Sans', system-ui, sans-serif;
+  --font-heading: 'Montserrat', system-ui, sans-serif;
 }
 
 @layer base {

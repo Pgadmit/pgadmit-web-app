@@ -1,2 +1,1 @@
 export { useUniversitiesStore } from './store';
-

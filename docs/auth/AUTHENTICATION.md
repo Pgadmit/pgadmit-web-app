@@ -1,6 +1,7 @@
 # 🔐 Authentication System Documentation
 
 ## Summary
+
 - **Purpose:** Manage user authentication, session flow, and route protection
 - **Scope:** Login, registration, OAuth (Google), password reset, user management
 - **Stack:** Next.js 15, Supabase Auth, TypeScript, React Context, Server Actions
@@ -58,6 +59,7 @@ interface AuthContextType {
 ```
 
 **Key Features:**
+
 - Automatic session restoration on app load
 - Real-time auth state changes via Supabase listeners
 - Error handling and session validation
@@ -66,18 +68,21 @@ interface AuthContextType {
 ### 2. User Interface Components
 
 #### Login Form (`login-form.tsx`)
+
 - Email/password authentication
 - Google OAuth integration
 - Form validation with error handling
 - Loading states and user feedback
 
 #### Register Form (`register-form.tsx`)
+
 - User registration with email verification
 - Password strength validation
 - Terms acceptance requirement
 - Automatic redirect to onboarding
 
 #### Protected Route (`protected-route.tsx`)
+
 - Route protection wrapper component
 - Optional onboarding requirement
 - Automatic redirects for unauthorized users
@@ -89,19 +94,19 @@ Server-side authentication functions:
 
 ```typescript
 // Email authentication
-export async function signInWithEmail(credentials: LoginCredentials)
-export async function signUpWithEmail(data: RegisterData)
+export async function signInWithEmail(credentials: LoginCredentials);
+export async function signUpWithEmail(data: RegisterData);
 
 // OAuth authentication
-export async function signInWithGoogle()
+export async function signInWithGoogle();
 
 // Session management
-export async function signOut()
-export async function getUser()
-export async function getSession()
+export async function signOut();
+export async function getUser();
+export async function getSession();
 
 // Password management
-export async function resetPassword(email: string)
+export async function resetPassword(email: string);
 ```
 
 ### 4. Middleware Protection (`middleware.ts`)
@@ -111,19 +116,20 @@ Next.js middleware for route protection:
 ```typescript
 const PROTECTED_ROUTES = [
   '/dashboard',
-  '/profile', 
+  '/profile',
   '/settings',
   '/onboarding',
   '/applications',
   '/universities',
   '/community',
-  '/resources'
+  '/resources',
 ];
 
 const AUTH_ROUTES = ['/login', '/signup', '/auth'];
 ```
 
 **Protection Logic:**
+
 - Redirects unauthenticated users from protected routes to `/login`
 - Redirects authenticated users from auth routes to `/dashboard`
 - Preserves redirect destination for post-login navigation
@@ -134,36 +140,40 @@ Handles OAuth provider callbacks:
 
 ```typescript
 export async function GET(request: NextRequest) {
-  const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/dashboard'
-  
+  const code = searchParams.get('code');
+  const next = searchParams.get('next') ?? '/dashboard';
+
   // Exchange code for session
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-  
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
   // Redirect to intended destination
-  return NextResponse.redirect(`${origin}${next}`)
+  return NextResponse.redirect(`${origin}${next}`);
 }
 ```
 
 ## 🔒 Security Features
 
 ### 1. Session Management
+
 - **Secure Cookies**: HTTP-only, secure, same-site cookies
 - **Session Validation**: Server-side session verification
 - **Automatic Refresh**: Token refresh on session expiry
 - **Cleanup**: Proper session cleanup on logout
 
 ### 2. Route Protection
+
 - **Middleware-level**: Server-side route protection
 - **Component-level**: Client-side route guards
 - **API-level**: Server action authentication checks
 
 ### 3. Input Validation
+
 - **Client-side**: Real-time form validation
 - **Server-side**: Server action validation
 - **Type Safety**: TypeScript interfaces for all auth data
 
 ### 4. Error Handling
+
 - **Graceful Degradation**: Fallback states for auth failures
 - **User Feedback**: Clear error messages
 - **Logging**: Comprehensive error logging for debugging
@@ -225,16 +235,19 @@ graph TD
 ## 📱 User Experience Features
 
 ### 1. Loading States
+
 - **Global Loading**: App-wide loading indicator during auth checks
 - **Form Loading**: Button loading states during form submission
 - **Redirect Loading**: Loading indicator during page transitions
 
 ### 2. Error Handling
+
 - **Form Errors**: Field-specific validation errors
 - **Network Errors**: Connection and server error handling
 - **Auth Errors**: Clear messages for auth failures
 
 ### 3. Responsive Design
+
 - **Mobile-first**: Optimized for mobile devices
 - **Desktop**: Full-featured desktop experience
 - **Tablet**: Adaptive layout for tablet screens
@@ -305,16 +318,19 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ## 🚨 Security Considerations
 
 ### 1. Data Protection
+
 - **No Sensitive Data**: No passwords stored in client state
 - **Secure Transmission**: HTTPS for all auth communications
 - **Token Security**: Secure token storage and transmission
 
 ### 2. Session Security
+
 - **Short-lived Tokens**: Configurable token expiration
 - **Secure Cookies**: HTTP-only, secure cookie settings
 - **CSRF Protection**: Same-site cookie policy
 
 ### 3. Input Sanitization
+
 - **Client-side**: Form validation and sanitization
 - **Server-side**: Server action validation
 - **Database**: Supabase RLS policies
@@ -322,11 +338,13 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ## 📊 Monitoring & Analytics
 
 ### 1. Error Tracking
+
 - **Client Errors**: Console logging and error boundaries
 - **Server Errors**: Server action error handling
 - **Auth Errors**: Supabase error logging
 
 ### 2. User Analytics
+
 - **Login Success Rate**: Track authentication success
 - **OAuth Usage**: Monitor OAuth vs email login
 - **Error Patterns**: Identify common auth issues
@@ -334,11 +352,13 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ## 🔄 Maintenance
 
 ### 1. Regular Updates
+
 - **Dependencies**: Keep Supabase and Next.js updated
 - **Security Patches**: Apply security updates promptly
 - **Feature Updates**: Monitor Supabase auth feature releases
 
 ### 2. Monitoring
+
 - **Session Health**: Monitor session creation/expiry
 - **Error Rates**: Track authentication error rates
 - **Performance**: Monitor auth flow performance

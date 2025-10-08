@@ -8,4 +8,3 @@ export type {
   UniversityCardData,
   LegacyUniversity,
 } from './types';
-

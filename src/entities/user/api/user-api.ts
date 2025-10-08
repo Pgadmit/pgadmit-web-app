@@ -1,84 +1,90 @@
-import { createClient } from '@/shared/lib/supabase'
-import type { UserProfile } from '../model/types'
+import { createClient } from '@/shared/lib/supabase';
+import type { UserProfile } from '../model/types';
 
-export const getProfile = async (userId: string): Promise<UserProfile | null> => {
-    const supabase = createClient()
+export const getProfile = async (
+  userId: string
+): Promise<UserProfile | null> => {
+  const supabase = createClient();
 
-    try {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('onboarding_complete, name, avatar_url, picture')
-            .eq('id', userId)
-            .single()
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('onboarding_complete, name, avatar_url, picture')
+      .eq('id', userId)
+      .single();
 
-        if (error) {
-            console.warn('Error fetching profile data:', error)
-            return null
-        }
-
-        return {
-            id: userId,
-            email: '', // Will be filled from session
-            name: data?.name || '',
-            avatar_url: data?.avatar_url,
-            onboardingComplete: data?.onboarding_complete || undefined,
-            createdAt: '', // Will be filled from session
-        }
-    } catch (error) {
-        console.error('Error fetching profile:', error)
-        return null
+    if (error) {
+      console.warn('Error fetching profile data:', error);
+      return null;
     }
-}
 
-export const updateProfile = async (userId: string, data: Partial<UserProfile>): Promise<boolean> => {
-    const supabase = createClient()
+    return {
+      id: userId,
+      email: '', // Will be filled from session
+      name: data?.name || '',
+      avatar_url: data?.avatar_url,
+      onboardingComplete: data?.onboarding_complete || undefined,
+      createdAt: '', // Will be filled from session
+    };
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    return null;
+  }
+};
 
-    try {
-        const { error } = await supabase
-            .from('profiles')
-            .update({
-                name: data.name,
-                avatar_url: data.avatar_url,
-                onboarding_complete: data.onboardingComplete,
-                updated_at: new Date().toISOString(),
-            })
-            .eq('id', userId)
+export const updateProfile = async (
+  userId: string,
+  data: Partial<UserProfile>
+): Promise<boolean> => {
+  const supabase = createClient();
 
-        if (error) {
-            console.error('Error updating profile:', error)
-            return false
-        }
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        name: data.name,
+        avatar_url: data.avatar_url,
+        onboarding_complete: data.onboardingComplete,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
 
-        return true
-    } catch (error) {
-        console.error('Error updating profile:', error)
-        return false
+    if (error) {
+      console.error('Error updating profile:', error);
+      return false;
     }
-}
 
-export const createProfile = async (userId: string, data: Partial<UserProfile>): Promise<boolean> => {
-    const supabase = createClient()
+    return true;
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    return false;
+  }
+};
 
-    try {
-        const { error } = await supabase
-            .from('profiles')
-            .insert({
-                id: userId,
-                name: data.name,
-                avatar_url: data.avatar_url,
-                onboarding_complete: data.onboardingComplete || undefined,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-            })
+export const createProfile = async (
+  userId: string,
+  data: Partial<UserProfile>
+): Promise<boolean> => {
+  const supabase = createClient();
 
-        if (error) {
-            console.error('Error creating profile:', error)
-            return false
-        }
+  try {
+    const { error } = await supabase.from('profiles').insert({
+      id: userId,
+      name: data.name,
+      avatar_url: data.avatar_url,
+      onboarding_complete: data.onboardingComplete || undefined,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    });
 
-        return true
-    } catch (error) {
-        console.error('Error creating profile:', error)
-        return false
+    if (error) {
+      console.error('Error creating profile:', error);
+      return false;
     }
-}
+
+    return true;
+  } catch (error) {
+    console.error('Error creating profile:', error);
+    return false;
+  }
+};

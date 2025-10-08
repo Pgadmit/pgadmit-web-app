@@ -1,21 +1,25 @@
 # 🔌 [API Name] Documentation
 
 ## Summary
+
 - **Purpose:** [Brief description of what this API does]
 - **Scope:** [Key endpoints and functionality]
 - **Stack:** [Technologies used: Next.js API Routes, Supabase, etc.]
 - **Status:** [✅ Completed | 🧩 In Progress | 📋 Planned] (v[version])
 
 ## Overview
+
 [Detailed description of the API's purpose and role in the application]
 
 ## Base URL
+
 ```
 Development: http://localhost:3000/api/[api-name]
 Production: https://yourdomain.com/api/[api-name]
 ```
 
 ## Authentication
+
 [How authentication is handled for this API]
 
 - **Required:** [Yes/No]
@@ -25,36 +29,41 @@ Production: https://yourdomain.com/api/[api-name]
 ## Endpoints
 
 ### [Endpoint Name]
+
 **`[METHOD] /api/[endpoint]`**
 
 [Description of what this endpoint does]
 
 #### Parameters
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `param1` | string | Yes | Description of parameter |
-| `param2` | number | No | Description of parameter |
+
+| Parameter | Type   | Required | Description              |
+| --------- | ------ | -------- | ------------------------ |
+| `param1`  | string | Yes      | Description of parameter |
+| `param2`  | number | No       | Description of parameter |
 
 #### Request Body
+
 ```typescript
 interface RequestBody {
-  field1: string
-  field2?: number
-  field3: boolean
+  field1: string;
+  field2?: number;
+  field3: boolean;
 }
 ```
 
 #### Response
+
 ```typescript
 interface Response {
-  success: boolean
-  data?: any
-  error?: string
-  message?: string
+  success: boolean;
+  data?: any;
+  error?: string;
+  message?: string;
 }
 ```
 
 #### Example Request
+
 ```bash
 curl -X POST "https://yourdomain.com/api/[endpoint]" \
   -H "Content-Type: application/json" \
@@ -67,6 +76,7 @@ curl -X POST "https://yourdomain.com/api/[endpoint]" \
 ```
 
 #### Example Response
+
 ```json
 {
   "success": true,
@@ -81,14 +91,16 @@ curl -X POST "https://yourdomain.com/api/[endpoint]" \
 ```
 
 #### Error Responses
-| Status Code | Description | Example Response |
-|-------------|-------------|------------------|
-| 400 | Bad Request | `{"success": false, "error": "Invalid parameters"}` |
-| 401 | Unauthorized | `{"success": false, "error": "Authentication required"}` |
-| 404 | Not Found | `{"success": false, "error": "Resource not found"}` |
-| 500 | Internal Server Error | `{"success": false, "error": "Internal server error"}` |
+
+| Status Code | Description           | Example Response                                         |
+| ----------- | --------------------- | -------------------------------------------------------- |
+| 400         | Bad Request           | `{"success": false, "error": "Invalid parameters"}`      |
+| 401         | Unauthorized          | `{"success": false, "error": "Authentication required"}` |
+| 404         | Not Found             | `{"success": false, "error": "Resource not found"}`      |
+| 500         | Internal Server Error | `{"success": false, "error": "Internal server error"}`   |
 
 ## Rate Limiting
+
 [Information about rate limiting if applicable]
 
 - **Requests per minute:** [number]
@@ -98,19 +110,21 @@ curl -X POST "https://yourdomain.com/api/[endpoint]" \
 ## Data Models
 
 ### [Model Name]
+
 ```typescript
 interface ModelName {
-  id: number
-  field1: string
-  field2?: string
-  createdAt: string
-  updatedAt: string
+  id: number;
+  field1: string;
+  field2?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 ```
 
 ## Validation
 
 ### Input Validation
+
 [Rules for validating input data]
 
 - **Required Fields:** [List of required fields]
@@ -119,6 +133,7 @@ interface ModelName {
 - **Type Validation:** [String, number, boolean, etc.]
 
 ### Output Validation
+
 [Rules for validating response data]
 
 - **Data Sanitization:** [How data is cleaned]
@@ -128,12 +143,15 @@ interface ModelName {
 ## Security
 
 ### Authentication
+
 [How the API handles authentication]
 
 ### Authorization
+
 [How the API handles authorization and permissions]
 
 ### Data Protection
+
 [How sensitive data is protected]
 
 - **Encryption:** [Data encryption methods]
@@ -143,45 +161,57 @@ interface ModelName {
 ## Error Handling
 
 ### Error Types
+
 [Different types of errors the API can return]
 
 ### Error Codes
+
 [Standardized error codes and their meanings]
 
 ### Error Response Format
+
 [Consistent error response structure]
 
 ## Testing
 
 ### Test Coverage
+
 [What aspects of the API are tested]
 
 ### Test Environment
+
 [How to set up testing environment]
 
 ### Example Tests
+
 [Sample test cases]
 
 ## Performance
 
 ### Response Times
+
 [Expected response times for different operations]
 
 ### Caching
+
 [Caching strategies used]
 
 ### Optimization
+
 [Performance optimization techniques]
 
 ## Monitoring
 
 ### Metrics
+
 [Key metrics to monitor]
 
 ### Logging
+
 [What is logged and how]
 
 ### Alerts
+
 [When alerts are triggered]
 
 ## Dependencies
@@ -196,16 +226,19 @@ This API depends on the following:
 ## Changelog
 
 ### v1.0.0 (2025-10-08)
+
 - Initial API implementation
 - Basic CRUD operations
 - Authentication integration
 
 ### v0.9.0 (2025-10-01)
+
 - Added validation
 - Improved error handling
 - Performance optimizations
 
 ## Related Documentation
+
 - [Authentication System](../auth/AUTHENTICATION.md)
 - [Database Schema](../../scripts/)
 - [Frontend Integration](../features/)

@@ -20,16 +20,18 @@ export async function POST(request: NextRequest) {
         {
           error: 'Rate limit exceeded. Please try again later.',
           remainingTime: rateLimitCheck.remainingTime,
-          resetTime: rateLimitCheck.resetTime
+          resetTime: rateLimitCheck.resetTime,
         },
         {
           status: 429,
           headers: {
-            'Retry-After': Math.ceil(rateLimitCheck.remainingTime / 1000).toString(),
+            'Retry-After': Math.ceil(
+              rateLimitCheck.remainingTime / 1000
+            ).toString(),
             'X-RateLimit-Limit': '5',
             'X-RateLimit-Remaining': '0',
-            'X-RateLimit-Reset': rateLimitCheck.resetTime.toString()
-          }
+            'X-RateLimit-Reset': rateLimitCheck.resetTime.toString(),
+          },
         }
       );
     }
@@ -63,7 +65,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         contactId: result.contactId,
-        message: 'Contact saved to HubSpot successfully'
+        message: 'Contact saved to HubSpot successfully',
       });
     } else {
       return NextResponse.json(
