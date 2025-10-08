@@ -1,77 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Heart, MapPin, Users, ExternalLink } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
-
-// Mock data for demonstration
-const mockUniversities = [
-  {
-    id: 1,
-    name: 'Harvard University',
-    country: 'United States',
-    city: 'Cambridge',
-    university_type: 'Private',
-    logo_url: '/placeholder-logo.svg',
-    description: 'A private research university in Cambridge, Massachusetts.',
-    qs_world_ranking: 5,
-    students_total: '23000',
-    international_students_percent: 25,
-    website_url: 'https://www.harvard.edu',
-  },
-  {
-    id: 2,
-    name: 'Stanford University',
-    country: 'United States',
-    city: 'Stanford',
-    university_type: 'Private',
-    logo_url: '/placeholder-logo.svg',
-    description: 'A private research university in Stanford, California.',
-    qs_world_ranking: 3,
-    students_total: '17000',
-    international_students_percent: 23,
-    website_url: 'https://www.stanford.edu',
-  },
-  {
-    id: 3,
-    name: 'University of Cambridge',
-    country: 'United Kingdom',
-    city: 'Cambridge',
-    university_type: 'Public',
-    logo_url: '/placeholder-logo.svg',
-    description: 'A collegiate research university in Cambridge, England.',
-    qs_world_ranking: 2,
-    students_total: '24000',
-    international_students_percent: 40,
-    website_url: 'https://www.cam.ac.uk',
-  },
-];
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Heart, MapPin, Users, ExternalLink } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+import { useGetUniversities } from "@/features/universities";
+import { University } from "@/entities/universities";
 
 interface UniversityGridProps {
   searchParams?: { query: string; type: string };
   className?: string;
 }
 
-export function UniversityGrid({ searchParams, className }: UniversityGridProps) {
+export function UniversityGrid({
+  searchParams,
+  className,
+}: UniversityGridProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(new Set());
-
+  const { universities, isLoading, error } = useGetUniversities();
   // Filter universities based on search params
-  const filteredUniversities = mockUniversities.filter((uni) => {
+  const filteredUniversities = universities.filter((uni) => {
     if (searchParams?.query) {
       const query = searchParams.query.toLowerCase();
-      if (!uni.name.toLowerCase().includes(query) &&
-        !uni.description.toLowerCase().includes(query)) {
+      if (
+        !uni.name.toLowerCase().includes(query) &&
+        !(uni.description?.toLowerCase().includes(query) ?? false)
+      ) {
         return false;
       }
     }
 
-    if (searchParams?.type && searchParams.type !== 'all') {
+    if (searchParams?.type && searchParams.type !== "all") {
       if (uni.university_type !== searchParams.type) {
         return false;
       }
@@ -81,7 +45,7 @@ export function UniversityGrid({ searchParams, className }: UniversityGridProps)
   });
 
   const toggleBookmark = (universityId: number) => {
-    setBookmarkedIds(prev => {
+    setBookmarkedIds((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(universityId)) {
         newSet.delete(universityId);
@@ -106,17 +70,19 @@ export function UniversityGrid({ searchParams, className }: UniversityGridProps)
 
   const formatLocation = (country?: string, city?: string) => {
     const parts = [city, country].filter(Boolean);
-    return parts.join(', ');
+    return parts.join(", ");
   };
 
   const formatStudents = (total?: string, internationalPercent?: number) => {
-    if (!total) return 'N/A';
+    if (!total) return "N/A";
 
     // Parse students_total from string to number
-    const totalStudents = parseInt(total.replace(/[^\d]/g, ''), 10);
+    const totalStudents = parseInt(total.replace(/[^\d]/g, ""), 10);
     if (isNaN(totalStudents)) return total;
 
-    const international = internationalPercent ? Math.round(totalStudents * internationalPercent / 100) : 0;
+    const international = internationalPercent
+      ? Math.round((totalStudents * internationalPercent) / 100)
+      : 0;
     return `${totalStudents.toLocaleString()} (${international.toLocaleString()} international)`;
   };
 
@@ -137,10 +103,13 @@ export function UniversityGrid({ searchParams, className }: UniversityGridProps)
   return (
     <div className={`space-y-6 ${className}`}>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredUniversities.map((university) => {
+        {filteredUniversities.map((university: University) => {
           const isBookmarked = bookmarkedIds.has(university.id);
           const location = formatLocation(university.country, university.city);
-          const students = formatStudents(university.students_total as string, university.international_students_percent);
+          const students = formatStudents(
+            university.students_total as string,
+            university.international_students_percent
+          );
 
           return (
             <Card
@@ -168,10 +137,11 @@ export function UniversityGrid({ searchParams, className }: UniversityGridProps)
                     className="p-2 h-8 w-8"
                   >
                     <Heart
-                      className={`h-4 w-4 ${isBookmarked
-                        ? 'fill-red-500 text-red-500'
-                        : 'text-muted-foreground hover:text-red-500'
-                        }`}
+                      className={`h-4 w-4 ${
+                        isBookmarked
+                          ? "fill-red-500 text-red-500"
+                          : "text-muted-foreground hover:text-red-500"
+                      }`}
                     />
                   </Button>
                 </div>
@@ -186,7 +156,9 @@ export function UniversityGrid({ searchParams, className }: UniversityGridProps)
                   {university.qs_world_ranking && (
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-muted-foreground">QS Ranking</span>
-                      <span className="font-medium">#{university.qs_world_ranking}</span>
+                      <span className="font-medium">
+                        #{university.qs_world_ranking}
+                      </span>
                     </div>
                   )}
 
@@ -212,7 +184,9 @@ export function UniversityGrid({ searchParams, className }: UniversityGridProps)
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => window.open(university.website_url, '_blank')}
+                      onClick={() =>
+                        window.open(university.website_url, "_blank")
+                      }
                     >
                       <ExternalLink className="h-4 w-4" />
                     </Button>
