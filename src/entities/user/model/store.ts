@@ -1,6 +1,6 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import type { User, UserState, UserActions } from './types'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type { User, UserState, UserActions } from './types';
 
 interface UserStore extends UserState, UserActions {}
 
@@ -15,34 +15,34 @@ export const useUserStore = create<UserStore>()(
         set({
           currentUser: user,
           isLoading: false,
-        })
+        });
       },
 
       clearUser: () => {
         set({
           currentUser: null,
           isLoading: false,
-        })
+        });
       },
 
       updateUser: (updates: Partial<User>) => {
-        const currentUser = get().currentUser
+        const currentUser = get().currentUser;
         if (currentUser) {
           set({
             currentUser: { ...currentUser, ...updates },
-          })
+          });
         }
       },
 
       setLoading: (isLoading: boolean) => {
-        set({ isLoading })
+        set({ isLoading });
       },
     }),
     {
       name: 'pgadmit-user-storage',
-      partialize: (state) => ({
+      partialize: state => ({
         currentUser: state.currentUser,
       }),
     }
   )
-)
+);
