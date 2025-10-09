@@ -13,6 +13,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import { ProtectedRoute } from '@/features/auth';
+import { LayoutWrapper } from '@/components';
 
 export default function ApplicationsPage() {
   const { user } = useAuth();
@@ -75,81 +76,79 @@ export default function ApplicationsPage() {
 
   return (
     <ProtectedRoute>
-      <div className='min-h-screen bg-background overflow-x-hidden'>
-        <div className='container mx-auto px-4 py-6 max-w-6xl w-full'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6'>
-            <div className='flex items-center gap-4 min-w-0'>
-              <Button variant='outline' onClick={() => router.back()}>
-                <ArrowLeft className='h-4 w-4 mr-2' />
-                Back
-              </Button>
-              <div className='min-w-0'>
-                <h1 className='text-2xl font-bold truncate'>My Applications</h1>
-                <p className='text-muted-foreground truncate'>
-                  Welcome back, {user.name}!
-                </p>
-              </div>
-            </div>
-            <Button className='shrink-0'>
-              <FileText className='h-4 w-4 mr-2' />
-              New Application
+      <LayoutWrapper>
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6'>
+          <div className='flex items-center gap-4 min-w-0'>
+            <Button variant='outline' onClick={() => router.back()}>
+              <ArrowLeft className='h-4 w-4 mr-2' />
+              Back
             </Button>
+            <div className='min-w-0'>
+              <h1 className='text-2xl font-bold truncate'>My Applications</h1>
+              <p className='text-muted-foreground truncate'>
+                Welcome back, {user.name}!
+              </p>
+            </div>
           </div>
-
-          <div className='grid gap-6'>
-            {applications.map(app => (
-              <Card
-                key={app.id}
-                className='hover:shadow-md transition-shadow overflow-hidden'
-              >
-                <CardHeader>
-                  <div className='flex items-center justify-between gap-2'>
-                    <CardTitle className='flex items-center gap-2 min-w-0 flex-1'>
-                      {getStatusIcon(app.status)}
-                      <span className='truncate'>{app.university}</span>
-                    </CardTitle>
-                    <Badge className={getStatusColor(app.status)}>
-                      {app.status.replace('-', ' ')}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
-                    <div>
-                      <label className='text-sm font-medium text-muted-foreground'>
-                        Program
-                      </label>
-                      <p>{app.program}</p>
-                    </div>
-                    <div>
-                      <label className='text-sm font-medium text-muted-foreground'>
-                        Deadline
-                      </label>
-                      <p>{new Date(app.deadline).toLocaleDateString()}</p>
-                    </div>
-                    <div>
-                      <label className='text-sm font-medium text-muted-foreground'>
-                        Progress
-                      </label>
-                      <p>{app.progress}% Complete</p>
-                    </div>
-                  </div>
-                  <div className='flex flex-wrap gap-2'>
-                    <Button variant='outline' size='sm' className='shrink-0'>
-                      View Details
-                    </Button>
-                    {app.status !== 'submitted' && (
-                      <Button size='sm' className='shrink-0'>
-                        Continue Application
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          <Button className='shrink-0'>
+            <FileText className='h-4 w-4 mr-2' />
+            New Application
+          </Button>
         </div>
-      </div>
+
+        <div className='grid gap-6'>
+          {applications.map(app => (
+            <Card
+              key={app.id}
+              className='hover:shadow-md transition-shadow overflow-hidden'
+            >
+              <CardHeader>
+                <div className='flex items-center justify-between gap-2'>
+                  <CardTitle className='flex items-center gap-2 min-w-0 flex-1'>
+                    {getStatusIcon(app.status)}
+                    <span className='truncate'>{app.university}</span>
+                  </CardTitle>
+                  <Badge className={getStatusColor(app.status)}>
+                    {app.status.replace('-', ' ')}
+                  </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className='grid grid-cols-1 md:grid-cols-3 gap-4 mb-4'>
+                  <div>
+                    <label className='text-sm font-medium text-muted-foreground'>
+                      Program
+                    </label>
+                    <p>{app.program}</p>
+                  </div>
+                  <div>
+                    <label className='text-sm font-medium text-muted-foreground'>
+                      Deadline
+                    </label>
+                    <p>{new Date(app.deadline).toLocaleDateString()}</p>
+                  </div>
+                  <div>
+                    <label className='text-sm font-medium text-muted-foreground'>
+                      Progress
+                    </label>
+                    <p>{app.progress}% Complete</p>
+                  </div>
+                </div>
+                <div className='flex flex-wrap gap-2'>
+                  <Button variant='outline' size='sm' className='shrink-0'>
+                    View Details
+                  </Button>
+                  {app.status !== 'submitted' && (
+                    <Button size='sm' className='shrink-0'>
+                      Continue Application
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </LayoutWrapper>
     </ProtectedRoute>
   );
 }
