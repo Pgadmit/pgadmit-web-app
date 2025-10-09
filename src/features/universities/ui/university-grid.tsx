@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useGetUniversities } from '@/features/universities';
 import { University } from '@/entities/universities';
+import { SaveUniversityButton } from '@/features/saved-universities/ui/save-university-button';
 
 interface UniversityGridProps {
   searchParams?: { query: string; type: string };
@@ -20,8 +21,6 @@ export function UniversityGrid({
   className,
 }: UniversityGridProps) {
   const router = useRouter();
-  const { toast } = useToast();
-  const [bookmarkedIds, setBookmarkedIds] = useState<Set<number>>(new Set());
   const { universities, isLoading, error } = useGetUniversities();
   // Filter universities based on search params
   const filteredUniversities = universities.filter(uni => {
@@ -43,26 +42,6 @@ export function UniversityGrid({
 
     return true;
   });
-
-  const toggleBookmark = (universityId: number) => {
-    setBookmarkedIds(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(universityId)) {
-        newSet.delete(universityId);
-        toast({
-          title: 'Removed from bookmarks',
-          description: 'University removed from your saved universities',
-        });
-      } else {
-        newSet.add(universityId);
-        toast({
-          title: 'Added to bookmarks',
-          description: 'University added to your saved universities',
-        });
-      }
-      return newSet;
-    });
-  };
 
   const viewDetails = (universityId: number) => {
     router.push(`/universities/${universityId}`);
@@ -104,7 +83,6 @@ export function UniversityGrid({
     <div className={`space-y-6 ${className}`}>
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
         {filteredUniversities.map((university: University) => {
-          const isBookmarked = bookmarkedIds.has(university.id);
           const location = formatLocation(university.country, university.city);
           const students = formatStudents(
             university.students_total as string,
@@ -130,20 +108,12 @@ export function UniversityGrid({
                       {university.university_type}
                     </Badge>
                   </div>
-                  <Button
+                  <SaveUniversityButton
+                    universityId={university.id}
                     variant='ghost'
                     size='sm'
-                    onClick={() => toggleBookmark(university.id)}
-                    className='p-2 h-8 w-8'
-                  >
-                    <Heart
-                      className={`h-4 w-4 ${
-                        isBookmarked
-                          ? 'fill-red-500 text-red-500'
-                          : 'text-muted-foreground hover:text-red-500'
-                      }`}
-                    />
-                  </Button>
+                    showText={false}
+                  />
                 </div>
               </CardHeader>
 
@@ -175,7 +145,7 @@ export function UniversityGrid({
                   <Button
                     variant='outline'
                     size='sm'
-                    className='flex-1'
+                    className='flex-1 cursor-pointer'
                     onClick={() => viewDetails(university.id)}
                   >
                     View Details
@@ -184,6 +154,7 @@ export function UniversityGrid({
                     <Button
                       variant='ghost'
                       size='sm'
+                      className='cursor-pointer'
                       onClick={() =>
                         window.open(university.website_url, '_blank')
                       }

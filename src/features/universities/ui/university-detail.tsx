@@ -3,18 +3,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  MapPin,
-  Users,
-  Calendar,
-  ExternalLink,
-  Heart,
-  ArrowLeft,
-} from 'lucide-react';
+import { MapPin, Users, Calendar, ExternalLink, ArrowLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
-import { useState } from 'react';
 import type { University } from '@/entities/universities';
+import { SaveUniversityButton } from '@/features/saved-universities/ui/save-university-button';
 
 interface UniversityDetailProps {
   university: University;
@@ -26,18 +18,6 @@ export function UniversityDetail({
   className,
 }: UniversityDetailProps) {
   const router = useRouter();
-  const { toast } = useToast();
-  const [isBookmarked, setIsBookmarked] = useState(false);
-
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked);
-    toast({
-      title: isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks',
-      description: isBookmarked
-        ? 'University removed from your saved universities'
-        : 'University added to your saved universities',
-    });
-  };
 
   const formatLocation = () => {
     const parts = [
@@ -73,7 +53,7 @@ export function UniversityDetail({
           <Button
             variant='ghost'
             onClick={() => router.back()}
-            className='mb-4'
+            className='mb-4 cursor-pointer'
           >
             <ArrowLeft className='h-4 w-4 mr-2' />
             Back
@@ -106,20 +86,18 @@ export function UniversityDetail({
             </div>
 
             <div className='flex gap-2 ml-4'>
-              <Button
+              <SaveUniversityButton
+                universityId={university.id}
                 variant='outline'
-                onClick={toggleBookmark}
-                className='flex items-center gap-2'
-              >
-                <Heart
-                  className={`h-4 w-4 ${isBookmarked ? 'fill-red-500 text-red-500' : ''}`}
-                />
-                {isBookmarked ? 'Saved' : 'Save'}
-              </Button>
+                size='default'
+                showText={true}
+                universityName={university.name}
+                className='cursor-pointer'
+              />
               {university.website_url && (
                 <Button
                   onClick={() => window.open(university.website_url, '_blank')}
-                  className='flex items-center gap-2'
+                  className='flex items-center gap-2 cursor-pointer'
                 >
                   <ExternalLink className='h-4 w-4' />
                   Website

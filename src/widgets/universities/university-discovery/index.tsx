@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { UniversitySearch, UniversityGrid } from '@/features/universities';
+import { SavedUniversitiesGrid } from '@/features/saved-universities';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface UniversityDiscoveryProps {
@@ -12,6 +13,21 @@ export function UniversityDiscovery({ className }: UniversityDiscoveryProps) {
   const [searchParams, setSearchParams] = useState<
     { query: string; type: string } | undefined
   >();
+  const [activeTab, setActiveTab] = useState<string>('search');
+
+  // Load active tab from localStorage on mount
+  useEffect(() => {
+    const savedTab = localStorage.getItem('university-discovery-tab');
+    if (savedTab && (savedTab === 'search' || savedTab === 'saved')) {
+      setActiveTab(savedTab);
+    }
+  }, []);
+
+  // Save active tab to localStorage when it changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    localStorage.setItem('university-discovery-tab', value);
+  };
 
   const handleSearch = (params: { query: string; type: string }) => {
     setSearchParams(params);
@@ -29,7 +45,11 @@ export function UniversityDiscovery({ className }: UniversityDiscoveryProps) {
           </p>
         </div>
 
-        <Tabs defaultValue='search' className='space-y-6'>
+        <Tabs
+          value={activeTab}
+          onValueChange={handleTabChange}
+          className='space-y-6'
+        >
           <TabsList className='grid w-full grid-cols-2'>
             <TabsTrigger value='search'>Search & Discover</TabsTrigger>
             <TabsTrigger value='saved'>Saved Universities</TabsTrigger>
@@ -40,13 +60,8 @@ export function UniversityDiscovery({ className }: UniversityDiscoveryProps) {
             <UniversityGrid searchParams={searchParams} />
           </TabsContent>
 
-          <TabsContent value='saved'>
-            <div className='text-center py-12'>
-              <h3 className='text-xl font-semibold mb-4'>Saved Universities</h3>
-              <p className='text-muted-foreground mb-6'>
-                Your bookmarked universities will appear here
-              </p>
-            </div>
+          <TabsContent value='saved' className='space-y-6'>
+            <SavedUniversitiesGrid limit={20} />
           </TabsContent>
         </Tabs>
       </div>

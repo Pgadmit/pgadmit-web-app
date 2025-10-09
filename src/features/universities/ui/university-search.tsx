@@ -53,7 +53,7 @@ export function UniversitySearch({
                 className='pl-10'
               />
             </div>
-            <Button onClick={handleSearch} className='px-6'>
+            <Button onClick={handleSearch} className='px-6 cursor-pointer'>
               Search
             </Button>
           </div>

@@ -56,7 +56,7 @@ export default function UniversityDetailPage() {
           </p>
           <button
             onClick={() => router.push('/universities')}
-            className='bg-primary text-primary-foreground px-6 py-3 rounded-lg'
+            className='bg-primary text-primary-foreground px-6 py-3 rounded-lg cursor-pointer'
           >
             Back to Search
           </button>
