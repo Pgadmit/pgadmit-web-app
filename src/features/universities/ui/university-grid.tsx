@@ -134,7 +134,7 @@ export function UniversityGrid({
                     variant='ghost'
                     size='sm'
                     onClick={() => toggleBookmark(university.id)}
-                    className='p-2 h-8 w-8'
+                    className='p-2 h-8 w-8 cursor-pointer'
                   >
                     <Heart
                       className={`h-4 w-4 ${
@@ -175,7 +175,7 @@ export function UniversityGrid({
                   <Button
                     variant='outline'
                     size='sm'
-                    className='flex-1'
+                    className='flex-1 cursor-pointer'
                     onClick={() => viewDetails(university.id)}
                   >
                     View Details
@@ -184,6 +184,7 @@ export function UniversityGrid({
                     <Button
                       variant='ghost'
                       size='sm'
+                      className='cursor-pointer'
                       onClick={() =>
                         window.open(university.website_url, '_blank')
                       }
