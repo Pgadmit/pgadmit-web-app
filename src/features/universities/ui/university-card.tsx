@@ -2,16 +2,16 @@
 
 import { useState } from 'react';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building2, MapPin, Heart } from 'lucide-react';
+import { Building2, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { UniversityCardData } from '@/entities/universities';
+import { SaveUniversityButton } from '@/features/saved-universities/ui/save-university-button';
 
 interface UniversityCardProps {
   university: UniversityCardData;
   index: number;
   isBlurred?: boolean;
   onViewDetails?: (university: UniversityCardData) => void;
-  onSave?: (university: UniversityCardData) => void;
   className?: string;
 }
 
@@ -19,17 +19,10 @@ export function UniversityCard({
   university,
   index,
   isBlurred = false,
-  onSave,
+  onViewDetails,
   className,
 }: UniversityCardProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isSaved, setIsSaved] = useState(university.isBookmarked || false);
-
-  const handleSave = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsSaved(!isSaved);
-    onSave?.(university);
-  };
 
   const formatLocation = () => {
     const parts = [university.city, university.country].filter(Boolean);
@@ -75,24 +68,18 @@ export function UniversityCard({
       />
 
       {/* Save button */}
-      <button
-        onClick={handleSave}
-        className={cn(
-          'absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-200',
-          'bg-background/80 backdrop-blur-sm border border-border/50',
-          'hover:bg-background hover:border-primary/50',
-          'opacity-0 group-hover:opacity-100 cursor-pointer',
-          isSaved && 'opacity-100 text-red-500'
-        )}
-        aria-label={isSaved ? 'Remove from saved' : 'Save university'}
+      <div
+        className='absolute top-4 right-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-200'
+        onClick={e => e.stopPropagation()}
       >
-        <Heart
-          className={cn(
-            'w-4 h-4 transition-all duration-200',
-            isSaved && 'fill-current scale-110'
-          )}
+        <SaveUniversityButton
+          universityId={university.id}
+          variant='ghost'
+          size='sm'
+          showText={false}
+          className='p-2 h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm border border-border/50 hover:bg-background hover:border-primary/50'
         />
-      </button>
+      </div>
 
       <CardHeader className='pb-3'>
         <div className='flex items-start justify-between'>

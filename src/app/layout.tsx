@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Open_Sans, Montserrat } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/features/auth';
+import { SavedUniversitiesProvider } from '@/features/saved-universities';
 import { LoadingProvider } from '@/lib/loading-context';
 import { AIProvider } from '@/lib/ai-context';
 import { GamificationProvider } from '@/lib/gamification-context';
@@ -134,18 +135,20 @@ export default function RootLayout({
       <body>
         <LoadingProvider>
           <AuthProvider>
-            <GamificationProvider>
-              <AIProvider>
-                <SidebarProvider>
-                  <ConditionalHeader />
-                  {children}
-                  <AchievementCelebration />
-                  <Toaster />
-                  <MobileBottomNav />
-                  <GlobalLoading />
-                </SidebarProvider>
-              </AIProvider>
-            </GamificationProvider>
+            <SavedUniversitiesProvider>
+              <GamificationProvider>
+                <AIProvider>
+                  <SidebarProvider>
+                    <ConditionalHeader />
+                    {children}
+                    <AchievementCelebration />
+                    <Toaster />
+                    <MobileBottomNav />
+                    <GlobalLoading />
+                  </SidebarProvider>
+                </AIProvider>
+              </GamificationProvider>
+            </SavedUniversitiesProvider>
           </AuthProvider>
         </LoadingProvider>
       </body>
