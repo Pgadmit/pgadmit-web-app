@@ -64,7 +64,7 @@ export function AdmissionSectionContent({
         <div className='min-h-[32rem] sm:min-h-[36rem] flex flex-col'>
           <div className='flex-1 grid gap-3 sm:gap-4 p-3 sm:p-4'>
             {universities.map((university, index) => {
-              const isBlurred = index >= 2;
+              const isBlurred = index >= 3;
               return (
                 <div
                   key={university}
@@ -84,7 +84,7 @@ export function AdmissionSectionContent({
               size='lg'
               className='px-6 sm:px-8 py-2 sm:py-3 text-base sm:text-lg bg-primary-blue hover:bg-primary-blue/80 w-full sm:w-auto'
             >
-              Get Detailed Report
+              Unloack Full Report & Strategy <span className='text-sm'>✨ Premium</span>
             </Button>
           </div>
         </div>
@@ -167,7 +167,7 @@ export function AdmissionSectionContent({
           {isOpenAILimited && (
             <div className='mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-center'>
               <span className='text-amber-700 font-medium'>
-                Rate limit active. Please wait and try again..
+                Searching For Your Matches
               </span>
             </div>
           )}

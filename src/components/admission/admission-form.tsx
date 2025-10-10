@@ -53,6 +53,8 @@ export default function AdmissionForm({
     'Letter Grade',
     '1.0 - 5.0',
     '1 - 5 Scale',
+    '1 - 10 Scale',
+    '1 - 20 Scale',
   ];
 
   const regionOptions = [
@@ -341,7 +343,7 @@ export default function AdmissionForm({
           size='lg'
           disabled={isPending || isRateLimited}
         >
-          {isPending ? 'Submitting...' : 'Get AI Suggestions'}
+          {isPending ? 'Submitting...' : 'See My Free Matches'}
         </Button>
         <FormLabel className='text-xs text-muted-foreground mb-2'>
           By submitting this form, you agree that your data will be stored and

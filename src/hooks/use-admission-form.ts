@@ -38,7 +38,7 @@ export function useAdmissionForm() {
 
   const onSubmit = (values: AdmissionFormSchemaValues) => {
     if (!canMakeOpenAIRequest()) {
-      setErrorMessage('Rate limit active. Please wait and try again..');
+      setErrorMessage('Searching For Your Matches');
       return;
     }
 

@@ -1,6 +1,5 @@
 import {
   AboutSection,
-  AdmissionSection,
   BlogSection,
   CampusTourSection,
   Footer,
@@ -15,7 +14,6 @@ export default async function HomePage() {
     <main className='min-h-screen bg-background'>
       <HeroSection />
       <CampusTourSection />
-      <AdmissionSection />
       <MatchToolSection />
       <BlogSection />
       <StudentStoriesSection />
