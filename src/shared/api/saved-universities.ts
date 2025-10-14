@@ -1,4 +1,3 @@
-import { supabaseBrowser } from '@/lib/supabase/client';
 import type {
   SavedUniversityResponse,
   ToggleSavedUniversityResponse,
@@ -7,23 +6,28 @@ import type {
   SavedUniversityWithDetails,
 } from '@/shared/types/saved-universities';
 
+const API_BASE_URL = '/api/saved-universities';
+
 export async function addSavedUniversity(
   universityId: number
 ): Promise<SavedUniversityResponse> {
   try {
-    const { data, error } = await supabaseBrowser().rpc(
-      'add_saved_university',
-      {
-        university_id_param: universityId,
-      }
-    );
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ universityId }),
+    });
 
-    if (error) {
-      console.error('Error adding saved university:', error);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error adding saved university:', data);
       return {
         success: false,
-        error: error.message,
-        code: 'SUPABASE_ERROR',
+        error: data.error || 'Failed to add university',
+        code: data.code || 'API_ERROR',
       };
     }
 
@@ -42,19 +46,21 @@ export async function removeSavedUniversity(
   universityId: number
 ): Promise<SavedUniversityResponse> {
   try {
-    const { data, error } = await supabaseBrowser().rpc(
-      'remove_saved_university',
+    const response = await fetch(
+      `${API_BASE_URL}?universityId=${universityId}`,
       {
-        university_id_param: universityId,
+        method: 'DELETE',
       }
     );
 
-    if (error) {
-      console.error('Error removing saved university:', error);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error removing saved university:', data);
       return {
         success: false,
-        error: error.message,
-        code: 'SUPABASE_ERROR',
+        error: data.error || 'Failed to remove university',
+        code: data.code || 'API_ERROR',
       };
     }
 
@@ -74,20 +80,17 @@ export async function getSavedUniversities(
   offset: number = 0
 ): Promise<SavedUniversityWithDetails[]> {
   try {
-    const { data, error } = await supabaseBrowser().rpc(
-      'get_saved_universities',
-      {
-        limit_count: limit,
-        offset_count: offset,
-      }
+    const response = await fetch(
+      `${API_BASE_URL}?limit=${limit}&offset=${offset}`
     );
 
-    if (error) {
-      console.error('Error fetching saved universities:', error);
+    if (!response.ok) {
+      console.error('Error fetching saved universities');
       return [];
     }
 
-    return data || [];
+    const result = await response.json();
+    return result.data || [];
   } catch (error) {
     console.error('Unexpected error fetching saved universities:', error);
     return [];
@@ -98,12 +101,14 @@ export async function isUniversitySaved(
   universityId: number
 ): Promise<IsSavedResponse> {
   try {
-    const { data, error } = await supabaseBrowser().rpc('is_university_saved', {
-      university_id_param: universityId,
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/check?universityId=${universityId}`
+    );
 
-    if (error) {
-      console.error('Error checking if university is saved:', error);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error checking if university is saved:', data);
       return {
         success: false,
         is_saved: false,
@@ -124,12 +129,12 @@ export async function isUniversitySaved(
 
 export async function getSavedUniversitiesCount(): Promise<SavedUniversitiesCountResponse> {
   try {
-    const { data, error } = await supabaseBrowser().rpc(
-      'get_saved_universities_count'
-    );
+    const response = await fetch(`${API_BASE_URL}/count`);
 
-    if (error) {
-      console.error('Error fetching saved universities count:', error);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error fetching saved universities count:', data);
       return {
         success: false,
         count: 0,
@@ -150,23 +155,26 @@ export async function toggleSavedUniversity(
   universityId: number
 ): Promise<ToggleSavedUniversityResponse> {
   try {
-    const { data, error } = await supabaseBrowser().rpc(
-      'toggle_saved_university',
-      {
-        university_id_param: universityId,
-      }
-    );
+    const response = await fetch(`${API_BASE_URL}/toggle`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ universityId }),
+    });
 
-    if (error) {
-      console.error('Error toggling saved university:', error);
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Error toggling saved university:', data);
       return {
         success: false,
         action: 'added',
         is_saved: false,
         data: {
           success: false,
-          error: error.message,
-          code: 'SUPABASE_ERROR',
+          error: data.error || 'Failed to toggle university',
+          code: data.code || 'API_ERROR',
         },
       };
     }
