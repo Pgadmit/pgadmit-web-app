@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -11,31 +10,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Search } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { useUniversityTypes } from '../lib';
 
 interface UniversitySearchProps {
-  onSearch: (params: { query: string; type: string }) => void;
+  query?: string;
+  type?: string;
+  onQueryChange: (query: string) => void;
+  onTypeChange: (type: string) => void;
+  onReset: () => void;
   className?: string;
 }
 
 export function UniversitySearch({
-  onSearch,
+  query = '',
+  type = 'all',
+  onQueryChange,
+  onTypeChange,
+  onReset,
   className,
 }: UniversitySearchProps) {
   const { universityTypes, isLoadingTypes } = useUniversityTypes();
-  const [query, setQuery] = useState('');
-  const [selectedType, setSelectedType] = useState('all');
 
-  const handleSearch = () => {
-    onSearch({ query, type: selectedType });
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
-  };
+  const hasFilters = query || (type && type !== 'all');
 
   return (
     <Card className={`bg-card shadow-sm ${className}`}>
@@ -46,16 +43,29 @@ export function UniversitySearch({
             <div className='relative flex-1'>
               <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
               <Input
-                placeholder='Search universities...'
+                placeholder='Search universities... (auto-search as you type)'
                 value={query}
-                onChange={e => setQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className='pl-10'
+                onChange={e => onQueryChange(e.target.value)}
+                className='pl-10 pr-10'
               />
+              {query && (
+                <button
+                  onClick={() => onQueryChange('')}
+                  className='absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer'
+                >
+                  <X className='h-4 w-4' />
+                </button>
+              )}
             </div>
-            <Button onClick={handleSearch} className='px-6 cursor-pointer'>
-              Search
-            </Button>
+            {hasFilters && (
+              <Button
+                onClick={onReset}
+                variant='outline'
+                className='px-6 cursor-pointer'
+              >
+                Reset
+              </Button>
+            )}
           </div>
 
           {/* University Type Filter */}
@@ -64,7 +74,7 @@ export function UniversitySearch({
               <label className='text-sm font-medium text-foreground mb-2 block'>
                 University Type
               </label>
-              <Select value={selectedType} onValueChange={setSelectedType}>
+              <Select value={type} onValueChange={onTypeChange}>
                 <SelectTrigger>
                   <SelectValue placeholder='Select type' />
                 </SelectTrigger>
@@ -75,12 +85,13 @@ export function UniversitySearch({
                       Loading...
                     </SelectItem>
                   ) : (
-                    universityTypes.map(type => (
+                    universityTypes.map(typeInfo => (
                       <SelectItem
-                        key={type.university_type}
-                        value={type.university_type}
+                        key={typeInfo.university_type}
+                        value={typeInfo.university_type}
                       >
-                        {type.university_type} ({type.universities_count})
+                        {typeInfo.university_type} (
+                        {typeInfo.universities_count})
                       </SelectItem>
                     ))
                   )}
