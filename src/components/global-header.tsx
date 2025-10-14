@@ -5,14 +5,12 @@ import { useAuth } from '@/features/auth';
 import { UserMenu } from '@/components/user-menu';
 import { useRouter } from 'next/navigation';
 import { useSidebar } from '@/lib/sidebar-context';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { Menu } from 'lucide-react';
 
 export function GlobalHeader() {
   const { user } = useAuth();
   const router = useRouter();
-  const { sidebarOpen, toggleSidebar } = useSidebar();
-  const isMobile = useIsMobile();
+  const { toggleSidebar } = useSidebar();
 
   const handleLogoClick = () => {
     router.push('/');
@@ -30,7 +28,7 @@ export function GlobalHeader() {
           <div className='flex items-center space-x-4'>
             <button
               onClick={handleLogoClick}
-              className='flex items-center space-x-2 text-foreground hover:opacity-80 transition-opacity'
+              className='cursor-pointer flex items-center space-x-2 text-foreground hover:opacity-80 transition-opacity'
             >
               <img
                 src='/logo.png'
