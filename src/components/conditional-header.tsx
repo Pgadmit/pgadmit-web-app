@@ -6,8 +6,8 @@ import { GlobalHeader } from '@/components/global-header';
 export function ConditionalHeader() {
   const pathname = usePathname();
 
-  // Don't show header on AI Chat pages
-  if (pathname.startsWith('/ai-chat')) {
+  // Show header on all pages except AI Chat (which has its own header)
+  if (pathname?.startsWith('/ai-chat')) {
     return null;
   }
 
