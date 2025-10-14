@@ -1,22 +1,23 @@
 import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { devtools, persist } from 'zustand/middleware';
 import type { UniversityTypeInfo, University } from '@/entities/universities';
 
 interface UniversitiesStore {
-  // University types (categories)
+  // University types
   universityTypes: UniversityTypeInfo[];
   isLoadingTypes: boolean;
   typesError: string | null;
 
-  // Single university
+  // Current university
   currentUniversity: University | null;
   isLoadingUniversity: boolean;
   universityError: string | null;
 
-  // Universities
+  // Universities list
   universities: University[];
   isLoadingUniversities: boolean;
   universitiesError: string | null;
+  hasInitializedUniversities: boolean;
 
   // Actions
   setUniversityTypes: (types: UniversityTypeInfo[]) => void;
@@ -30,8 +31,8 @@ interface UniversitiesStore {
   setUniversities: (universities: University[]) => void;
   setLoadingUniversities: (loading: boolean) => void;
   setUniversitiesError: (error: string | null) => void;
+  setHasInitializedUniversities: (initialized: boolean) => void;
 
-  // Reset
   reset: () => void;
 }
 
@@ -45,34 +46,44 @@ const initialState = {
   universities: [],
   isLoadingUniversities: false,
   universitiesError: null,
+  hasInitializedUniversities: false,
 };
 
 export const useUniversitiesStore = create<UniversitiesStore>()(
   devtools(
-    set => ({
-      ...initialState,
+    persist(
+      set => ({
+        ...initialState,
 
-      // Actions
-      setUniversityTypes: types => set({ universityTypes: types }),
-      setLoadingTypes: loading => set({ isLoadingTypes: loading }),
-      setTypesError: error => set({ typesError: error }),
+        // University types actions
+        setUniversityTypes: types => set({ universityTypes: types }),
+        setLoadingTypes: loading => set({ isLoadingTypes: loading }),
+        setTypesError: error => set({ typesError: error }),
 
-      setCurrentUniversity: university =>
-        set({ currentUniversity: university }),
-      setLoadingUniversity: loading => set({ isLoadingUniversity: loading }),
-      setUniversityError: error => set({ universityError: error }),
+        // Current university actions
+        setCurrentUniversity: university =>
+          set({ currentUniversity: university }),
+        setLoadingUniversity: loading => set({ isLoadingUniversity: loading }),
+        setUniversityError: error => set({ universityError: error }),
 
-      // Universities
-      setUniversities: universities => set({ universities: universities }),
-      setLoadingUniversities: loading =>
-        set({ isLoadingUniversities: loading }),
-      setUniversitiesError: error => set({ universitiesError: error }),
+        // Universities list actions
+        setUniversities: universities => set({ universities }),
+        setLoadingUniversities: loading =>
+          set({ isLoadingUniversities: loading }),
+        setUniversitiesError: error => set({ universitiesError: error }),
+        setHasInitializedUniversities: initialized =>
+          set({ hasInitializedUniversities: initialized }),
 
-      // Reset
-      reset: () => set(initialState),
-    }),
-    {
-      name: 'universities-store',
-    }
+        reset: () => set(initialState),
+      }),
+      {
+        name: 'universities-store',
+        partialize: state => ({
+          universities: state.universities,
+          hasInitializedUniversities: state.hasInitializedUniversities,
+        }),
+      }
+    ),
+    { name: 'universities-store' }
   )
 );

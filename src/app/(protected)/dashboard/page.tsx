@@ -5,13 +5,20 @@ import { MobileDashboardLayout } from '@/features/dashboard/ui';
 import { ProtectedRoute } from '@/features/auth';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useEffect } from 'react';
+import { LayoutWrapper } from '@/components';
 
 export default function DashboardPage() {
   const isMobile = useIsMobile();
   console.log(isMobile);
   return (
     <ProtectedRoute>
-      {isMobile ? <MobileDashboardLayout /> : <DashboardContent />}
+      {isMobile ? (
+        <MobileDashboardLayout />
+      ) : (
+        <LayoutWrapper>
+          <DashboardContent />
+        </LayoutWrapper>
+      )}
     </ProtectedRoute>
   );
 }

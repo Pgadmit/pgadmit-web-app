@@ -10,6 +10,8 @@ export function useGetUniversities() {
     isLoadingUniversities,
     setLoadingUniversities,
     setUniversitiesError,
+    hasInitializedUniversities,
+    setHasInitializedUniversities,
   } = useUniversitiesStore();
 
   const fetchUniversities = useCallback(async () => {
@@ -34,9 +36,17 @@ export function useGetUniversities() {
     }
   }, [setUniversities, setLoadingUniversities, setUniversitiesError]);
 
+  // Initialize universities data once globally
   useEffect(() => {
-    fetchUniversities();
-  }, [fetchUniversities]);
+    if (!hasInitializedUniversities) {
+      fetchUniversities();
+      setHasInitializedUniversities(true);
+    }
+  }, [
+    fetchUniversities,
+    hasInitializedUniversities,
+    setHasInitializedUniversities,
+  ]);
 
   const reloadUniversities = useCallback(() => {
     fetchUniversities();
