@@ -1,22 +1,26 @@
-import { createClient } from '@/shared/lib/supabase';
 import type { UserProfile } from '../model/types';
+
+const API_BASE_URL = '/api/profile';
 
 export const getProfile = async (
   userId: string
 ): Promise<UserProfile | null> => {
-  const supabase = createClient();
-
   try {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('onboarding_complete, name, avatar_url, picture')
-      .eq('id', userId)
-      .single();
+    const response = await fetch(API_BASE_URL);
 
-    if (error) {
-      console.warn('Error fetching profile data:', error);
+    if (!response.ok) {
+      if (response.status === 401) {
+        console.warn('Unauthorized - user not logged in');
+        return null;
+      }
+
+      const errorData = await response.json();
+      console.warn('Error fetching profile data:', errorData);
       return null;
     }
+
+    const result = await response.json();
+    const data = result.data;
 
     return {
       id: userId,
@@ -36,21 +40,22 @@ export const updateProfile = async (
   userId: string,
   data: Partial<UserProfile>
 ): Promise<boolean> => {
-  const supabase = createClient();
-
   try {
-    const { error } = await supabase
-      .from('profiles')
-      .update({
+    const response = await fetch(API_BASE_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         name: data.name,
         avatar_url: data.avatar_url,
         onboarding_complete: data.onboardingComplete,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', userId);
+      }),
+    });
 
-    if (error) {
-      console.error('Error updating profile:', error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error updating profile:', errorData);
       return false;
     }
 
@@ -65,20 +70,22 @@ export const createProfile = async (
   userId: string,
   data: Partial<UserProfile>
 ): Promise<boolean> => {
-  const supabase = createClient();
-
   try {
-    const { error } = await supabase.from('profiles').insert({
-      id: userId,
-      name: data.name,
-      avatar_url: data.avatar_url,
-      onboarding_complete: data.onboardingComplete || undefined,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+    const response = await fetch(API_BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: data.name,
+        avatar_url: data.avatar_url,
+        onboarding_complete: data.onboardingComplete,
+      }),
     });
 
-    if (error) {
-      console.error('Error creating profile:', error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error creating profile:', errorData);
       return false;
     }
 
