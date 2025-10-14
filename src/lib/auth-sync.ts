@@ -14,10 +14,7 @@ export async function syncOnboardingData(userData: User) {
       } = await supabase.auth.getUser();
       if (refreshedUser) {
         const { fetchUserProfile } = await import('./profile-utils');
-        const refreshedUserData = await fetchUserProfile(
-          refreshedUser,
-          supabase
-        );
+        const refreshedUserData = await fetchUserProfile(refreshedUser);
         return refreshedUserData;
       }
     } else {
