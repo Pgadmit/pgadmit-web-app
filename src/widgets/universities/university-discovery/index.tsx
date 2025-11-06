@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { UniversitySearch, UniversityGrid } from '@/features/universities';
+import { UniversitySearch, UniversityGrid, useSearchUniversities } from '@/features/universities';
 import { SavedUniversitiesGrid } from '@/features/saved-universities';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -10,10 +10,19 @@ interface UniversityDiscoveryProps {
 }
 
 export function UniversityDiscovery({ className }: UniversityDiscoveryProps) {
-  const [searchParams, setSearchParams] = useState<
-    { query: string; type: string } | undefined
-  >();
   const [activeTab, setActiveTab] = useState<string>('search');
+
+  const {
+    universities,
+    isLoading,
+    pagination,
+    searchParams,
+    search,
+    nextPage,
+    prevPage,
+    goToPage,
+    reset,
+  } = useSearchUniversities({ page: 1, limit: 12 });
 
   // Load active tab from localStorage on mount
   useEffect(() => {
@@ -29,8 +38,12 @@ export function UniversityDiscovery({ className }: UniversityDiscoveryProps) {
     localStorage.setItem('university-discovery-tab', value);
   };
 
-  const handleSearch = (params: { query: string; type: string }) => {
-    setSearchParams(params);
+  const handleQueryChange = (query: string) => {
+    search({ query });
+  };
+
+  const handleTypeChange = (type: string) => {
+    search({ type });
   };
 
   return (
@@ -41,7 +54,7 @@ export function UniversityDiscovery({ className }: UniversityDiscoveryProps) {
             University Discovery
           </h1>
           <p className='text-muted-foreground'>
-            Find and explore universities by type
+            Find and explore universities with instant search
           </p>
         </div>
 
@@ -56,8 +69,21 @@ export function UniversityDiscovery({ className }: UniversityDiscoveryProps) {
           </TabsList>
 
           <TabsContent value='search' className='space-y-6'>
-            <UniversitySearch onSearch={handleSearch} />
-            <UniversityGrid searchParams={searchParams} />
+            <UniversitySearch
+              query={searchParams.query}
+              type={searchParams.type}
+              onQueryChange={handleQueryChange}
+              onTypeChange={handleTypeChange}
+              onReset={reset}
+            />
+            <UniversityGrid
+              universities={universities}
+              isLoading={isLoading}
+              pagination={pagination}
+              onNextPage={nextPage}
+              onPrevPage={prevPage}
+              onGoToPage={goToPage}
+            />
           </TabsContent>
 
           <TabsContent value='saved' className='space-y-6'>

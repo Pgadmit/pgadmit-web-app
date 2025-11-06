@@ -1,23 +1,103 @@
-import { supabaseBrowser } from '@/lib/supabase/client';
 import type { UniversityTypeInfo, University } from '@/entities/universities';
 
-const supabase = supabaseBrowser();
+const API_BASE_URL = '/api/universities';
+
+export interface UniversitySearchParams {
+  query?: string;
+  type?: string;
+  country?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface UniversitySearchResponse {
+  data: University[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  };
+  error?: string;
+}
+
+export async function searchUniversities(
+  params: UniversitySearchParams = {}
+): Promise<UniversitySearchResponse> {
+  try {
+    const searchParams = new URLSearchParams();
+
+    if (params.query) searchParams.set('query', params.query);
+    if (params.type) searchParams.set('type', params.type);
+    if (params.country) searchParams.set('country', params.country);
+    searchParams.set('page', String(params.page || 1));
+    searchParams.set('limit', String(params.limit || 12));
+
+    const response = await fetch(`${API_BASE_URL}/search?${searchParams}`);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API error:', errorData);
+      return {
+        data: [],
+        pagination: {
+          page: 1,
+          limit: 12,
+          total: 0,
+          totalPages: 0,
+          hasNext: false,
+          hasPrev: false,
+        },
+        error: errorData.error || 'Failed to search universities',
+      };
+    }
+
+    const result = await response.json();
+    return {
+      data: result.data || [],
+      pagination: result.pagination,
+    };
+  } catch (error) {
+    console.error('Universities search error:', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      timestamp: new Date().toISOString(),
+    });
+    return {
+      data: [],
+      pagination: {
+        page: 1,
+        limit: 12,
+        total: 0,
+        totalPages: 0,
+        hasNext: false,
+        hasPrev: false,
+      },
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
 
 export async function getUniversities(): Promise<{
   data: University[];
   error?: string;
 }> {
   try {
-    const { data, error } = await supabase.from('universities').select('*');
-    if (error) {
-      console.error('Supabase error:', {
-        error: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-      });
+    const response = await fetch(API_BASE_URL);
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API error:', errorData);
+      return {
+        data: [],
+        error: errorData.error || 'Failed to fetch universities',
+      };
     }
-    return { data: data ?? [], error: error?.message };
+
+    const result = await response.json();
+    return { data: result.data || [] };
   } catch (error) {
     console.error('Universities retrieval error:', {
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -36,24 +116,19 @@ export async function getUniversityById(id: number): Promise<{
   error?: string;
 }> {
   try {
-    const { data, error } = await supabase
-      .from('universities')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const response = await fetch(`${API_BASE_URL}/${id}`);
 
-    if (error) {
-      console.error('Supabase error:', {
-        error: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API error:', {
+        error: errorData.error,
         id,
       });
-      return { data: null, error: error.message };
+      return { data: null, error: errorData.error || 'University not found' };
     }
 
-    return { data };
+    const result = await response.json();
+    return { data: result.data };
   } catch (error) {
     console.error('Unexpected error:', {
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -73,19 +148,19 @@ export async function getUniversityTypes(): Promise<{
   error?: string;
 }> {
   try {
-    const { data, error } = await supabase.rpc('get_university_types_list');
+    const response = await fetch(`${API_BASE_URL}/types`);
 
-    if (error) {
-      console.error('RPC error:', {
-        error: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code,
-      });
-      return { data: [], error: error.message };
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('API error:', errorData);
+      return {
+        data: [],
+        error: errorData.error || 'Failed to fetch university types',
+      };
     }
 
-    return { data: data ?? [] };
+    const result = await response.json();
+    return { data: result.data || [] };
   } catch (error) {
     console.error('Unexpected error:', {
       error: error instanceof Error ? error.message : 'Unknown error',

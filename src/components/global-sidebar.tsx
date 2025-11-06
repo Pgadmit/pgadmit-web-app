@@ -6,29 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import { useSidebar } from '@/lib/sidebar-context';
 import { useIsMobile } from '@/hooks/use-mobile';
-import {
-  Home,
-  Search,
-  MessageCircle,
-  ClipboardList,
-  User,
-  Settings,
-  BookOpen,
-  Users,
-  Menu,
-} from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const navigationItems = [
-  { icon: Home, label: 'Home', href: '/dashboard' },
-  { icon: Search, label: 'Search', href: '/universities' },
-  { icon: MessageCircle, label: 'AI Chat', href: '/ai-chat' },
-  { icon: ClipboardList, label: 'Tracker', href: '/applications' },
-  { icon: User, label: 'Profile', href: '/profile' },
-  { icon: Settings, label: 'Settings', href: '/settings' },
-  { icon: BookOpen, label: 'Resources', href: '/resources' },
-  { icon: Users, label: 'Community', href: '/community' },
-];
+import { SIDEBAR_NAVIGATION_ITEMS } from '@/config/navigation';
 
 export function GlobalSidebar() {
   const router = useRouter();
@@ -48,10 +28,12 @@ export function GlobalSidebar() {
       {/* Navigation Items */}
       <div className='flex-1 p-4 md:p-6'>
         <nav className='space-y-2'>
-          {navigationItems.map(item => {
+          {SIDEBAR_NAVIGATION_ITEMS.map(item => {
             const isActive =
               pathname === item.href ||
-              (item.href !== '/dashboard' && pathname.startsWith(item.href));
+              (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+
+            const Icon = item.icon;
 
             return (
               <Button
@@ -59,13 +41,14 @@ export function GlobalSidebar() {
                 variant='ghost'
                 onClick={() => handleNavigation(item.href)}
                 className={cn(
-                  'w-full justify-start text-left h-10 px-3',
+                  'w-full justify-start text-left h-10 px-3 cursor-pointer',
                   isActive
                     ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 )}
+                title={item.description}
               >
-                <item.icon className='w-4 h-4 mr-3' />
+                <Icon className='w-4 h-4 mr-3' />
                 <span className='text-sm font-medium'>{item.label}</span>
               </Button>
             );
@@ -73,30 +56,32 @@ export function GlobalSidebar() {
         </nav>
       </div>
 
-      {/* AI Counselor Section */}
-      <div className='p-4 md:p-6 border-t border-gray-200'>
-        <div className='bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4'>
-          <div className='flex items-center space-x-3 mb-3'>
-            <div className='p-2 bg-blue-100 rounded-lg'>
-              <MessageCircle className='w-5 h-5 text-blue-600' />
+      {/* AI Counselor Section - hide on AI Chat page */}
+      {pathname !== '/ai-chat' && (
+        <div className='p-4 md:p-6 border-t border-gray-200'>
+          <div className='bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4'>
+            <div className='flex items-center space-x-3 mb-3'>
+              <div className='p-2 bg-blue-100 rounded-lg'>
+                <MessageCircle className='w-5 h-5 text-blue-600' />
+              </div>
+              <div>
+                <h3 className='text-sm font-semibold text-gray-900'>
+                  AI Counselor
+                </h3>
+                <p className='text-xs text-gray-600'>
+                  Your personal study abroad guide
+                </p>
+              </div>
             </div>
-            <div>
-              <h3 className='text-sm font-semibold text-gray-900'>
-                AI Counselor
-              </h3>
-              <p className='text-xs text-gray-600'>
-                Your personal study abroad guide
-              </p>
-            </div>
+            <Button
+              className='w-full bg-blue-600 hover:bg-blue-700 text-white text-sm h-9 cursor-pointer'
+              onClick={() => handleNavigation('/ai-chat')}
+            >
+              Ask AI Assistant
+            </Button>
           </div>
-          <Button
-            className='w-full bg-blue-600 hover:bg-blue-700 text-white text-sm h-9'
-            onClick={() => handleNavigation('/ai-chat')}
-          >
-            Ask AI Assistant
-          </Button>
         </div>
-      </div>
+      )}
     </div>
   );
 

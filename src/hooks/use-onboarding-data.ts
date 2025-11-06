@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { supabaseBrowser } from '@/lib/supabase/client';
 import { useOnboardingLoading } from '@/lib/loading-context';
 import { useAuth } from '@/features/auth';
 import type { UserOnboarding } from '@/types';
@@ -40,28 +39,25 @@ export function useOnboardingData() {
       setError(null);
 
       try {
-        const supabase = supabaseBrowser();
+        const response = await fetch('/api/onboarding');
 
-        const { data, error } = await supabase
-          .from('user_onboarding')
-          .select('*')
-          .eq('id', user.id)
-          .single();
+        if (!response.ok) {
+          if (response.status === 401) {
+            setOnboardingData(null);
+            return;
+          }
+
+          const errorData = await response.json();
+          console.error('❌ [useOnboardingData] API error:', errorData);
+          throw new Error(errorData.error || 'Failed to fetch onboarding data');
+        }
 
         if (!user?.id) {
           return;
         }
 
-        if (error) {
-          if (error.code === 'PGRST116') {
-            setOnboardingData(null);
-          } else {
-            console.error('❌ [useOnboardingData] Database error:', error);
-            throw error;
-          }
-        } else {
-          setOnboardingData(data as UserOnboarding);
-        }
+        const result = await response.json();
+        setOnboardingData(result.data as UserOnboarding | null);
       } catch (err) {
         const errorMessage =
           err instanceof Error

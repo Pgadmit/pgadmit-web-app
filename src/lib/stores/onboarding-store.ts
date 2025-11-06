@@ -122,11 +122,7 @@ export const useOnboardingStore = create<OnboardingState>()(
             is_completed: state.isCompleted,
           };
 
-          const savedData = await saveUserOnboarding(
-            user.id,
-            onboardingData,
-            supabase
-          );
+          const savedData = await saveUserOnboarding(user.id, onboardingData);
           if (!savedData) {
             throw new Error('Failed to save onboarding data');
           }
@@ -135,8 +131,7 @@ export const useOnboardingStore = create<OnboardingState>()(
           if (state.isCompleted) {
             const profileUpdated = await updateOnboardingCompletion(
               user.id,
-              true,
-              supabase
+              true
             );
             if (!profileUpdated) {
               console.warn('Failed to update onboarding completion in profile');
@@ -157,19 +152,17 @@ export const useOnboardingStore = create<OnboardingState>()(
           } = await supabase.auth.getUser();
           if (!user) return;
 
-          const { data: onboardingData, error } = await supabase
-            .from('user_onboarding')
-            .select('*')
-            .eq('id', user.id)
-            .maybeSingle();
-
-          if (error) {
-            if (error.code === 'PGRST116') {
+          const response = await fetch('/api/onboarding');
+          if (!response.ok) {
+            if (response.status === 401) {
               return;
             }
-            console.error('Error loading onboarding data:', error);
+            console.error('Error loading onboarding data');
             return;
           }
+
+          const result = await response.json();
+          const onboardingData = result.data;
 
           if (onboardingData) {
             // Update store with data from Supabase

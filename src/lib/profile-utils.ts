@@ -1,12 +1,11 @@
-import { createBrowserClient } from '@supabase/ssr';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { fetchWithRetry } from './retry-utils';
 import { connectionMonitor } from './connection-monitor';
 import type { UserProfile, UserOnboarding } from '@/types';
 
+const API_BASE_URL = '/api';
+
 export async function fetchUserProfile(
-  supabaseUser: SupabaseUser,
-  supabase: ReturnType<typeof createBrowserClient>
+  supabaseUser: SupabaseUser
 ): Promise<UserProfile> {
   if (!connectionMonitor.isOnline()) {
     console.warn('No internet connection, using cached profile if available');
@@ -14,21 +13,14 @@ export async function fetchUserProfile(
   }
 
   try {
-    const { data: profileData, error: profileError } = await fetchWithRetry(
-      async () => {
-        const result = await supabase
-          .from('profiles')
-          .select('onboarding_complete, name, avatar_url, picture')
-          .eq('id', supabaseUser.id)
-          .single();
+    const response = await fetch(`${API_BASE_URL}/profile`);
 
-        if (result.error) throw result.error;
-        return result;
-      }
-    );
-    if (profileError) {
-      console.warn('Error fetching profile data:', profileError);
+    if (!response.ok) {
+      throw new Error('Failed to fetch profile');
     }
+
+    const result = await response.json();
+    const profileData = result.data;
 
     const userProfile: UserProfile = {
       id: supabaseUser.id,
@@ -41,7 +33,7 @@ export async function fetchUserProfile(
       avatar_url:
         profileData?.avatar_url || supabaseUser.user_metadata?.avatar_url,
       onboardingComplete:
-        profileData?.onboardingComplete || supabaseUser.onboarding_complete,
+        profileData?.onboarding_complete || supabaseUser.onboarding_complete,
       createdAt: supabaseUser.created_at,
     };
     return userProfile;
@@ -65,39 +57,21 @@ export async function fetchUserProfile(
 }
 
 export async function fetchUserOnboarding(
-  userId: string,
-  supabase: ReturnType<typeof createBrowserClient>
+  userId: string
 ): Promise<UserOnboarding | null> {
   try {
-    const { data, error } = await fetchWithRetry(async () => {
-      const result = await supabase
-        .from('user_onboarding')
-        .select('*')
-        .eq('id', userId)
-        .single();
+    const response = await fetch(`${API_BASE_URL}/onboarding`);
 
-      if (result.error) throw result.error;
-      return result;
-    });
-
-    if (error) {
-      if (error.code === 'PGRST116') {
+    if (!response.ok) {
+      if (response.status === 401) {
         return null;
       }
-      console.error('Error fetching user onboarding:', error);
-      return null;
+      throw new Error('Failed to fetch onboarding data');
     }
 
-    return data as UserOnboarding;
+    const result = await response.json();
+    return result.data as UserOnboarding | null;
   } catch (error) {
-    if (
-      error &&
-      typeof error === 'object' &&
-      'code' in error &&
-      error.code === 'PGRST116'
-    ) {
-      return null;
-    }
     console.error('Error fetching user onboarding:', error);
     return null;
   }
@@ -105,59 +79,39 @@ export async function fetchUserOnboarding(
 
 export async function saveUserOnboarding(
   userId: string,
-  onboardingData: Partial<UserOnboarding>,
-  supabase: ReturnType<typeof createBrowserClient>
+  onboardingData: Partial<UserOnboarding>
 ): Promise<UserOnboarding | null> {
   try {
-    const { data, error } = await fetchWithRetry(async () => {
-      const result = await supabase
-        .from('user_onboarding')
-        .upsert({
-          id: userId,
-          ...onboardingData,
-          updated_at: new Date().toISOString(),
-        })
-        .select()
-        .single();
-
-      if (result.error) throw result.error;
-      return result;
+    const response = await fetch(`${API_BASE_URL}/onboarding/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(onboardingData),
     });
 
-    if (error) {
-      console.error('Error saving user onboarding:', error);
-      return null;
+    if (!response.ok) {
+      throw new Error('Failed to save onboarding data');
     }
 
-    return data as UserOnboarding;
+    const result = await response.json();
+    return result.data as UserOnboarding;
   } catch (error) {
     console.error('Error saving user onboarding:', error);
     return null;
   }
 }
 
-export async function checkOnboardingStatus(
-  userId: string,
-  supabase: ReturnType<typeof createBrowserClient>
-): Promise<boolean> {
+export async function checkOnboardingStatus(userId: string): Promise<boolean> {
   try {
-    const { data, error } = await fetchWithRetry(async () => {
-      const result = await supabase
-        .from('profiles')
-        .select('onboarding_complete')
-        .eq('id', userId)
-        .single();
+    const response = await fetch(`${API_BASE_URL}/profile`);
 
-      if (result.error) throw result.error;
-      return result;
-    });
-
-    if (error) {
-      console.error('Error checking onboarding status:', error);
+    if (!response.ok) {
       return false;
     }
 
-    return data?.onboarding_complete || false;
+    const result = await response.json();
+    return result.data?.onboarding_complete || false;
   } catch (error) {
     console.error('Error checking onboarding status:', error);
     return false;
@@ -166,25 +120,20 @@ export async function checkOnboardingStatus(
 
 export async function updateOnboardingCompletion(
   userId: string,
-  isCompleted: boolean,
-  supabase: ReturnType<typeof createBrowserClient>
+  isCompleted: boolean
 ): Promise<boolean> {
   try {
-    const { error } = await fetchWithRetry(async () => {
-      const result = await supabase
-        .from('profiles')
-        .update({
-          onboarding_complete: isCompleted,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', userId);
-
-      if (result.error) throw result.error;
-      return result;
+    const response = await fetch(`${API_BASE_URL}/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        onboarding_complete: isCompleted,
+      }),
     });
 
-    if (error) {
-      console.error('Error updating onboarding completion:', error);
+    if (!response.ok) {
       return false;
     }
 
