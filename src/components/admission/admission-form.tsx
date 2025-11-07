@@ -1,12 +1,22 @@
-'use client';
-
+import * as React from 'react';
+import { Check, ChevronsUpDown } from 'lucide-react';
+// --- MODIFIED: Re-import 'world-countries' to get the country list ---
 import countries from 'world-countries';
 
-import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 
+// --- NEW: Import Combobox components ---
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import {
   Form,
   FormControl,
@@ -17,12 +27,18 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -33,19 +49,24 @@ type AdmissionFormProps = {
   isRateLimited?: boolean;
 };
 
-const countryOptions = countries.map(c => ({
-  value: c.cca2,
-  label: c.name.common,
-}));
-
+// --- MODIFIED: Re-create the country options list and sort it alphabetically ---
+const countryOptions = countries
+  .map(c => ({
+    label: c.name.common,
+    value: c.name.common.toLowerCase(), // Use a consistent value for keys
+  }))
+  .sort((a, b) => a.label.localeCompare(b.label));
+const onValidationErrors = (errors: any) => {
+    console.error("FORM VALIDATION ERRORS:", errors);
+    // You can add a toast or alert here if you want to be more explicit
+    // alert('Please fix the errors before submitting.');
+  };
 export default function AdmissionForm({
   form,
   onSubmit,
   isPending,
   isRateLimited = false,
 }: AdmissionFormProps) {
-  const [selectedCountry, setSelectedCountry] = useState('');
-
   const allGradingScales = [
     'GPA (4.0)',
     'GPA (5.0)',
@@ -53,6 +74,8 @@ export default function AdmissionForm({
     'Letter Grade',
     '1.0 - 5.0',
     '1 - 5 Scale',
+    '1 - 10 Scale',
+    '1 - 20 Scale',
   ];
 
   const regionOptions = [
@@ -63,44 +86,73 @@ export default function AdmissionForm({
     'Africa',
   ];
 
+  const testOptions = ['SAT', 'ACT', 'TOEFL', 'IELTS', 'None'];
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, onValidationErrors)}
         className='max-w-3xl space-y-6'
       >
         {/* Country + Grading Scale */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+          {/* --- MODIFIED: Replaced the Input with a searchable Combobox --- */}
           <FormField
             control={form.control}
             name='homeCountry'
             render={({ field }) => (
-              <FormItem>
+              <FormItem className='flex flex-col'>
                 <FormLabel>Home Country</FormLabel>
-                <Select
-                  onValueChange={val => {
-                    const country = countryOptions.find(c => c.value === val);
-                    field.onChange(country?.label); // store full name
-                    setSelectedCountry(country?.label || '');
-                  }}
-                  value={
-                    countryOptions.find(c => c.label === field.value)?.value ||
-                    ''
-                  }
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select Country' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className='max-h-60 overflow-y-auto'>
-                    {countryOptions.map(c => (
-                      <SelectItem key={c.value} value={c.value}>
-                        {c.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant='outline'
+                        role='combobox'
+                        className={cn(
+                          'w-full justify-between',
+                          !field.value && 'text-muted-foreground'
+                        )}
+                      >
+                        {field.value
+                          ? countryOptions.find(
+                            country => country.label === field.value
+                          )?.label
+                          : 'Select country'}
+                        <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className='w-[--radix-popover-trigger-width] max-h-[--radix-popover-content-available-height] p-0'>
+                    <Command>
+                      <CommandInput placeholder='Search country...' />
+                      <CommandList>
+                        <CommandEmpty>No country found.</CommandEmpty>
+                        <CommandGroup>
+                          {countryOptions.map(country => (
+                            <CommandItem
+                              value={country.label}
+                              key={country.value}
+                              onSelect={() => {
+                                form.setValue('homeCountry', country.label);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  'mr-2 h-4 w-4',
+                                  country.label === field.value
+                                    ? 'opacity-100'
+                                    : 'opacity-0'
+                                )}
+                              />
+                              {country.label}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
@@ -112,11 +164,7 @@ export default function AdmissionForm({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Grading Scale</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  value={field.value}
-                  disabled={!selectedCountry}
-                >
+                <Select onValueChange={field.onChange} value={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder='Select Scale' />
@@ -179,26 +227,29 @@ export default function AdmissionForm({
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
           <FormField
             control={form.control}
-            name='standardizedTest'
-            render={({ field }) => (
+            name='testsTaken'
+            render={() => (
               <FormItem>
                 <FormLabel>Test Taken</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select Test' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value='SAT'>SAT</SelectItem>
-                    <SelectItem value='ACT'>ACT</SelectItem>
-                    <SelectItem value='TOEFL'>TOEFL</SelectItem>
-                    <SelectItem value='IELTS'>IELTS</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className='grid grid-cols-2 gap-2'>
+                  {testOptions.map(test => (
+                    <div key={test} className='flex items-center space-x-2'>
+                      <Checkbox
+                        checked={form.getValues('testsTaken')?.includes(test)}
+                        onCheckedChange={checked => {
+                          const current = form.getValues('testsTaken') || [];
+                          form.setValue(
+                            'testsTaken',
+                            checked
+                              ? [...current, test]
+                              : current.filter((t: string) => t !== test)
+                          );
+                        }}
+                      />
+                      <span>{test}</span>
+                    </div>
+                  ))}
+                </div>
                 <FormMessage />
               </FormItem>
             )}
@@ -229,16 +280,17 @@ export default function AdmissionForm({
           name='preferredRegions'
           render={() => (
             <FormItem>
-              <FormLabel>Preferred Regions</FormLabel>
+              <FormLabel>Region you would like to study in?</FormLabel>
               <div className='grid grid-cols-2 gap-2'>
                 {regionOptions.map(region => (
                   <div key={region} className='flex items-center space-x-2'>
                     <Checkbox
                       checked={form
                         .getValues('preferredRegions')
-                        .includes(region)}
+                        ?.includes(region)}
                       onCheckedChange={checked => {
-                        const current = form.getValues('preferredRegions');
+                        const current =
+                          form.getValues('preferredRegions') || [];
                         form.setValue(
                           'preferredRegions',
                           checked
@@ -258,22 +310,27 @@ export default function AdmissionForm({
 
         {/* Budget */}
         <FormField
-          control={form.control}
-          name='budget'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Annual Budget for Tuition</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='e.g. 20000'
-                  {...field}
-                  value={field.value ?? ''}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+  control={form.control}
+  name="budget"
+  render={({ field }) => (
+    <FormItem>
+      {/* This label now dynamically shows the selected value */}
+      <FormLabel>
+        Annual Budget for Tuition: ${Number(field.value || 0).toLocaleString()}
+      </FormLabel>
+      <FormControl>
+        <Slider
+          // The slider's value is an array, we only need the first handle
+          onValueChange={(value) => field.onChange(value[0])}
+          defaultValue={[100]} // Set a default starting value
+          max={100000}
+          step={1000}
         />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
         {/* Name + Email */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -339,9 +396,9 @@ export default function AdmissionForm({
           className='bg-primary-blue hover:bg-primary-blue/80'
           type='submit'
           size='lg'
-          disabled={isPending || isRateLimited}
+          
         >
-          {isPending ? 'Submitting...' : 'Get AI Suggestions'}
+          {isPending ? 'Submitting...' : 'See My Free Matches'}
         </Button>
         <FormLabel className='text-xs text-muted-foreground mb-2'>
           By submitting this form, you agree that your data will be stored and
