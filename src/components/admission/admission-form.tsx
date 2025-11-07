@@ -56,7 +56,11 @@ const countryOptions = countries
     value: c.name.common.toLowerCase(), // Use a consistent value for keys
   }))
   .sort((a, b) => a.label.localeCompare(b.label));
-
+const onValidationErrors = (errors: any) => {
+    console.error("FORM VALIDATION ERRORS:", errors);
+    // You can add a toast or alert here if you want to be more explicit
+    // alert('Please fix the errors before submitting.');
+  };
 export default function AdmissionForm({
   form,
   onSubmit,
@@ -87,7 +91,7 @@ export default function AdmissionForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(onSubmit, onValidationErrors)}
         className='max-w-3xl space-y-6'
       >
         {/* Country + Grading Scale */}
@@ -112,8 +116,8 @@ export default function AdmissionForm({
                       >
                         {field.value
                           ? countryOptions.find(
-                              country => country.label === field.value
-                            )?.label
+                            country => country.label === field.value
+                          )?.label
                           : 'Select country'}
                         <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
                       </Button>
@@ -306,27 +310,29 @@ export default function AdmissionForm({
 
         {/* Budget */}
         <FormField
-          control={form.control}
-          name='budget'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Annual Budget for Tuition: $
-                {field.value ? Number(field.value).toLocaleString() : '0'}
-              </FormLabel>
-              <FormControl>
-                <Slider
-                  min={0}
-                  max={100000}
-                  step={1000}
-                  defaultValue={[field.value || 20000]}
-                  onValueChange={value => field.onChange(value[0])}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+  control={form.control}
+  name="budget"
+  render={({ field }) => (
+    <FormItem>
+      <FormLabel>Annual Budget for Tuition</FormLabel>
+      <FormControl>
+        {/* --- THIS IS THE FIX --- */}
+        <Input
+          // 1. Change type to "text" to ensure the value is always a string.
+          type="text"
+          // 2. Add inputMode for a better mobile experience (shows number pad).
+          inputMode="numeric"
+          // 3. Add a pattern to help browsers with validation.
+          pattern="[0-9]*"
+          placeholder="e.g. 20000"
+          {...field}
+          value={field.value ?? ''}
         />
+      </FormControl>
+      <FormMessage />
+    </FormItem>
+  )}
+/>
 
         {/* Name + Email */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -392,7 +398,7 @@ export default function AdmissionForm({
           className='bg-primary-blue hover:bg-primary-blue/80'
           type='submit'
           size='lg'
-          disabled={isPending || isRateLimited}
+          
         >
           {isPending ? 'Submitting...' : 'See My Free Matches'}
         </Button>
