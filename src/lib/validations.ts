@@ -14,7 +14,7 @@ export const AdmissionFormSchema = z.object({
   testScore: z.string().min(1, 'Test score required'),
   preferredRegions: z.array(z.string()).nonempty('Select at least one region'),
   major: z.string().min(1, 'Required'),
-  budget: z.string().regex(wholeNumberRegex, 'Budget must be a whole number'),
+budget: z.coerce.number().min(0, 'Budget is required'),
   name: z
     .string()
     .regex(nameRegex, 'Invalid characters in name')

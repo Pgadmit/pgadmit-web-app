@@ -314,19 +314,17 @@ export default function AdmissionForm({
   name="budget"
   render={({ field }) => (
     <FormItem>
-      <FormLabel>Annual Budget for Tuition</FormLabel>
+      {/* This label now dynamically shows the selected value */}
+      <FormLabel>
+        Annual Budget for Tuition: ${Number(field.value || 0).toLocaleString()}
+      </FormLabel>
       <FormControl>
-        {/* --- THIS IS THE FIX --- */}
-        <Input
-          // 1. Change type to "text" to ensure the value is always a string.
-          type="text"
-          // 2. Add inputMode for a better mobile experience (shows number pad).
-          inputMode="numeric"
-          // 3. Add a pattern to help browsers with validation.
-          pattern="[0-9]*"
-          placeholder="e.g. 20000"
-          {...field}
-          value={field.value ?? ''}
+        <Slider
+          // The slider's value is an array, we only need the first handle
+          onValueChange={(value) => field.onChange(value[0])}
+          defaultValue={[100]} // Set a default starting value
+          max={100000}
+          step={1000}
         />
       </FormControl>
       <FormMessage />
