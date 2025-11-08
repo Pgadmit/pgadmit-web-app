@@ -310,27 +310,25 @@ export default function AdmissionForm({
 
         {/* Budget */}
         <FormField
-  control={form.control}
-  name="budget"
-  render={({ field }) => (
-    <FormItem>
-      {/* This label now dynamically shows the selected value */}
-      <FormLabel>
-        Annual Budget for Tuition: ${Number(field.value || 0).toLocaleString()}
-      </FormLabel>
-      <FormControl>
-        <Slider
-          // The slider's value is an array, we only need the first handle
-          onValueChange={(value) => field.onChange(value[0])}
-          defaultValue={[100]} // Set a default starting value
-          max={100000}
-          step={1000}
+          control={form.control}
+          name="budget"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                Annual Budget for Tuition: ${Number(field.value || 0).toLocaleString()}
+              </FormLabel>
+              <FormControl>
+                <Slider
+                  onValueChange={(value) => field.onChange(value[0])}
+                  defaultValue={[100]} // Set a default starting value
+                  max={100000}
+                  step={1000}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </FormControl>
-      <FormMessage />
-    </FormItem>
-  )}
-/>
 
         {/* Name + Email */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -396,7 +394,7 @@ export default function AdmissionForm({
           className='bg-primary-blue hover:bg-primary-blue/80'
           type='submit'
           size='lg'
-          
+
         >
           {isPending ? 'Submitting...' : 'See My Free Matches'}
         </Button>

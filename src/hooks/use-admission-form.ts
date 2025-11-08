@@ -1,6 +1,8 @@
 import { useState, useTransition, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { verifyRecaptcha } from '@/actions/recaptcha';
 
 import { getCollegeSuggestions, sendToN8nWebhook } from '@/actions/ai-workflow';
 import {
@@ -19,6 +21,8 @@ export function useAdmissionForm() {
     setLastOpenAIRequest,
     checkRateLimits,
   } = useRateLimitStore();
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const [isPending, startTransition] = useTransition();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -61,6 +65,18 @@ export function useAdmissionForm() {
     console.log('[onSubmit] Starting async transition...');
     startTransition(async () => {
       try {
+        if (!executeRecaptcha) {
+          console.error('reCAPTCHA not ready');
+          throw new Error('reCAPTCHA is not available. Please try again.');
+        }
+        const token = await executeRecaptcha('admission_form');
+        const verification = await verifyRecaptcha(token);
+
+        if (!verification.success || verification.score < 0.5) {
+          throw new Error('reCAPTCHA verification failed. Please try again.');
+        }
+
+
         // --- 5. HubSpot Integration ---
         const hubspotContact = createHubSpotContact(values);
         console.log('[HubSpot] Attempting to save contact. Data:', hubspotContact);
