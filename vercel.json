@@ -1,9 +1,14 @@
 {
-  "redirects": [
+   "rewrites": [
     {
-      "source": "/free-search",
-      "destination": "https://match-pgadmit.com",
-      "permanent": true
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "match-pgadmit.com"
+        }
+      ],
+      "destination": "/free-search"
     }
   ],
   "headers": [
