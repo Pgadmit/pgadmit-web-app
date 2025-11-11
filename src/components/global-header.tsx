@@ -12,13 +12,8 @@ export function GlobalHeader() {
   const router = useRouter();
   const { toggleSidebar } = useSidebar();
 
-  const handleLogoClick = () => {
-    router.push('/');
-  };
-
-  const handleGetStarted = () => {
-    router.push('/onboarding');
-  };
+  const handleLogoClick = () => router.push('/');
+  const handleGetStarted = () => router.push('/onboarding');
 
   return (
     <header className='bg-background/95 backdrop-blur-sm border-b border-border'>
@@ -28,12 +23,16 @@ export function GlobalHeader() {
           <div className='flex items-center space-x-4'>
             <button
               onClick={handleLogoClick}
-              className='cursor-pointer flex items-center space-x-2 text-foreground hover:opacity-80 transition-opacity'
+              className='cursor-pointer flex items-center space-x-2'
             >
+              {/* --- THIS IS THE TEST --- */}
               <img
                 src='/logo.png'
                 alt='PGadmit Logo'
-                className='max-w-[120px] sm:max-w-[140px] md:max-w-[160px] h-auto object-contain transition-transform hover:scale-105'
+                style={{
+                  maxWidth: '160px',
+                  height: 'auto',
+                }}
               />
             </button>
           </div>
@@ -42,24 +41,13 @@ export function GlobalHeader() {
           <div className='flex items-center space-x-4'>
             {user ? (
               <>
-                {/* Mobile Menu Button */}
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  onClick={toggleSidebar}
-                  className='md:hidden p-2'
-                >
+                <Button variant='ghost' size='sm' onClick={toggleSidebar} className='md:hidden p-2'>
                   <Menu className='h-5 w-5' />
                 </Button>
-
-                {/* User Menu */}
                 <UserMenu />
               </>
             ) : (
-              <Button
-                onClick={handleGetStarted}
-                className='bg-blue-600 hover:bg-blue-700 text-white'
-              >
+              <Button onClick={handleGetStarted} className='bg-blue-600 hover:bg-blue-700 text-white'>
                 Get Started
               </Button>
             )}

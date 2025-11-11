@@ -1,8 +1,9 @@
 {
   "rewrites": [
     {
-      "source": "/strapi-api/(.*)",
-      "destination": "https://refreshing-acoustics-4f6486bcd4.strapiapp.com/api/$1"
+      "source": "/free-search",
+      "destination": "https://match-pgadmit.com",
+      "permanent": true
     }
   ],
   "headers": [
