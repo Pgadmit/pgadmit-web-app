@@ -1,6 +1,7 @@
 // src/app/layout.tsx
 
 import React from 'react';
+import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { Open_Sans, Montserrat } from 'next/font/google';
 import './globals.css';
