@@ -5,7 +5,7 @@
       "has": [
         {
           "type": "host",
-          "value": "match-pgadmit.com"
+          "value": "match.pgadmit.com"
         }
       ],
       "destination": "/free-search"
