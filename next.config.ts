@@ -10,7 +10,15 @@ const nextConfig: NextConfig = {
         : 'http://localhost:3000'),
     PORT: process.env.PORT,
   },
-
+async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/free-search',
+        permanent: false, // set true for permanent 301
+      },
+    ];
+  },
   // Strapi API proxy rewrites to avoid CORS
   async rewrites() {
     return [
